@@ -15,18 +15,23 @@
   "workers": 4,
   "only": null,
   "seconds": 10.6,
+  "scoring": 2,
   "run": "20261031-052637-fa5f9f8c-linux-corpus"
  },
  "docs": {
   "chrome/academic-paper": {
    "sha256": "bb4044817c3d40e875a344ed8f9c51869ecf4436d06556a21c7c5bd3c3ca4e6d",
    "status": "ok",
-   "score": 0.7009824613883092,
+   "score": 0.5936793163336548,
+   "halves": {
+    "looks": 0.3914920634920635,
+    "text": 0.9002867835902909
+   },
    "components": {
     "words": 0.9938144329896907,
     "order": 0.7925311203319502,
     "format": 0.7850685936303855,
-    "visual": 0.2694157680454974,
+    "visual": 0.17057142857142854,
     "structure": 0.8333333333333334
    },
    "details": {
@@ -51,17 +56,34 @@
     "images_ref": 1,
     "images_docx": 1,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.3411,
+     "text": 0.9938144329896907,
+     "words_ref": 485,
+     "words_docx": 485,
+     "images_ref": 1,
+     "images_docx": 1,
+     "positioned": false,
+     "similarity": 0.5388
+    }
+   ]
   },
   "chrome/code-listing": {
    "sha256": "846f149df3f3cd2b20f1adcc602bf87e9edc5948c9560b3372e7362e067ec221",
    "status": "ok",
-   "score": 0.8332404880419122,
+   "score": 0.7412271911618926,
+   "halves": {
+    "looks": 0.5896190476190478,
+    "text": 0.9318181818181817
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.5691349601397074,
+    "visual": 0.38442857142857156,
     "structure": 1.0
    },
    "details": {
@@ -86,17 +108,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.3844,
+     "text": 1.0,
+     "words_ref": 141,
+     "words_docx": 141,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.5691
+    }
+   ]
   },
   "chrome/form-fields": {
    "sha256": "7605b081dd2be6ba25b571a375c10ae7247715746e1823cb68505a49912e1c02",
    "status": "ok",
-   "score": 0.8338073523409608,
+   "score": 0.7423637222439523,
+   "halves": {
+    "looks": 0.5914285714285714,
+    "text": 0.9318181818181817
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.5710245078032028,
+    "visual": 0.3871428571428571,
     "structure": 1.0
    },
    "details": {
@@ -121,17 +160,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.3871,
+     "text": 1.0,
+     "words_ref": 80,
+     "words_docx": 80,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.571
+    }
+   ]
   },
   "chrome/headings-emphasis": {
    "sha256": "eb20358ab2b6e6a3d1414d0cd3eb745ca1231e5eb1ab6eccad00c976fd39db2d",
    "status": "ok",
-   "score": 0.9164524891472179,
+   "score": 0.8858483350592656,
+   "halves": {
+    "looks": 0.8300000000000002,
+    "text": 0.9454545454545454
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.8,
-    "visual": 0.8215082971573933,
+    "visual": 0.7450000000000001,
     "structure": 1.0
    },
    "details": {
@@ -156,17 +212,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.745,
+     "text": 1.0,
+     "words_ref": 285,
+     "words_docx": 285,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.8215
+    }
+   ]
   },
   "chrome/highlights-callouts": {
    "sha256": "25866d26023d8b8e9966bb5d61358e87f9301ba2e5f965b437e351a53a0f3589",
    "status": "ok",
-   "score": 0.7774944710227794,
+   "score": 0.620105074185257,
+   "halves": {
+    "looks": 0.4126666666666667,
+    "text": 0.9318181818181817
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.38331490340926466,
+    "visual": 0.11899999999999998,
     "structure": 1.0
    },
    "details": {
@@ -191,17 +264,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.119,
+     "text": 1.0,
+     "words_ref": 214,
+     "words_docx": 214,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.3833
+    }
+   ]
   },
   "chrome/images-figures": {
    "sha256": "d5b1f5801b5b24dd6cd3af950392cfcd51466f72b550783f6de2680239866849",
    "status": "ok",
-   "score": 0.9475765512736085,
+   "score": 0.9421847595944871,
+   "halves": {
+    "looks": 0.952666666666667,
+    "text": 0.9318181818181817
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.9502551709120285,
+    "visual": 0.9290000000000002,
     "structure": 1.0
    },
    "details": {
@@ -226,17 +316,34 @@
     "images_ref": 3,
     "images_docx": 3,
     "positioned_pages": 1
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.929,
+     "text": 1.0,
+     "words_ref": 153,
+     "words_docx": 153,
+     "images_ref": 3,
+     "images_docx": 3,
+     "positioned": true,
+     "similarity": 0.9503
+    }
+   ]
   },
   "chrome/international": {
    "sha256": "8c83b831bec0d15bd8392fc4be4413b990b9a24157365a363b96b3915d3ddcc1",
    "status": "ok",
-   "score": 0.8182509100704595,
+   "score": 0.7744659659840014,
+   "halves": {
+    "looks": 0.7254285714285715,
+    "text": 0.8268181818181817
+   },
    "components": {
     "words": 0.8088888888888888,
     "order": 1.0,
     "format": 0.7472222222222222,
-    "visual": 0.7116697002348651,
+    "visual": 0.5881428571428572,
     "structure": 1.0
    },
    "details": {
@@ -261,17 +368,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.5881,
+     "text": 0.8088888888888888,
+     "words_ref": 113,
+     "words_docx": 112,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.7117
+    }
+   ]
   },
   "chrome/invoice": {
    "sha256": "8f6ec36a6b25ad9220449bc0717f33205c308ec787ff78d693cfb24b7e22b764",
    "status": "ok",
-   "score": 0.9001656922070409,
+   "score": 0.8709241830903961,
+   "halves": {
+    "looks": 0.8262857142857144,
+    "text": 0.9179741578218734
+   },
    "components": {
     "words": 0.9746192893401014,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.8175996846833682,
+    "visual": 0.7394285714285715,
     "structure": 1.0
    },
    "details": {
@@ -296,17 +420,34 @@
     "images_ref": 1,
     "images_docx": 1,
     "positioned_pages": 1
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.7394,
+     "text": 0.9746192893401014,
+     "words_ref": 100,
+     "words_docx": 97,
+     "images_ref": 1,
+     "images_docx": 1,
+     "positioned": true,
+     "similarity": 0.8176
+    }
+   ]
   },
   "chrome/letter-a4": {
    "sha256": "b0e93510cdf9bbac54927fd49b4ba35aa3110b10073d4a8416cdbb9e20b531c7",
    "status": "ok",
-   "score": 0.7382817328278104,
+   "score": 0.5613835722137897,
+   "halves": {
+    "looks": 0.33333333333333337,
+    "text": 0.9454545454545454
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.8,
-    "visual": 0.2276057760927013,
+    "visual": 0.0,
     "structure": 1.0
    },
    "details": {
@@ -331,17 +472,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.0,
+     "text": 1.0,
+     "words_ref": 142,
+     "words_docx": 142,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.2276
+    }
+   ]
   },
   "chrome/lists": {
    "sha256": "0e4471fc835e644ed7a039ca8191fe688a1276ac574f93a6e2fa011715b62f10",
    "status": "ok",
-   "score": 0.8751284365306586,
+   "score": 0.8206058368022613,
+   "halves": {
+    "looks": 0.7226666666666668,
+    "text": 0.9318181818181817
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.7087614551021956,
+    "visual": 0.5840000000000001,
     "structure": 1.0
    },
    "details": {
@@ -366,17 +524,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.584,
+     "text": 1.0,
+     "words_ref": 92,
+     "words_docx": 92,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.7088
+    }
+   ]
   },
   "chrome/mixed-page-sizes": {
    "sha256": "e6c33ba1df2ff23f736ae78a334302053b7814fe3f7b9be84173019519fd786f",
    "status": "ok",
-   "score": 0.8612630477755794,
+   "score": 0.79519480401646,
+   "halves": {
+    "looks": 0.6786031746031747,
+    "text": 0.9318181818181817
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.6625434925852646,
+    "visual": 0.517904761904762,
     "structure": 1.0
    },
    "details": {
@@ -401,17 +576,56 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.8496,
+     "text": 1.0,
+     "words_ref": 94,
+     "words_docx": 94,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.8947
+    },
+    {
+     "page": 2,
+     "visual": 0.2984,
+     "text": 1.0,
+     "words_ref": 103,
+     "words_docx": 103,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.5089
+    },
+    {
+     "page": 3,
+     "visual": 0.4057,
+     "text": 1.0,
+     "words_ref": 52,
+     "words_docx": 52,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.584
+    }
+   ]
   },
   "chrome/multipage-report": {
    "sha256": "1d3df9c25d43d48daaf0c3c5537318a2a01a0fc4d88806c7c319b6702683a394",
    "status": "ok",
-   "score": 0.8467876348186952,
+   "score": 0.7856897223417463,
+   "halves": {
+    "looks": 0.6625986394557823,
+    "text": 0.9316474605206998
+   },
    "components": {
     "words": 1.0,
     "order": 0.9990610328638497,
     "format": 0.75,
-    "visual": 0.6146051051077009,
+    "visual": 0.49389795918367346,
     "structure": 1.0
    },
    "details": {
@@ -436,17 +650,100 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.0,
+     "text": 1.0,
+     "words_ref": 15,
+     "words_docx": 15,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.0822
+    },
+    {
+     "page": 2,
+     "visual": 0.5854,
+     "text": 1.0,
+     "words_ref": 18,
+     "words_docx": 18,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.7098
+    },
+    {
+     "page": 3,
+     "visual": 0.6559,
+     "text": 1.0,
+     "words_ref": 188,
+     "words_docx": 188,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.7591
+    },
+    {
+     "page": 4,
+     "visual": 0.6313,
+     "text": 1.0,
+     "words_ref": 191,
+     "words_docx": 191,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.7419
+    },
+    {
+     "page": 5,
+     "visual": 0.3253,
+     "text": 1.0,
+     "words_ref": 264,
+     "words_docx": 264,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.5277
+    },
+    {
+     "page": 6,
+     "visual": 0.6041,
+     "text": 1.0,
+     "words_ref": 187,
+     "words_docx": 187,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.7229
+    },
+    {
+     "page": 7,
+     "visual": 0.6553,
+     "text": 1.0,
+     "words_ref": 202,
+     "words_docx": 202,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.7587
+    }
+   ]
   },
   "chrome/prose-letter": {
    "sha256": "e5a29b0e2a19261482ba75f4b90d4f86cc013c320923163d2a7b5bd194877d36",
    "status": "ok",
-   "score": 0.8799359317669347,
+   "score": 0.8292123211777992,
+   "halves": {
+    "looks": 0.737904761904762,
+    "text": 0.9318181818181817
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.724786439223116,
+    "visual": 0.6068571428571429,
     "structure": 1.0
    },
    "details": {
@@ -471,17 +768,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.6069,
+     "text": 1.0,
+     "words_ref": 373,
+     "words_docx": 373,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.7248
+    }
+   ]
   },
   "chrome/rotated-labels": {
    "sha256": "b862f3f5d25627fd908876326ca648aebd67fde87eb758c0c575caa349002bc1",
    "status": "ok",
-   "score": 0.8639180771006537,
+   "score": 0.8128300195567587,
+   "halves": {
+    "looks": 0.7267619047619047,
+    "text": 0.9090909090909091
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.6666666666666666,
-    "visual": 0.7130602570021791,
+    "visual": 0.5901428571428571,
     "structure": 1.0
    },
    "details": {
@@ -506,17 +820,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 1
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.5901,
+     "text": 1.0,
+     "words_ref": 88,
+     "words_docx": 88,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": true,
+     "similarity": 0.7131
+    }
+   ]
   },
   "chrome/slide-deck": {
    "sha256": "655d0d301a8a84fe586028fcb5b2eed234047f3fe539bdda6ad98250c047106d",
    "status": "ok",
-   "score": 0.779346060451745,
+   "score": 0.7296244594665476,
+   "halves": {
+    "looks": 0.5905079365079365,
+    "text": 0.9015151515151515
+   },
    "components": {
     "words": 0.9444444444444444,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.5283757570613726,
+    "visual": 0.46909523809523807,
     "structure": 0.8333333333333334
    },
    "details": {
@@ -541,17 +872,56 @@
     "images_ref": 2,
     "images_docx": 1,
     "positioned_pages": 1
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.0,
+     "text": 1.0,
+     "words_ref": 10,
+     "words_docx": 10,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.0
+    },
+    {
+     "page": 2,
+     "visual": 0.4097,
+     "text": 1.0,
+     "words_ref": 20,
+     "words_docx": 20,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.5868
+    },
+    {
+     "page": 3,
+     "visual": 0.9976,
+     "text": 0.6666666666666666,
+     "words_ref": 4,
+     "words_docx": 8,
+     "images_ref": 2,
+     "images_docx": 1,
+     "positioned": true,
+     "similarity": 0.9983
+    }
+   ]
   },
   "chrome/small-print": {
    "sha256": "3d4c617dda3eb854e15e2c2979c012e8547647cff4dd92b3c523a382cd976f41",
    "status": "ok",
-   "score": 0.750341007545146,
+   "score": 0.6443421200548415,
+   "halves": {
+    "looks": 0.44555555555555565,
+    "text": 0.9318181818181817
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.37613669181715353,
+    "visual": 0.2516666666666667,
     "structure": 0.8333333333333333
    },
    "details": {
@@ -576,17 +946,45 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.633,
+     "text": 1.0,
+     "words_ref": 1349,
+     "words_docx": 1349,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.7431
+    },
+    {
+     "page": 2,
+     "visual": 0.122,
+     "text": 1.0,
+     "words_ref": 671,
+     "words_docx": 671,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.3854
+    }
+   ]
   },
   "chrome/table-bordered": {
    "sha256": "48854f0b0c6798d6bef06f3d9876c896db29a33b03484e5ee6a619ba20b60c4f",
    "status": "ok",
-   "score": 0.8462722324468364,
+   "score": 0.7686420013997346,
+   "halves": {
+    "looks": 0.6360000000000001,
+    "text": 0.9289473684210525
+   },
    "components": {
     "words": 1.0,
     "order": 0.9842105263157894,
     "format": 0.75,
-    "visual": 0.6178372660508581,
+    "visual": 0.45400000000000007,
     "structure": 1.0
    },
    "details": {
@@ -611,17 +1009,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.454,
+     "text": 1.0,
+     "words_ref": 190,
+     "words_docx": 190,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.6178
+    }
+   ]
   },
   "chrome/table-borderless": {
    "sha256": "78b0e81c2f3a84ccb0436f981bbc58431fc3a9a601f76eb49f695003c2708352",
    "status": "ok",
-   "score": 0.7807003034365569,
+   "score": 0.631861923636293,
+   "halves": {
+    "looks": 0.43047619047619057,
+    "text": 0.9274600997089034
+   },
    "components": {
     "words": 0.9952153110047847,
     "order": 0.9903846153846154,
     "format": 0.75,
-    "visual": 0.4019908286555337,
+    "visual": 0.14571428571428577,
     "structure": 1.0
    },
    "details": {
@@ -646,17 +1061,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.1457,
+     "text": 0.9952153110047847,
+     "words_ref": 104,
+     "words_docx": 105,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.402
+    }
+   ]
   },
   "chrome/table-spans": {
    "sha256": "586f3ac48c2faa154f71ef8e44a49b91c03c66d7e0b04af36247fd7399e5acb1",
    "status": "ok",
-   "score": 0.7999993154305906,
+   "score": 0.6716314053025993,
+   "halves": {
+    "looks": 0.4840952380952381,
+    "text": 0.9318181818181817
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.4583310514353019,
+    "visual": 0.22614285714285715,
     "structure": 1.0
    },
    "details": {
@@ -681,17 +1113,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.2261,
+     "text": 1.0,
+     "words_ref": 131,
+     "words_docx": 131,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.4583
+    }
+   ]
   },
   "chrome/three-column-newsletter": {
    "sha256": "f21c9e23c28db57f4412056781243b1ea9cbca70696698b1699e0ea638a805ae",
    "status": "ok",
-   "score": 0.7390596693260392,
+   "score": 0.5820086032991638,
+   "halves": {
+    "looks": 0.3861904761904762,
+    "text": 0.8771164365720239
+   },
    "components": {
     "words": 1.0,
     "order": 0.6991404011461319,
     "format": 0.75,
-    "visual": 0.3554854307047534,
+    "visual": 0.07928571428571428,
     "structure": 1.0
    },
    "details": {
@@ -716,17 +1165,34 @@
     "images_ref": 1,
     "images_docx": 1,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.0793,
+     "text": 1.0,
+     "words_ref": 349,
+     "words_docx": 349,
+     "images_ref": 1,
+     "images_docx": 1,
+     "positioned": false,
+     "similarity": 0.3555
+    }
+   ]
   },
   "chrome/two-column-article": {
    "sha256": "831d72483dab80ba3db1e1f9490c5d19208c0e428c7e082919103ff944bc0d62",
    "status": "ok",
-   "score": 0.9023683513084195,
+   "score": 0.861682638618749,
+   "halves": {
+    "looks": 0.7853333333333334,
+    "text": 0.9454545454545454
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.8,
-    "visual": 0.7745611710280652,
+    "visual": 0.678,
     "structure": 1.0
    },
    "details": {
@@ -751,17 +1217,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 1
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.678,
+     "text": 1.0,
+     "words_ref": 471,
+     "words_docx": 471,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": true,
+     "similarity": 0.7746
+    }
+   ]
   },
   "chrome/watermark-draft": {
    "sha256": "0327f00ceb8b7980ddfcd8babb27e5c0d5e74c6d1a36e6fe967cb6d6026d22a4",
    "status": "ok",
-   "score": 0.8901488932603923,
+   "score": 0.8545998086115266,
+   "halves": {
+    "looks": 0.7966666666666669,
+    "text": 0.91674581532911
+   },
    "components": {
     "words": 0.985,
     "order": 1.0,
     "format": 0.7247346562067374,
-    "visual": 0.7864623160979389,
+    "visual": 0.6950000000000001,
     "structure": 1.0
    },
    "details": {
@@ -786,17 +1269,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 1
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.695,
+     "text": 0.985,
+     "words_ref": 202,
+     "words_docx": 198,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": true,
+     "similarity": 0.7865
+    }
+   ]
   },
   "handmade/raw-base14": {
    "sha256": "8373d7619a5c6aac64804212d476d76ae9fb156ebc72859b3287bc3f062d6f6b",
    "status": "ok",
-   "score": 0.9456974381984371,
+   "score": 0.9340875122382702,
+   "halves": {
+    "looks": 0.9228571428571429,
+    "text": 0.9454545454545454
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.8,
-    "visual": 0.918991460661457,
+    "visual": 0.8842857142857143,
     "structure": 1.0
    },
    "details": {
@@ -821,17 +1321,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 1
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.8843,
+     "text": 1.0,
+     "words_ref": 138,
+     "words_docx": 138,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": true,
+     "similarity": 0.919
+    }
+   ]
   },
   "handmade/raw-rotate90": {
    "sha256": "0a1e9caf250553950103f48d22616a5a25412a3a3e7c9ea8618f67a445d00fcd",
    "status": "ok",
-   "score": 0.7706279887819137,
+   "score": 0.6172905467019717,
+   "halves": {
+    "looks": 0.3810476190476191,
+    "text": 1.0
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": null,
-    "visual": 0.3501126348820887,
+    "visual": 0.07157142857142862,
     "structure": 1.0
    },
    "details": {
@@ -856,17 +1373,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 1
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.0716,
+     "text": 1.0,
+     "words_ref": 97,
+     "words_docx": 97,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": true,
+     "similarity": 0.3501
+    }
+   ]
   },
   "handmade/raw-text-grid": {
    "sha256": "f6eb091fe1538922fac849a4041861ec9209c21fa304ae3e050d829a628dc50d",
    "status": "ok",
-   "score": 0.9180368090526891,
+   "score": 0.8945941545185175,
+   "halves": {
+    "looks": 0.858857142857143,
+    "text": 0.9318181818181817
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.8517893635089642,
+    "visual": 0.7882857142857145,
     "structure": 1.0
    },
    "details": {
@@ -891,17 +1425,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.7883,
+     "text": 1.0,
+     "words_ref": 99,
+     "words_docx": 99,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.8518
+    }
+   ]
   },
   "handmade/scanned-page": {
    "sha256": "cbd9adf08932ff1e05296e486d1e3429a36d27e8504dcb15e84854e19d2873e6",
    "status": "ok",
-   "score": 0.8068932711177196,
+   "score": 0.7240952380952383,
+   "halves": {
+    "looks": 0.7240952380952383,
+    "text": null
+   },
    "components": {
     "words": null,
     "order": null,
     "format": null,
-    "visual": 0.7103399066765792,
+    "visual": 0.5861428571428573,
     "structure": 1.0
    },
    "details": {
@@ -926,17 +1477,34 @@
     "images_ref": 1,
     "images_docx": 1,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.5861,
+     "text": null,
+     "words_ref": 0,
+     "words_docx": 0,
+     "images_ref": 1,
+     "images_docx": 1,
+     "positioned": false,
+     "similarity": 0.7103
+    }
+   ]
   },
   "libreoffice/lo-memo": {
    "sha256": "30dae8ba8b1f73b3b0083726d9dc09a5774ed43cc9fdcb5df38311990af22add",
    "status": "ok",
-   "score": 0.9059879872409158,
+   "score": 0.8679298154241302,
+   "halves": {
+    "looks": 0.7967619047619049,
+    "text": 0.9454545454545454
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.8,
-    "visual": 0.7866266241363858,
+    "visual": 0.6951428571428572,
     "structure": 1.0
    },
    "details": {
@@ -961,17 +1529,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.6951,
+     "text": 1.0,
+     "words_ref": 247,
+     "words_docx": 247,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.7866
+    }
+   ]
   },
   "libreoffice/lo-report": {
    "sha256": "9b21c6c1951981aa4a96722fc1dcd17c18a3e519ed9051a773fc49c542509ec0",
    "status": "ok",
-   "score": 0.8209998751269406,
+   "score": 0.7163867368328064,
+   "halves": {
+    "looks": 0.5507619047619048,
+    "text": 0.9318181818181817
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.528332917089802,
+    "visual": 0.3261428571428572,
     "structure": 1.0
    },
    "details": {
@@ -996,17 +1581,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.3261,
+     "text": 1.0,
+     "words_ref": 184,
+     "words_docx": 184,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.5283
+    }
+   ]
   },
   "mcp-suite/chrome-layout": {
    "sha256": "0ec2d9f814732288afe0150c52b342f585de6bd3aea3dd7c1804a2d9bf768233",
    "status": "ok",
-   "score": 0.9204133142233292,
+   "score": 0.91224980829248,
+   "halves": {
+    "looks": 0.9285714285714286,
+    "text": 0.8962150752473332
+   },
    "components": {
     "words": 0.9362637362637363,
     "order": 0.9953917050691244,
     "format": 0.75,
-    "visual": 0.9249834094576528,
+    "visual": 0.8928571428571429,
     "structure": 1.0
    },
    "details": {
@@ -1031,17 +1633,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 1
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.8929,
+     "text": 0.9362637362637363,
+     "words_ref": 230,
+     "words_docx": 225,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": true,
+     "similarity": 0.925
+    }
+   ]
   },
   "mcp-suite/chrome-scripts": {
    "sha256": "593f3bc5c93e95abd2218cf93a878277cd620f015a2a5c578dca519969c44488",
    "status": "ok",
-   "score": 0.7845251188695537,
+   "score": 0.7082499055179248,
+   "halves": {
+    "looks": 0.5984285714285714,
+    "text": 0.8382252329107295
+   },
    "components": {
     "words": 0.8558951965065502,
     "order": 1.0,
     "format": 0.6950354609929078,
-    "visual": 0.5783374692288417,
+    "visual": 0.3976428571428572,
     "structure": 1.0
    },
    "details": {
@@ -1066,17 +1685,89 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.4351,
+     "text": 1.0,
+     "words_ref": 32,
+     "words_docx": 32,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.6046
+    },
+    {
+     "page": 2,
+     "visual": 0.4476,
+     "text": 1.0,
+     "words_ref": 22,
+     "words_docx": 22,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.6133
+    },
+    {
+     "page": 3,
+     "visual": 0.1639,
+     "text": 0.39999999999999997,
+     "words_ref": 14,
+     "words_docx": 16,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.4147
+    },
+    {
+     "page": 4,
+     "visual": 0.389,
+     "text": 1.0,
+     "words_ref": 9,
+     "words_docx": 9,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.5723
+    },
+    {
+     "page": 5,
+     "visual": 0.4787,
+     "text": 0.4827586206896552,
+     "words_ref": 12,
+     "words_docx": 17,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.6351
+    },
+    {
+     "page": 6,
+     "visual": 0.4716,
+     "text": 1.0,
+     "words_ref": 22,
+     "words_docx": 22,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.6301
+    }
+   ]
   },
   "mcp-suite/chrome-turkish": {
    "sha256": "a0bde218adabc7b07a7524c73faeeda2951392468f16234754218403c5eeda12",
    "status": "ok",
-   "score": 0.8451419419232065,
+   "score": 0.7842295404236765,
+   "halves": {
+    "looks": 0.6836190476190477,
+    "text": 0.8996472146514174
+   },
    "components": {
     "words": 0.9651162790697674,
     "order": 0.927710843373494,
     "format": 0.75,
-    "visual": 0.6677865795497564,
+    "visual": 0.5254285714285715,
     "structure": 1.0
    },
    "details": {
@@ -1101,17 +1792,45 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.6653,
+     "text": 0.9571428571428571,
+     "words_ref": 69,
+     "words_docx": 71,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.7657
+    },
+    {
+     "page": 2,
+     "visual": 0.3856,
+     "text": 1.0,
+     "words_ref": 16,
+     "words_docx": 16,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.5699
+    }
+   ]
   },
   "mcp-suite/content-array": {
    "sha256": "fc864f22ece1c34bddb54f6196b01c5a852b15afe1ee897c78e2d79c95d6e47b",
    "status": "ok",
-   "score": 0.7957912943856056,
+   "score": 0.7399171652809601,
+   "halves": {
+    "looks": 0.6313650793650795,
+    "text": 0.8671328671328671
+   },
    "components": {
     "words": 0.9230769230769231,
     "order": 1.0,
     "format": 0.6666666666666666,
-    "visual": 0.7295607248750957,
+    "visual": 0.6137142857142858,
     "structure": 0.6666666666666666
    },
    "details": {
@@ -1136,17 +1855,34 @@
     "images_ref": 1,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.6137,
+     "text": 0.9230769230769231,
+     "words_ref": 20,
+     "words_docx": 19,
+     "images_ref": 1,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.7296
+    }
+   ]
   },
   "mcp-suite/image": {
    "sha256": "0a5798f1f3841c2396cf1b5a3c67be1fc5991757ac217dfc336511eb8eecfe21",
    "status": "ok",
-   "score": 0.8982353083086879,
+   "score": 0.8716308047219647,
+   "halves": {
+    "looks": 0.8357142857142859,
+    "text": 0.9090909090909091
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.6666666666666666,
-    "visual": 0.8274510276956266,
+    "visual": 0.7535714285714288,
     "structure": 1.0
    },
    "details": {
@@ -1171,17 +1907,34 @@
     "images_ref": 1,
     "images_docx": 1,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.7536,
+     "text": 1.0,
+     "words_ref": 7,
+     "words_docx": 7,
+     "images_ref": 1,
+     "images_docx": 1,
+     "positioned": false,
+     "similarity": 0.8275
+    }
+   ]
   },
   "mcp-suite/inherited": {
    "sha256": "bf4cdafe18c9d589519c5914345c56e9900d9d08180843c2aff9538bedb25c8b",
    "status": "ok",
-   "score": 0.7024918900834132,
+   "score": 0.5315446195190792,
+   "halves": {
+    "looks": 0.2825396825396826,
+    "text": 1.0
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": null,
-    "visual": 0.2403936885696705,
+    "visual": 0.00714285714285715,
     "structure": 0.8333333333333333
    },
    "details": {
@@ -1206,17 +1959,56 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 3
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.0,
+     "text": 1.0,
+     "words_ref": 9,
+     "words_docx": 9,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": true,
+     "similarity": 0.1889
+    },
+    {
+     "page": 2,
+     "visual": 0.0,
+     "text": 1.0,
+     "words_ref": 7,
+     "words_docx": 7,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": true,
+     "similarity": 0.2173
+    },
+    {
+     "page": 3,
+     "visual": 0.0214,
+     "text": 1.0,
+     "words_ref": 6,
+     "words_docx": 6,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": true,
+     "similarity": 0.315
+    }
+   ]
   },
   "mcp-suite/lo-writer-turkish": {
    "sha256": "09d147f99802b087103f4c35c9405cdfe38a991073f07dce5f6185f5f37627b3",
    "status": "ok",
-   "score": 0.7367819502032066,
+   "score": 0.5555332058996499,
+   "halves": {
+    "looks": 0.34400000000000003,
+    "text": 0.8971428571428571
+   },
    "components": {
     "words": 1.0,
     "order": 0.82,
     "format": 0.7428571428571429,
-    "visual": 0.3111779292487839,
+    "visual": 0.015999999999999983,
     "structure": 1.0
    },
    "details": {
@@ -1241,17 +2033,34 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.016,
+     "text": 1.0,
+     "words_ref": 50,
+     "words_docx": 50,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.3112
+    }
+   ]
   },
   "mcp-suite/tagged": {
    "sha256": "62199801c8252ca69056d2271b525ca421f466930ccfe339e296c7b19abb10fe",
    "status": "ok",
-   "score": 0.8822840434993339,
+   "score": 0.8640085777993309,
+   "halves": {
+    "looks": 0.8643809523809526,
+    "text": 0.8636363636363635
+   },
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.5,
-    "visual": 0.8576134783311129,
+    "visual": 0.7965714285714287,
     "structure": 1.0
    },
    "details": {
@@ -1276,17 +2085,34 @@
     "images_ref": 1,
     "images_docx": 1,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.7966,
+     "text": 1.0,
+     "words_ref": 12,
+     "words_docx": 12,
+     "images_ref": 1,
+     "images_docx": 1,
+     "positioned": false,
+     "similarity": 0.8576
+    }
+   ]
   },
   "mcp-suite/type3": {
    "sha256": "9f9d36e2c1987e58b27a69323351da65f962887539463d35d6700050f30f05c3",
    "status": "ok",
-   "score": 0.7321816716456974,
+   "score": 0.7155030319604445,
+   "halves": {
+    "looks": 0.8799047619047621,
+    "text": 0.5818181818181818
+   },
    "components": {
     "words": 0.4,
     "order": 1.0,
     "format": 0.6666666666666666,
-    "visual": 0.8739389054856579,
+    "visual": 0.8198571428571431,
     "structure": 1.0
    },
    "details": {
@@ -1311,7 +2137,20 @@
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 0
-   }
+   },
+   "pages": [
+    {
+     "page": 1,
+     "visual": 0.8199,
+     "text": 0.4,
+     "words_ref": 2,
+     "words_docx": 3,
+     "images_ref": 0,
+     "images_docx": 0,
+     "positioned": false,
+     "similarity": 0.8739
+    }
+   ]
   }
  }
 }

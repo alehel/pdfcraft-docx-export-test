@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib.parse import quote
 
 from .pipeline import safe_name
-from .score import WEIGHTS
+from .score import CHANCE, HALVES, WEIGHTS
 
 THRESHOLD = 0.02           # a score change of 2 points or more is a regression / improvement
 COMPONENT_THRESHOLD = 0.05  # component changes worth mentioning
@@ -114,14 +114,16 @@ def markdown(meta, records, baseline):
     counts = summary_counts(records)
     out += ["", f"**{len(records)} PDFs, mean score {pct(mean_score(records))}**  " +
             " · ".join(f"{CLASSES[c][0]} {n} {CLASSES[c][1]}" for c, n in sorted(counts.items(), key=lambda x: ORDER.index(x[0]))),
-            "", "Scores are 0-100. Weights: " + ", ".join(f"{k} {int(v * 100)} %" for k, v in WEIGHTS.items()) + ".", "",
-            "| | PDF | score | Δ | words | order | format | visual | structure | pages | status |",
-            "|---|---|---:|---:|---:|---:|---:|---:|---:|---|---|"]
+            "", formula() + ".", "",
+            "| | PDF | score | Δ | looks | text | words | order | format | visual | structure | pages | status |",
+            "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|"]
     for rec in sorted(records, key=sort_key):
         c = rec.get("components") or {}
         counts_ = rec.get("counts") or {}
         pages = f"{counts_.get('pages_ref', '?')}→{counts_.get('pages_docx') if counts_.get('pages_docx') is not None else '?'}" if counts_ else ""
+        h = rec.get("halves") or {}
         out.append(f"| {CLASSES[rec['class']][0]} | {rec['name']} | {pct(rec['score'])} | {signed(rec['delta'])} | "
+                   f"{pct(h.get('looks'))} | {pct(h.get('text'))} | "
                    f"{pct(c.get('words'))} | {pct(c.get('order'))} | {pct(c.get('format'))} | {pct(c.get('visual'))} | "
                    f"{pct(c.get('structure'))} | {pages} | {rec['status']} |")
     out += ["", "## Details", ""]
@@ -201,6 +203,8 @@ details.tech {{ margin: 14px 0; }}
 details.tech > summary {{ cursor: pointer; color: var(--ink-2); font-weight: 600; padding: 6px 0; }}
 details.tech[open] > summary {{ margin-bottom: 8px; }}
 .verdict {{ font-weight: 600; color: var(--ink-2); }}
+.halves {{ color: var(--ink-2); font-size: 13px; }}
+.halves b {{ color: var(--ink); font-weight: 600; }}
 .name {{ font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); margin: 2px 0 0; }}
 .doc-foot {{ margin: 4px 0 6px; }}
 .pill {{ display: inline-block; padding: 0 8px; border: 1px solid var(--border); border-radius: 999px;
@@ -371,6 +375,29 @@ def verdict(score, status="ok", sentence=False):
     return next(v[2 if sentence else 1] for v in VERDICTS if score >= v[0])
 
 
+def halves_line(h):
+    """'Looks 59.1 · Text 90.2' for a document or an average."""
+    names = {"looks": "Looks", "text": "Text"}
+    return " · ".join(f"{names[k]} <b>{pct(v)}</b>" for k, v in (h or {}).items() if v is not None)
+
+
+def mean_halves(records):
+    out = {}
+    for half in HALVES:
+        values = [r["halves"][half] for r in records if (r.get("halves") or {}).get(half) is not None]
+        out[half] = sum(values) / len(values) if values else None
+    return out
+
+
+def formula():
+    """The scoring formula in one line, for the technical details."""
+    def part(half):
+        weight = sum(WEIGHTS[k] for k in HALVES[half])
+        return ", ".join(f"{k} {round(100 * WEIGHTS[k] / weight)} %" for k in HALVES[half])
+    return (f"Score 0-100: the geometric mean of looks ({part('looks')}) and text ({part('text')}); a page's look "
+            f"counts from a similarity of {CHANCE}, what an unrelated page scores")
+
+
 def title_of(name, corpus):
     """A test file's plain title from corpus.json, or one made from its file name."""
     return (corpus.get(name) or {}).get("title") or name.rsplit("/", 1)[-1].replace("-", " ").capitalize()
@@ -407,7 +434,8 @@ def html_report(meta, records, baseline, corpus=None, run_dir=None):
             story += f" Since the baseline, {plural(better, 'document')} got better and {worse} got worse."
     tiles = [
         ("Average score", f"<div class='value hero'>{pct(mean)}</div>",
-         f"<b>{verdict(mean)}</b>" + (" · " + delta_html(sum(deltas) / len(deltas), " since the baseline") if deltas else "")),
+         f"<b>{verdict(mean)}</b>" + (" · " + delta_html(sum(deltas) / len(deltas), " since the baseline") if deltas else "")
+         + f"<br><span class='halves'>{halves_line(mean_halves(records))}</span>"),
         ("Test documents", f"<div class='value'>{len(records)}</div>",
          f"{failed} could not be converted" if failed else "all converted"),
         ("Changed since the baseline", f"<div class='value'>{better + worse}</div>",
@@ -420,7 +448,7 @@ def html_report(meta, records, baseline, corpus=None, run_dir=None):
     if suite:
         meta_lines.append(f"Suite: `{suite['sha'][:10]}`" + (" with uncommitted changes" if suite.get("dirty") else ""))
     meta_lines.append(f"Run `{meta['id']}`, {meta.get('seconds', 0):.0f} s")
-    meta_lines.append("Scores 0-100; weights " + ", ".join(f"{k} {int(v * 100)} %" for k, v in WEIGHTS.items()))
+    meta_lines.append(formula())
     rows = []
     for rec in sorted(records, key=sort_key):
         c = rec.get("components") or {}
@@ -430,6 +458,7 @@ def html_report(meta, records, baseline, corpus=None, run_dir=None):
         rows.append(
             f"<tr{quiet}><td class='l'>{CLASSES[rec['class']][0]}</td><td class='l'><a href='#{e(rec['name'])}'>{e(rec['name'])}</a></td>"
             f"<td>{pct(rec['score'])}</td><td>{delta_html(rec['delta'])}</td>"
+            + "".join(f"<td>{pct((rec.get('halves') or {}).get(k))}</td>" for k in HALVES)
             + "".join(f"<td>{pct(c.get(k))}</td>" for k in WEIGHTS)
             + f"<td>{pages}</td><td class='l'>{e(rec['status'])}</td></tr>")
     body = f"""
@@ -449,7 +478,8 @@ def html_report(meta, records, baseline, corpus=None, run_dir=None):
 {''.join(f'<li>{inline_md(line)}</li>' for line in meta_lines)}</ul></details>
 <details class="tech"><summary>All scores in one table</summary>
 <div class="wrap"><table><thead><tr><th class="l"></th><th class="l">PDF</th><th>score</th><th>Δ</th>
-{''.join(f'<th>{k}</th>' for k in WEIGHTS)}<th>pages</th><th class="l">status</th></tr></thead>
+{''.join(f'<th>{k}</th>' for k in HALVES)}{''.join(f'<th>{k}</th>' for k in WEIGHTS)}<th>pages</th>
+<th class="l">status</th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div></details>
 <h2>The documents</h2>
 <p class="ink-2">Each test document as a PDF (left) and as the Word file PdfCraft made, opened in LibreOffice (right).
@@ -489,11 +519,13 @@ def doc_html(rec, corpus, run_dir=None, sha=None):
 <p class="desc">{e((corpus.get(rec['name']) or {}).get('description') or '')}</p></div>
 <div class="score"><div class="num">{pct(rec['score'])}<small> / 100</small></div>
 <div class="meter"><span style="width:{100 * rec['score']:.1f}%"></span></div>
-<div class="verdict">{verdict(rec['score'], rec['status'])}</div><div>{change}</div></div></div>
+<div class="verdict">{verdict(rec['score'], rec['status'])}</div>
+<div class="halves">{halves_line(rec.get('halves'))}</div><div>{change}</div></div></div>
 {error}{pages_html(rec, run_dir)}
 <p class="doc-foot"><a href="{e(history)}">How this document changed across PdfCraft versions →</a></p>
 <details class="more"><summary>Score breakdown and details</summary>
-<ul class="parts">{''.join(f'<li>{k}<b>{pct(c.get(k))}</b></li>' for k in WEIGHTS)}</ul><ul>{items}</ul></details>
+<ul class="parts">{''.join(f'<li>{k}<b>{pct((rec.get("halves") or {}).get(k))}</b></li>' for k in HALVES)}
+{''.join(f'<li>{k}<b>{pct(c.get(k))}</b></li>' for k in WEIGHTS)}</ul><ul>{items}</ul></details>
 </article>"""
 
 

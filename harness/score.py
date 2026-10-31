@@ -1,11 +1,23 @@
-"""Scores, each 0..1 (None when it does not apply to the document), and the weighted total."""
+"""Scores, each 0..1 (None when it does not apply to the document), and how they make a total."""
 
 import collections
 import difflib
 
-# How much each part counts towards a document's score. A part that does not apply (no text in
-# the PDF, no images on either side, ...) is left out and the others are scaled up.
+# Raised whenever the formula changes: scores made under different formulas are not compared, and
+# `suite.py rescore` brings the kept runs up to date.
+VERSION = 2
+
+# How much each part counts within its half. A part that does not apply (no text in the PDF, no
+# images on either side, ...) is left out and the others in its half are scaled up.
 WEIGHTS = {"words": 0.30, "order": 0.10, "format": 0.15, "visual": 0.30, "structure": 0.15}
+# The two questions a reader asks: does it look like the original, and is the text all there? The
+# total is their geometric mean, so a document scores well only when both are right: text that is
+# all present cannot make up for pages that look nothing like the PDF.
+HALVES = {"looks": ("visual", "structure"), "text": ("words", "order", "format")}
+# A page's look counts from here. Pages of unrelated corpus documents score 0.22 (lower quartile)
+# to 0.39 (median) on render.page_similarity just by having text in similar places; 0.3 matched
+# by-eye ratings of ten exports best.
+CHANCE = 0.3
 
 SIZE_TOLERANCE = 1.0      # points, or 10 % when that is more (Poppler rounds font sizes)
 COLOR_TOLERANCE = 48      # per 8-bit channel
@@ -130,7 +142,32 @@ def structure_scores(ref_sizes, ref_images, docx_sections, docx_images, rendered
     return mean(parts.values()), parts
 
 
+def above_chance(similarity):
+    """A page's look: its similarity above chance, rescaled to 0..1."""
+    return max(0.0, (similarity - CHANCE) / (1 - CHANCE))
+
+
+def look(similarities):
+    """The look part: the pages' looks averaged; a page with nothing to match counts 0."""
+    return sum(above_chance(s) for s in similarities) / len(similarities) if similarities else None
+
+
+def halves(components):
+    """{"looks": .., "text": ..}, each the weighted mean of its parts (None when none apply)."""
+    out = {}
+    for half, parts in HALVES.items():
+        used = {k: components[k] for k in parts if components.get(k) is not None}
+        weight = sum(WEIGHTS[k] for k in used)
+        out[half] = sum(WEIGHTS[k] * v for k, v in used.items()) / weight if weight else None
+    return out
+
+
 def total(components):
-    used = {k: v for k, v in components.items() if k in WEIGHTS and v is not None}
-    weight = sum(WEIGHTS[k] for k in used)
-    return sum(WEIGHTS[k] * v for k, v in used.items()) / weight if weight else 0.0
+    """The geometric mean of the halves that apply (a scan has no text, so only its looks count)."""
+    values = [v for v in halves(components).values() if v is not None]
+    if not values:
+        return 0.0
+    product = 1.0
+    for v in values:
+        product *= v
+    return product ** (1 / len(values))

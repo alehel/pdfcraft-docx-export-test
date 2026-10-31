@@ -13,9 +13,10 @@ from pathlib import Path
 
 from .history import PARTS
 from .pipeline import safe_name
-from .report import (CLASSES, FORMATS, SITE, commit_html, delta_html, page_html, pct, png_size, site_header,
+from .report import (CLASSES, FORMATS, SITE, commit_html, delta_html, halves_line, page_html, pct, png_size,
+                     site_header,
                      title_of, verdict, version_label, when)
-from .score import WEIGHTS
+from .score import HALVES, VERSION, WEIGHTS, halves
 
 MAX_COLUMNS = 10  # tested commits in the per-document table
 
@@ -76,7 +77,9 @@ h3.section { font-size: 18px; margin: 40px 0 10px; }
 .intro .lead { margin-bottom: 4px; }
 details.explain { max-width: 760px; }
 details.explain p { color: var(--ink-2); }
-ul.weights { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 8px; }
+details.explain h4 { margin: 16px 0 0; font-size: 15px; }
+ul.weights { list-style: none; padding: 0; margin: 8px 0 12px; display: grid; gap: 8px; }
+.halves b { color: var(--ink); font-weight: 600; }
 ul.weights li { display: grid; grid-template-columns: 120px 48px 1fr; gap: 10px; color: var(--ink-2); }
 ul.weights b { color: var(--ink); }
 .fcard .verdict { font-size: 15px; }
@@ -164,7 +167,8 @@ def fingerprint(entry):
 
 
 def tested_commits(entries):
-    full = sorted((e for e in entries if not e.get("only")), key=lambda e: e["started"])
+    # Only runs scored with the current formula are comparable (suite.py rescore updates kept runs).
+    full = sorted((e for e in entries if not e.get("only") and e.get("scoring", 1) == VERSION), key=lambda e: e["started"])
     if not full:
         return [], None
     env = full[-1].get("environment")
@@ -291,13 +295,14 @@ def html_index(entries, available, baseline_run, public, corpus):
                         most_ticks=6, xlabels=xlabels, tags=tags, breaks=breaks, meta=meta)
         minis = "".join(
             f"<figure class='chart card'><h3>{k}</h3>"
-            + line_svg([(p.get("parts") or {}).get(k) for p in points], k, width=320, height=150,
-                       margins=(30, 40, 12, 10), most_ticks=3, breaks=breaks, meta=meta)
-            + "<div class='tip' hidden></div></figure>" for k in PARTS)
+            + line_svg([({**(p.get("parts") or {}), **(p.get("halves") or {})}).get(k) for p in points], k, width=320,
+                       height=150, margins=(30, 40, 12, 10), most_ticks=3, breaks=breaks, meta=meta)
+            + "<div class='tip' hidden></div></figure>" for k in ("looks", "text", *PARTS))
         data = [{"run": p["id"], "href": href(p), "sha": p["pdfcraft"]["sha"][:10], "tags": p["pdfcraft"].get("tags") or [],
                  "date": when(p["pdfcraft"].get("date") or p["started"], False), "subject": p["pdfcraft"].get("subject") or "",
-                 "mean": round(100 * p["mean"], 2),
-                 "parts": {k: (None if v is None else round(100 * v, 2)) for k, v in (p.get("parts") or {}).items()}}
+                 "mean": round(100 * p["mean"], 1),
+                 "parts": {k: (None if v is None else round(100 * v, 1))
+                           for k, v in {**(p.get("parts") or {}), **(p.get("halves") or {})}.items()}}
                 for p in points]
         caption = ("The average score of all the test documents at each PdfCraft version tested, oldest first. Hover "
                    "over a point for details, or click it to open that version's report.")
@@ -354,20 +359,28 @@ see every page side by side, and how it changed from version to version.</p>
 </main>""", script, CSS)
 
 
-PART_NAMES = {"words": ("Words", "Is all the text there, with nothing extra?"),
-              "order": ("Reading order", "Does the text come in the same order?"),
-              "format": ("Formatting", "Bold, italic, size, colour and font."),
-              "visual": ("Look", "Does each page look like the original?"),
-              "structure": ("Structure", "The same number of pages, page sizes and pictures.")}
+PART_NAMES = {"visual": ("Pages", "Each page next to the original's. A page that resembles it no more than an unrelated "
+                                "page would counts 0."),
+              "structure": ("Structure", "The same number of pages, page sizes and pictures."),
+              "words": ("Words", "All the text there, with nothing extra."),
+              "order": ("Reading order", "The text in the same order."),
+              "format": ("Formatting", "The same bold, italic, size, colour and font.")}
+HALF_NAMES = {"looks": "Does it look like the original?", "text": "Is the text all there?"}
 
 
 def explainer():
-    parts = "".join(f"<li><b>{PART_NAMES[k][0]}</b><span>{int(w * 100)} %</span><span>{PART_NAMES[k][1]}</span></li>"
-                    for k, w in WEIGHTS.items())
+    groups = []
+    for half, parts in HALVES.items():
+        weight = sum(WEIGHTS[k] for k in parts)
+        items = "".join(f"<li><b>{PART_NAMES[k][0]}</b><span>{round(100 * WEIGHTS[k] / weight)} %</span>"
+                        f"<span>{PART_NAMES[k][1]}</span></li>" for k in parts)
+        groups.append(f"<h4>{HALF_NAMES[half]}</h4><ul class='weights'>{items}</ul>")
     return f"""<details class="tech explain"><summary>How is the score worked out?</summary>
 <p>PdfCraft converts each document, and the result is opened in LibreOffice so its pages can be laid next to the
-original's. Five things are checked, and together they make the score:</p>
-<ul class="weights">{parts}</ul>
+original's. Each document gets two scores out of 100, one for each question:</p>
+{''.join(groups)}
+<p>The overall score combines the two (as their geometric mean), so a document only scores well when it both looks
+like the original and keeps its text: text that is all there cannot make up for pages that look nothing like it.</p>
 <p>What a score means: 90 or more is <b>very close</b> to the original, 80 to 89 <b>close</b>, 70 to 79 has
 <b>noticeable differences</b>, and below 70 <b>big differences</b>.</p>
 <p>The tests always run with the same versions of every tool and font, so a score means the same from one PdfCraft
@@ -381,6 +394,12 @@ def takeaway(points):
     now = points[-1]
     text = (f"On average, the Word files PdfCraft makes are {verdict(now['mean'], sentence=True)}: "
             f"{pct(now['mean'])} out of 100 at {html.escape(version_label(now['pdfcraft']))}.")
+    h = now.get("halves") or {}
+    if h.get("looks") is not None and h.get("text") is not None:
+        text += (f" The text comes through better than the look: {pct(h['text'])} for the text, {pct(h['looks'])} for "
+                 "how the pages look." if h["text"] > h["looks"] else
+                 f" The pages look better than the text comes through: {pct(h['looks'])} for the look, {pct(h['text'])} "
+                 "for the text.")
     if len(points) > 1:
         d = now["mean"] - points[0]["mean"]
         first = html.escape(version_label(points[0]["pdfcraft"]))
@@ -397,6 +416,13 @@ def takeaway(points):
         text += f" Of the {len(now['docs'])} test documents, " + (", ".join(said[:-1]) + " and " + said[-1]
                                                                    if len(said) > 1 else said[0]) + "."
     return text
+
+
+def doc_halves(rec, doc):
+    """A document's halves: from its run's scores, or worked out from the parts in the history."""
+    if rec and rec.get("halves"):
+        return rec["halves"]
+    return halves(dict(zip(PARTS, doc[3]))) if len(doc) > 3 else None
 
 
 def gallery_html(points, public, corpus):
@@ -433,6 +459,7 @@ def gallery_html(points, public, corpus):
             f"<span class='tdesc'>{e((corpus.get(name) or {}).get('description') or '')}</span>"
             f"<div class='tscore'><span class='num'>{pct(score)}</span><span class='verdict'>{verdict(score, status)}</span></div>"
             f"<div class='meter'><span style='width:{100 * score:.1f}%'></span></div>"
+            f"<span class='sub halves'>{halves_line(doc_halves(recs.get(name), now['docs'][name]))}</span>"
             f"{f'<span class=tchange>{moved}</span>' if moved else ''}</a>")
     return "".join(cards)
 
@@ -462,6 +489,7 @@ def format_cards(points):
             change = (delta_html(now["mean"] - points[0]["mean"], f" since {html.escape(version_label(points[0]['pdfcraft']))}")
                       if len(points) > 1 else "the first version tested")
             body = (f"<div class='value hero'>{pct(now['mean'])}</div><div class='verdict'>{verdict(now['mean'])}</div>"
+                    f"<div class='sub halves'>{halves_line(now.get('halves'))}</div>"
                     f"<div class='sub'>average score at {html.escape(version_label(now['pdfcraft']))} · {change}</div>"
                     f"{sparkline([p['mean'] for p in points[-12:]])}"
                     f"<div class='sub'>{len(now['docs'])} test documents · {len(points)} PdfCraft versions tested</div>")
@@ -546,13 +574,17 @@ def reports_table(entries, points, available, baseline_run):
             flags += f" <span class='pill'>{e(entry['label'])}</span>"
         scope = f"<code>--only {e(entry['only'])}</code>" if entry.get("only") else "all"
         env = (entry.get("environment") or "?").split(":")[0]
+        mean = pct(entry["mean"])
+        if entry.get("scoring", 1) != VERSION:
+            mean = f"<span class='muted' title='scored with an older formula'>{mean}*</span>"
         rows.append(f"<tr><td class='l'>{report}{flags}</td><td class='l'>{commit_html(pc, 8)}</td>"
                     f"<td class='l subject' title='{e(pc.get('subject') or '')}'>{e(pc.get('subject') or '')}</td>"
-                    f"<td>{len(entry['docs'])}</td><td>{pct(entry['mean'])}</td><td>{change}</td><td>{against}</td>"
+                    f"<td>{len(entry['docs'])}</td><td>{mean}</td><td>{change}</td><td>{against}</td>"
                     f"<td class='l'>{scope} <span class='muted'>· {e(env)}</span></td></tr>")
     return f"""<p class="ink-2">Newest first. Δ is a tested commit's change in mean score from the tested commit before it
 (🧩: a different corpus). "vs baseline" counts the documents that got worse (🔴) or better (🟢) by 2 points or
-more. Runs without a link have been pruned; their scores are still in the charts.</p>
+more. Runs without a link have been pruned; their scores are still in the charts. * scored with an older formula
+and no longer kept, so not comparable and not charted.</p>
 <div class="wrap"><table><thead><tr><th class="l">Run</th><th class="l">PdfCraft</th><th class="l">Commit</th>
 <th>PDFs</th><th>mean</th><th>Δ</th><th>vs baseline</th><th class="l">scope · where</th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div>"""

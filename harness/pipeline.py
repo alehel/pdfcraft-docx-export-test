@@ -107,7 +107,7 @@ def _evaluate(rec, pdf, work, ctx):
                 shot["diff"] = f"images/{key}/p{i + 1:03}-diff.png"
             images.append(shot)
     rec["images"] = images
-    visual = score.mean(similarities) if similarities else None
+    visual = score.look(similarities)
 
     docx_pages = [s.words for s in sections]
     text, pairs, missing, extra = score.text_scores(ref["words"], docx_pages, ref["raw_words"])
@@ -120,6 +120,7 @@ def _evaluate(rec, pdf, work, ctx):
                          "structure": structure}
     rec["details"] = {"recall": text["recall"], "precision": text["precision"], "order_layout": text["order_layout"],
                       "order_raw": text["order_raw"], **fmt_parts, **structure_parts}
+    rec["halves"] = score.halves(rec["components"])
     rec["score"] = 0.0 if rec["status"] == "invalid-docx" else score.total(rec["components"])
     rec["missing"] = missing
     rec["extra"] = extra
@@ -132,7 +133,8 @@ def _evaluate(rec, pdf, work, ctx):
     per_page = len(sections) == n_ref
     rec["pages"] = [{
         "page": i + 1,
-        "visual": round(similarities[i], 4) if i < len(similarities) else None,
+        "similarity": round(similarities[i], 4) if i < len(similarities) else None,
+        "visual": round(score.above_chance(similarities[i]), 4) if i < len(similarities) else None,
         "text": score.text_scores([ref["words"][i]], [sections[i].words])[0]["words"] if per_page else None,
         "words_ref": len(ref["words"][i]),
         "words_docx": len(sections[i].words) if per_page else None,
@@ -142,3 +144,22 @@ def _evaluate(rec, pdf, work, ctx):
     } for i in range(n_ref)]
     if not per_page:
         rec["notes"].append(f"the DOCX has {len(sections)} sections for {n_ref} pages, so text is compared as one block")
+
+
+def rescore(rec):
+    """Score a record again with the current formula, from the page similarities it stored (records
+    made before the look was counted from chance kept the raw similarity as "visual")."""
+    if not rec.get("components"):
+        return
+    pages = rec.get("pages", [])
+    for p in pages:
+        if "similarity" not in p:
+            p["similarity"] = p.get("visual")
+        if p["similarity"] is not None:
+            p["visual"] = round(score.above_chance(p["similarity"]), 4)
+    counts = rec.get("counts") or {}
+    unmatched = max(0, (counts.get("pages_docx") or 0) - len(pages))  # DOCX pages past the PDF's last
+    similarities = [p["similarity"] or 0.0 for p in pages] + [0.0] * unmatched
+    rec["components"]["visual"] = score.look(similarities)
+    rec["halves"] = score.halves(rec["components"])
+    rec["score"] = 0.0 if rec["status"] == "invalid-docx" else score.total(rec["components"])

@@ -15,18 +15,22 @@ def summarize(meta, records):
     for k in PARTS:
         values = [r["components"][k] for r in records if (r.get("components") or {}).get(k) is not None]
         parts[k] = round(sum(values) / len(values), 4) if values else None
+    halves = {}
+    for half in ("looks", "text"):
+        values = [r["halves"][half] for r in records if (r.get("halves") or {}).get(half) is not None]
+        halves[half] = round(sum(values) / len(values), 4) if values else None
     classes = None
     if all("class" in r for r in records):
         classes = {}
         for r in records:
             classes[r["class"]] = classes.get(r["class"], 0) + 1
     return {
-        "id": meta["id"], "started": meta["started"], "seconds": meta.get("seconds"),
+        "id": meta["id"], "started": meta["started"], "seconds": meta.get("seconds"), "scoring": meta.get("scoring", 1),
         "label": meta.get("label"), "only": meta.get("only"), "environment": meta.get("environment"),
         "oracles": meta.get("oracles"), "pdfcraft": meta.get("pdfcraft", {}), "suite": meta.get("suite"),
         "baseline": meta.get("baseline"),
         "mean": round(sum(r["score"] for r in records) / len(records), 4) if records else 0.0,
-        "parts": parts, "classes": classes,
+        "parts": parts, "halves": halves, "classes": classes,
         "docs": {r["name"]: [round(r["score"], 4), r["status"], r["sha256"][:12],
                              [None if (r.get("components") or {}).get(k) is None else round(r["components"][k], 4)
                               for k in PARTS]] for r in records},
@@ -41,6 +45,12 @@ def load(path):
                 entry = json.loads(line)
                 entries[entry["id"]] = entry
     return list(entries.values())
+
+
+def save(path, entries):
+    """Write the whole history again (after a rescore), oldest first."""
+    Path(path).write_text("".join(json.dumps(e, ensure_ascii=False, separators=(",", ":")) + "\n"
+                                  for e in sorted(entries, key=lambda e: e["started"])))
 
 
 def append(path, entry):

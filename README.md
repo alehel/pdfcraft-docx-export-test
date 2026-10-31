@@ -147,17 +147,29 @@ from the baseline's.
 
 ## The score
 
-| Part | Weight | What it measures |
-|---|---:|---|
-| words | 30 % | F1 of the words in the PDF and in the DOCX, as multisets: text that went missing or was added |
-| order | 10 % | of the words both share, the share that lines up in reading order (per page) |
-| format | 15 % | for words that line up: bold and italic (F1), font size (±1 pt or 10 %), colour, font family |
-| visual | 30 % | the DOCX rendered by LibreOffice against the PDF, page by page: where the ink is (below) |
-| structure | 15 % | page count (as LibreOffice lays the DOCX out), page sizes, number of images |
+Each document gets two scores, one per question a reader asks, and an overall score:
+
+| Half | Part | Weight in the half | What it measures |
+|---|---|---:|---|
+| **looks**: does it look like the original? | visual | 67 % | the DOCX rendered by LibreOffice against the PDF, page by page: where the ink is (below) |
+| | structure | 33 % | page count (as LibreOffice lays the DOCX out), page sizes, number of images |
+| **text**: is the text all there? | words | 55 % | F1 of the words in the PDF and in the DOCX, as multisets: text that went missing or was added |
+| | order | 18 % | of the words both share, the share that lines up in reading order (per page) |
+| | format | 27 % | for words that line up: bold and italic (F1), font size (±1 pt or 10 %), colour, font family |
+
+The **overall score is the geometric mean of looks and text**. A weighted average let text that is
+all present (most exports get 90+ on it) make up for pages that look nothing like the PDF: the
+slide deck lost its title slide's background (white title on white) and its bullets, and still
+scored 77.9. With the geometric mean it scores 73.0, shown as looks 59.1 and text 90.2.
 
 A part that does not apply (no text in a scanned page, no images on either side) is left out and
-the rest are scaled up. A DOCX with package errors (broken zip, XML that does not parse, missing
-content types or relationship targets) scores 0, as does a failed export.
+the rest of its half are scaled up; a half with no parts (a scan has no text) is left out of the
+overall. A DOCX with package errors (broken zip, XML that does not parse, missing content types or
+relationship targets) scores 0, as does a failed export.
+
+The formula has a version (`score.VERSION`, recorded with every run). After a change,
+`suite.py rescore` scores the kept runs again from the page scores they stored, the baseline
+from its run, and their history lines; the index charts only runs on the current formula.
 
 **Words and order.** The PDF's words come from Poppler's `pdftotext` (logical order for
 right-to-left text), the DOCX's from `word/document.xml`: paragraphs, tables, text boxes (VML and
@@ -174,12 +186,19 @@ document defaults, paragraph style (`basedOn` chains), character style and direc
 A DOCX that names no font gets the word processor's default, which counts as a miss.
 
 **Visual.** Both are rendered at 50 dpi in grayscale. The ink on each page is summed over a grid
-(8, 16, 32 and 64 columns), blurred by one cell, and normalised to a distribution; the page
-score is one minus the total variation distance, averaged over the four grids. It measures where
-the ink is, not how dark it is, so a different font weight costs little; content that moved a
+(8, 16, 32 and 64 columns), blurred by one cell, and normalised to a distribution; the page's
+similarity is one minus the total variation distance, averaged over the four grids. It measures
+where the ink is, not how dark it is, so a different font weight costs little; content that moved a
 little still overlaps on the coarse grids. Calibration: the same page is 1.0, the page shifted
-down by 14 pt about 0.86, an unrelated page of body text about 0.5, a blank page against content
-0. Extra or missing pages count 0.
+down by 14 pt about 0.86, a blank page against content 0.
+
+Pages of *unrelated* corpus documents still score 0.22 (lower quartile) to 0.39 (median), up to
+0.6 for two pages of body text, just by having text in similar places. So a page's look counts
+from a similarity of 0.3 (`score.CHANCE`): look = (similarity − 0.3) / 0.7, and 0 below. 0.3 is
+where the looks half matched by-eye ratings of ten exports best (within 6 points on average).
+Extra or missing pages count 0. The measure is still blind to some things a reader sees at once:
+it is generous when lines run together in the same place (lost bullets), and harsh when text keeps
+its content but moves (a right-aligned block set left).
 
 **Word lint** (reported, not scored): things Word refuses or complains about that other readers
 accept, such as table cells not ending in a paragraph, rows without cells, rows wider than the

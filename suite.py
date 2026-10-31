@@ -8,6 +8,7 @@
   suite.py accept [RUN]                            make RUN (default: the latest) the baseline
   suite.py status                                  build, baseline and recent runs
   suite.py index                                   rebuild public/index.html (every report, accuracy over time)
+  suite.py rescore                                 score the kept runs again after the formula changed
   suite.py corpus [--force NAME|all]               make missing corpus files (tools/make_corpus.py)
 """
 
@@ -29,7 +30,7 @@ from pathlib import Path
 SUITE = Path(__file__).resolve().parent
 sys.path.insert(0, str(SUITE))
 
-from harness import docpage, history, index, pipeline, render, report  # noqa: E402
+from harness import docpage, history, index, pipeline, render, report, score  # noqa: E402
 from harness.pdfref import ToolFailed  # noqa: E402
 
 # The pdfcraft checkout, its build and the LibreOffice profiles; the container keeps them in a
@@ -196,7 +197,8 @@ def cmd_run(args):
     run_dir = PUBLIC / run_id
     run_dir.mkdir(parents=True)
     baseline = None if args.no_baseline else load_json(BASELINE / "scores.json")
-    meta = {"id": run_id, "started": now.isoformat(timespec="seconds"), "label": args.label, "pdfcraft": identity,
+    meta = {"id": run_id, "started": now.isoformat(timespec="seconds"), "label": args.label, "scoring": score.VERSION,
+            "pdfcraft": identity,
             "suite": suite_identity(), "environment": ENVIRONMENT, "oracles": oracle_versions(soffice),
             "workers": args.workers, "only": args.only, "baseline": baseline["meta"].get("run") if baseline else None}
     base_docs = (baseline or {}).get("docs", {})
@@ -352,7 +354,8 @@ def cmd_compare(args):
             "docs": {r["name"]: r for r in load_json(a / "scores.json")}}
     meta, records = load_json(b / "run.json"), load_json(b / "scores.json")
     report.classify(records, base)
-    changed = [r for r in records if r["delta"] or r["changes"] or r["class"] not in ("same",)]
+    # Below 0.05 points is rounding (a rescored run keeps its page scores to four decimals).
+    changed = [r for r in records if abs(r["delta"] or 0) >= 0.0005 or r["changes"] or r["class"] not in ("same",)]
     print(f"{a.name} → {b.name}: {len(records)} PDFs, mean {100 * report.mean_score(records):.1f}")
     if not changed:
         print("identical scores")
@@ -365,10 +368,20 @@ def cmd_compare(args):
 
 def cmd_accept(args):
     run_dir = resolve_run(args.run)
-    meta, records = load_json(run_dir / "run.json"), load_json(run_dir / "scores.json")
+    meta = load_json(run_dir / "run.json")
     if meta.get("only") and not args.force:
         sys.exit("this run covered a subset (--only); pass --force to accept it anyway")
-    keep = ("sha256", "status", "score", "components", "details", "counts")
+    docs = accept(run_dir)
+    update_index()
+    print(f"baseline is now {run_dir.name}: {len(docs)} PDFs, mean {100 * report.mean_score(list(docs.values())):.1f}")
+    print("commit it with: git add baseline && git commit -m 'Accept baseline " + run_dir.name + "'")
+    return 0
+
+
+def accept(run_dir):
+    """Make a run the baseline: its scores (with the page scores, so it can be rescored) and DOCX files."""
+    meta, records = load_json(run_dir / "run.json"), load_json(run_dir / "scores.json")
+    keep = ("sha256", "status", "score", "halves", "components", "details", "counts", "pages")
     docs = {r["name"]: {k: r.get(k) for k in keep} for r in records}
     if meta.get("only"):
         docs = {**(load_json(BASELINE / "scores.json") or {}).get("docs", {}), **docs}
@@ -381,9 +394,41 @@ def cmd_accept(args):
             (BASELINE / "docx").mkdir(parents=True, exist_ok=True)
             shutil.copyfile(run_dir / rec["docx_file"], BASELINE / "docx" / f"{pipeline.safe_name(rec['name'])}.docx")
     dump_json(BASELINE / "scores.json", {"meta": {**meta, "run": run_dir.name}, "docs": docs})
+    return docs
+
+
+def cmd_rescore(args):
+    """Score the kept runs again with the current formula, from the page scores they stored; then
+    the baseline (again from its run), their reports and their lines in the history. Runs that are
+    no longer kept keep their old scores, and the index leaves them out of its charts."""
+    rescored = []
+    for run_dir in run_dirs():
+        meta, records = load_json(run_dir / "run.json"), load_json(run_dir / "scores.json")
+        if meta.get("scoring", 1) == score.VERSION and not args.force:
+            continue
+        for rec in records:
+            pipeline.rescore(rec)
+        meta["scoring"] = score.VERSION
+        dump_json(run_dir / "run.json", meta)
+        dump_json(run_dir / "scores.json", records)
+        rescored.append(run_dir)
+    baseline = load_json(BASELINE / "scores.json")
+    if baseline and baseline["meta"].get("scoring", 1) != score.VERSION:
+        base_dir = PUBLIC / baseline["meta"].get("run", "")
+        if (base_dir / "scores.json").exists():
+            accept(base_dir)
+            print(f"baseline rescored from its run {base_dir.name}")
+        else:
+            print("warning: the baseline's run is not kept, so it cannot be rescored: accept a new baseline")
+    baseline = load_json(BASELINE / "scores.json")
+    entries = {e["id"]: e for e in history.load(HISTORY)}
+    for run_dir in rescored:
+        meta, records = load_json(run_dir / "run.json"), load_json(run_dir / "scores.json")
+        write_reports(run_dir, meta, records, baseline)
+        entries[run_dir.name] = history.summarize(meta, records)
+    history.save(HISTORY, list(entries.values()))
     update_index()
-    print(f"baseline is now {run_dir.name}: {len(docs)} PDFs, mean {100 * report.mean_score(list(docs.values())):.1f}")
-    print("commit it with: git add baseline && git commit -m 'Accept baseline " + run_dir.name + "'")
+    print(f"rescored {len(rescored)} runs with scoring version {score.VERSION}")
     return 0
 
 
@@ -442,11 +487,13 @@ def main():
     a.add_argument("--force", action="store_true")
     sub.add_parser("status")
     sub.add_parser("index", help="rebuild public/index.html")
+    rs = sub.add_parser("rescore", help="score the kept runs again with the current formula")
+    rs.add_argument("--force", action="store_true", help="also runs already on the current formula")
     co = sub.add_parser("corpus", help="make missing corpus files")
     co.add_argument("--force", action="append", default=[], help="remake NAME (e.g. chrome/invoice), or 'all'")
     args = parser.parse_args()
     handler = {"build": cmd_build, "run": cmd_run, "report": cmd_report, "compare": cmd_compare,
-               "accept": cmd_accept, "status": cmd_status, "index": cmd_index, "corpus": cmd_corpus}[args.command]
+               "accept": cmd_accept, "status": cmd_status, "index": cmd_index, "rescore": cmd_rescore, "corpus": cmd_corpus}[args.command]
     try:
         sys.exit(handler(args) or 0)
     except ToolFailed as e:

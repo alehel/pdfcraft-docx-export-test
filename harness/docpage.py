@@ -8,11 +8,13 @@ import json
 from pathlib import Path
 
 from .history import PARTS
+from .score import HALVES, halves
 from .index import CSS as CHART_CSS
 from .index import SCRIPT as CHART_SCRIPT
 from .index import line_svg
 from .pipeline import safe_name
-from .report import (SITE, THRESHOLD, commit_html, delta_html, page_html, pct, png_size, site_header, title_of,
+from .report import (SITE, THRESHOLD, commit_html, delta_html, halves_line, page_html, pct, png_size, site_header,
+                     title_of,
                      verdict, when)
 
 CSS = CHART_CSS + """
@@ -154,14 +156,16 @@ def series(name, points, kept, public):
                         item[f"{side}_size"] = png_size(public / p["id"] / src)
                 shots.append(item)
         parts = (rec or {}).get("components") or (dict(zip(PARTS, rest[0])) if rest else None)
+        if parts:  # the halves first, then the parts they are made of
+            parts = {**((rec or {}).get("halves") or halves(parts)), **parts}
         counts = (rec or {}).get("counts") or {}
         pc = p["pdfcraft"]
         out.append({
             "entry": p, "run": p["id"], "sha": pc["sha"][:10], "tags": pc.get("tags") or [],
             "label": (pc.get("tags") or [None])[0] or pc["sha"][:7],
             "date": when(pc.get("date") or p["started"], False), "subject": pc.get("subject") or "",
-            "score": round(100 * score, 2), "status": status, "pdf": sha,
-            "parts": {k: (None if v is None else round(100 * v, 2)) for k, v in parts.items()} if parts else None,
+            "score": round(100 * score, 1), "status": status, "pdf": sha,
+            "parts": {k: (None if v is None else round(100 * v, 1)) for k, v in parts.items()} if parts else None,
             "pages": [counts["pages_ref"], counts.get("pages_docx")] if counts.get("pages_ref") else None,
             "shots": shots, "report": f"../{p['id']}/report.html#{name}" if rec is not None else None,
         })
@@ -177,9 +181,11 @@ def doc_page(name, points, kept, public, corpus):
         it["hint"] = "Click to compare with the version before" if i else "Click to show this version"
     latest, first = items[-1], items[0]
     moves = sum(1 for a, b in zip(items, items[1:]) if abs(b["score"] - a["score"]) >= 100 * THRESHOLD)
+    latest_halves = {k: latest["parts"][k] / 100 for k in HALVES if (latest["parts"] or {}).get(k) is not None}
     tiles = [
         ("Latest score", f"<div class='value hero'>{latest['score']:.1f}</div>",
          f"<b>{verdict(latest['score'] / 100, latest['status'])}</b> · "
+         + (f"<span class='halves'>{halves_line(latest_halves)}</span><br>" if latest_halves else "")
          + (delta_html((latest["score"] - first["score"]) / 100, f" since {e(first['label'])}") if len(items) > 1
             else "one version tested") + f"<br>PdfCraft {commit_html(latest['entry']['pdfcraft'], 8)}"),
         ("Lowest and highest", f"<div class='value'>{min(i['score'] for i in items):.1f}–{max(i['score'] for i in items):.1f}</div>",
@@ -203,7 +209,7 @@ def doc_page(name, points, kept, public, corpus):
         compare = f"<a href='{e(it['href'])}'>compare</a>" if i else ""
         rows.append(f"<tr><td class='l'>{commit_html(it['entry']['pdfcraft'], 8)}</td><td class='l'>{it['date']}</td>"
                     f"<td>{it['score']:.1f}</td><td>{delta_html((it['score'] - items[i - 1]['score']) / 100) if i else ''}</td>"
-                    + "".join(f"<td>{'–' if parts.get(k) is None else f'{parts[k]:.1f}'}</td>" for k in PARTS)
+                    + "".join(f"<td>{'–' if parts.get(k) is None else f'{parts[k]:.1f}'}</td>" for k in (*HALVES, *PARTS))
                     + f"<td>{pages}</td><td class='l'>{report} {compare}</td></tr>")
     payload = json.dumps(chart_data, ensure_ascii=False).replace("</", "<\\/")
     doc_payload = json.dumps(doc_data, ensure_ascii=False).replace("</", "<\\/")
@@ -233,7 +239,7 @@ def doc_page(name, points, kept, public, corpus):
 </section>
 <details class="tech"><summary>Every version tested, in a table</summary>
 <div class="wrap"><table><thead><tr><th class="l">PdfCraft</th><th class="l">committed</th><th>score</th><th>Δ</th>
-{''.join(f'<th>{k}</th>' for k in PARTS)}<th>pages</th><th class="l"></th></tr></thead>
+{''.join(f'<th>{k}</th>' for k in (*HALVES, *PARTS))}<th>pages</th><th class="l"></th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div></details>
 </main>"""
     script = (f"<script type='application/json' id='points'>{payload}</script>"
