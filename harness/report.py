@@ -3,6 +3,8 @@
 import datetime as dt
 import html
 import re
+import struct
+from pathlib import Path
 from urllib.parse import quote
 
 from .score import WEIGHTS
@@ -169,11 +171,11 @@ def detail_markdown(rec):
 
 LIGHT = """color-scheme: light; --surface: #fcfcfb; --plane: #f9f9f7; --ink: #0b0b0b; --ink-2: #52514e;
   --muted: #898781; --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10); --series: #2a78d6;
-  --track: #cde2fb; --up: #006300; --down: #d03b3b; --up-wash: rgba(42,120,214,0.18);
+  --track: #cde2fb; --warn: #fab219; --up: #006300; --down: #d03b3b; --up-wash: rgba(42,120,214,0.18);
   --up-wash-2: rgba(42,120,214,0.07); --down-wash: rgba(227,73,72,0.18); --down-wash-2: rgba(227,73,72,0.07);"""
 DARK = """color-scheme: dark; --surface: #1a1a19; --plane: #0d0d0d; --ink: #f0efec; --ink-2: #c3c2b7;
   --muted: #898781; --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10); --series: #3987e5;
-  --track: #184f95; --up: #0ca30c; --down: #e66767; --up-wash: rgba(57,135,229,0.26);
+  --track: #184f95; --warn: #fab219; --up: #0ca30c; --down: #e66767; --up-wash: rgba(57,135,229,0.26);
   --up-wash-2: rgba(57,135,229,0.10); --down-wash: rgba(230,103,103,0.26); --down-wash-2: rgba(230,103,103,0.10);"""
 
 CSS = f"""
@@ -228,14 +230,21 @@ td.subject {{ max-width: 200px; overflow: hidden; text-overflow: ellipsis; }}
 .parts {{ display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 10px 0 12px; padding: 0; list-style: none;
   color: var(--ink-2); font-size: 13px; }}
 .parts b {{ color: var(--ink); font-variant-numeric: tabular-nums; margin-left: 4px; }}
-.page {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; align-items: start; }}
-.page figure {{ margin: 0; }}
+.page {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }}
+.page figure {{ margin: 0; display: flex; flex-direction: column; }}
 .page img {{ display: block; width: 100%; height: auto; border: 1px solid var(--border); background: #fff; }}
+.gap {{ flex: 1; min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  gap: 6px; padding: 24px; text-align: center; color: var(--ink-2); border: 1px dashed var(--axis); border-radius: 4px;
+  background: repeating-linear-gradient(135deg, transparent 0 9px, var(--grid) 9px 10px); }}
+.gap b {{ color: var(--ink); font-size: 15px; }}
+.gap span {{ max-width: 260px; }}
+.note {{ margin: 0 0 12px; padding: 7px 12px; border-left: 3px solid var(--warn); border-radius: 0 6px 6px 0;
+  background: var(--plane); color: var(--ink-2); }}
+.note b {{ color: var(--ink); margin-right: 6px; }}
 figcaption {{ color: var(--ink-2); font-size: 12px; margin-top: 4px; }}
-.missing-shot {{ border: 1px dashed var(--axis); border-radius: 4px; padding: 24px; text-align: center; color: var(--muted); }}
-.diff {{ display: none; }}
+.page figure.diff {{ display: none; }}
 body:has(#overlays:checked) .page {{ grid-template-columns: repeat(3, minmax(0, 1fr)); }}
-body:has(#overlays:checked) .diff {{ display: block; }}
+body:has(#overlays:checked) .page figure.diff {{ display: flex; }}
 body:has(#changed:checked) [data-quiet] {{ display: none; }}
 details.more {{ margin-top: 4px; }}
 details.more summary {{ cursor: pointer; color: var(--ink-2); }}
@@ -302,7 +311,7 @@ def commit_line(pc):
     return " · ".join(b for b in bits if b)
 
 
-def html_report(meta, records, baseline, descriptions=None):
+def html_report(meta, records, baseline, descriptions=None, run_dir=None):
     e = html.escape
     descriptions = descriptions or {}
     pc = meta["pdfcraft"]
@@ -355,7 +364,7 @@ def html_report(meta, records, baseline, descriptions=None):
 {''.join(f'<th>{k}</th>' for k in WEIGHTS)}<th>pages</th><th class="l">status</th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div>
 <h2>Documents</h2>
-{''.join(doc_html(rec, descriptions.get(rec['name'])) for rec in sorted(records, key=sort_key))}
+{''.join(doc_html(rec, descriptions.get(rec['name']), run_dir) for rec in sorted(records, key=sort_key))}
 </main>"""
     return page_html(f"DOCX export · {title} · {meta['id']}", body)
 
@@ -366,7 +375,7 @@ def inline_md(text):
     return "".join(f"<code>{p}</code>" if i % 2 else p for i, p in enumerate(parts))
 
 
-def doc_html(rec, description):
+def doc_html(rec, description, run_dir=None):
     """One document: score, parts, then each page as PDF | DOCX (| overlay), then the details."""
     e = html.escape
     c = rec.get("components") or {}
@@ -376,24 +385,6 @@ def doc_html(rec, description):
         change = "<span class='muted'>new since the baseline</span>"
     else:
         change = delta_html(rec["delta"], " vs baseline")
-    pages = {p["page"]: p for p in rec.get("pages", [])}
-    shots = []
-    for shot in rec.get("images", []):
-        p = pages.get(shot["page"], {})
-        about = [f"visual {pct(p.get('visual'))}"] + ([f"words {pct(p['text'])}"] if p.get("text") is not None else [])
-        if p.get("positioned"):
-            about.append("positioned text")
-        figs = []
-        for key, caption, extra in ((shot.get("pdf") or shot.get("ref"), f"PDF · page {shot['page']}", ""),
-                                    (shot.get("docx"), f"DOCX in LibreOffice · {', '.join(about)}", ""),
-                                    (shot.get("diff"), "Overlay", " class='diff'")):
-            img = (f"<a href='{e(key)}'><img loading='lazy' src='{e(key)}' alt='{e(caption)}'></a>" if key
-                   else "<div class='missing-shot'>no page</div>")
-            figs.append(f"<figure{extra}>{img}<figcaption>{caption}</figcaption></figure>")
-        shots.append(f"<div class='page'>{''.join(figs)}</div>")
-    more = len(rec.get("pages", [])) - len(rec.get("images", []))
-    if more > 0:
-        shots.append(f"<p class='muted'>{more} more pages not shown (run with --image-pages)</p>")
     items = "".join(f"<li>{inline_md(line[2:])}</li>" for line in detail_markdown(rec)[2:] if line.startswith("- "))
     links = [f"<a href='{e(rec[k])}'>{label}</a>" for k, label in (("docx_file", "DOCX"), ("rendered_file", "LibreOffice PDF"))
              if rec.get(k)]
@@ -407,6 +398,73 @@ def doc_html(rec, description):
 <div class="score"><div class="num">{pct(rec['score'])}<small> / 100</small></div>
 <div class="meter"><span style="width:{100 * rec['score']:.1f}%"></span></div><div>{change}</div></div></div>
 {error}<ul class="parts">{''.join(f'<li>{k}<b>{pct(c.get(k))}</b></li>' for k in WEIGHTS)}</ul>
-{''.join(shots)}
+{pages_html(rec, run_dir)}
 <details class="more"><summary>Details</summary><ul>{items}</ul></details>
 </article>"""
+
+
+def pages_html(rec, run_dir=None):
+    """Each page as PDF | DOCX (| overlay). Where the page counts differ, a note says so, and the
+    side without a page gets a page-sized placeholder that explains why, rather than looking like a
+    missing file."""
+    e = html.escape
+    counts = rec.get("counts") or {}
+    n_pdf, n_docx = counts.get("pages_ref"), counts.get("pages_docx")
+
+    def figure(src, caption, cls=""):
+        size = png_size(Path(run_dir) / src) if run_dir else None
+        dims = f" width='{size[0]}' height='{size[1]}'" if size else ""
+        return (f"<figure{cls}><a href='{e(src)}'><img loading='lazy' src='{e(src)}'{dims} alt='{e(caption)}'></a>"
+                f"<figcaption>{caption}</figcaption></figure>")
+
+    def gap(title, text, caption="", cls=""):
+        return f"<figure{cls}><div class='gap'><b>{title}</b><span>{text}</span></div><figcaption>{caption}</figcaption></figure>"
+
+    out = []
+    if n_pdf and n_docx and n_pdf != n_docx:
+        first, last = min(n_pdf, n_docx) + 1, max(n_pdf, n_docx)
+        span = f"page {first}" if first == last else f"pages {first}–{last}"
+        verb = "has" if first == last else "have"
+        if n_docx > n_pdf:
+            what = f"DOCX {span} {verb} no PDF page to match: content pushed past the PDF's last page. "
+        else:
+            what = f"PDF {span} {verb} no DOCX page to match. "
+        out.append(f"<p class='note'><b>⚠ Page count</b> The PDF has {n_pdf} page{'s' * (n_pdf != 1)}; the DOCX runs to "
+                   f"{n_docx} in LibreOffice. {what}Unmatched pages count 0 towards the visual score.</p>")
+    pages = {p["page"]: p for p in rec.get("pages", [])}
+    for shot in rec.get("images", []):
+        k = shot["page"]
+        pdf, docx, diff = shot.get("pdf") or shot.get("ref"), shot.get("docx"), shot.get("diff")
+        p = pages.get(k, {})
+        about = [f"visual {pct(p.get('visual'))}"] + ([f"words {pct(p['text'])}"] if p.get("text") is not None else [])
+        if p.get("positioned"):
+            about.append("positioned text")
+        if pdf:
+            left = figure(pdf, f"PDF · page {k}" + ("" if docx else " · unmatched, counts 0 towards visual"))
+        else:
+            left = gap(f"No page {k} in the PDF", f"The PDF ends on page {n_pdf}. The DOCX page beside this holds "
+                                                  "content pushed past it.", f"PDF · ends on page {n_pdf}")
+        if docx:
+            right = figure(docx, f"DOCX in LibreOffice · page {k} · "
+                                 + (", ".join(about) if pdf else "unmatched, counts 0 towards visual"))
+        else:
+            right = gap(f"No page {k} in the DOCX", f"The DOCX ends on page {n_docx}, so this PDF page has nothing to "
+                                                    "compare with.", f"DOCX · ends on page {n_docx}")
+        overlay = (figure(diff, "Overlay", " class='diff'") if diff
+                   else gap("No overlay", "Only one side has this page.", "Overlay", " class='diff'"))
+        out.append(f"<div class='page'>{left}{right}{overlay}</div>")
+    more = max(n_pdf or 0, n_docx or 0) - len(rec.get("images", []))
+    if more > 0:
+        out.append(f"<p class='muted'>{more} more pages not shown (run with --image-pages)</p>")
+    return "".join(out)
+
+
+def png_size(path):
+    """A PNG's (width, height) from its header, so the report holds each page's place before the
+    image loads."""
+    try:
+        with open(path, "rb") as f:
+            head = f.read(24)
+    except OSError:
+        return None
+    return struct.unpack(">II", head[16:24]) if head[:8] == b"\x89PNG\r\n\x1a\n" else None

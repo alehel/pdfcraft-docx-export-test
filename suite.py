@@ -241,7 +241,7 @@ def write_reports(run_dir, meta, records, baseline):
     report.classify(records, baseline)
     descriptions = {name: d.get("description") for name, d in (load_json(CORPUS / "corpus.json") or {}).items()}
     (run_dir / "report.md").write_text(report.markdown(meta, records, baseline))
-    (run_dir / "report.html").write_text(report.html_report(meta, records, baseline, descriptions))
+    (run_dir / "report.html").write_text(report.html_report(meta, records, baseline, descriptions, run_dir))
 
 
 def update_index(entry=None):
