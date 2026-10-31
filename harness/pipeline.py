@@ -88,17 +88,20 @@ def _evaluate(rec, pdf, work, ctx):
             raise pdfref.ToolFailed(f"pdftoppm left {len(pages)} page bitmaps of the {what}'s {expected} pages")
     image_dir = run_dir / "images" / key
     image_dir.mkdir(parents=True, exist_ok=True)
+    # The report's screenshots, in colour: the PDF, and the DOCX as LibreOffice lays it out.
+    shots = {}
+    for kind, source in (("pdf", pdf), ("docx", rendered)):
+        if source and ctx["image_pages"]:
+            for i, png in enumerate(render.screenshots(source, work / "shots", kind, ctx["image_pages"])):
+                shutil.move(png, image_dir / f"p{i + 1:03}-{kind}.png")
+                shots.setdefault(i, {})[kind] = f"images/{key}/p{i + 1:03}-{kind}.png"
     similarities, images = [], []
     for i in range(max(len(ref_pages), len(out_pages))):
         a = render.read_pgm(ref_pages[i]) if i < len(ref_pages) else None
         b = render.read_pgm(out_pages[i]) if i < len(out_pages) else None
         similarities.append(render.page_similarity(a, b) if a and b else 0.0)
         if i < ctx["image_pages"]:
-            shot = {"page": i + 1}
-            for kind, img in (("ref", a), ("docx", b)):
-                if img:
-                    render.write_png(image_dir / f"p{i + 1:03}-{kind}.png", img)
-                    shot[kind] = f"images/{key}/p{i + 1:03}-{kind}.png"
+            shot = {"page": i + 1, **shots.get(i, {})}
             if a and b:
                 render.write_png(image_dir / f"p{i + 1:03}-diff.png", render.overlay(a, b), channels=3)
                 shot["diff"] = f"images/{key}/p{i + 1:03}-diff.png"

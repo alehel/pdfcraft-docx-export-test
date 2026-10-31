@@ -51,15 +51,59 @@ run --only 'chrome/'       # a subset (regex on corpus names)
 compare RUN_A RUN_B        # score changes between two runs (same build twice = flake check)
 accept [RUN]               # make RUN (default: the latest) the baseline; then commit baseline/
 report [RUN]               # rebuild a run's reports from its scores.json
+index                      # rebuild runs/index.html
 status                     # build, origin/main, baseline, environment, recent runs
 corpus [--force NAME|all]  # (re)make missing corpus files with the pinned Chromium and LibreOffice
 ```
 
-`run` exits with 1 when a document regressed or newly fails, 0 otherwise. Each run writes
-`runs/<id>/` with `report.html` (summary table, then per document: the scores, missing and extra
-words, Word lint, and page images: original | DOCX as LibreOffice renders it | overlay with red
-for ink only in the PDF and blue for ink only in the DOCX), `report.md`, `scores.json`, the
-exported `docx/` and LibreOffice's `rendered/` PDFs. The newest 10 runs are kept.
+`run` exits with 1 when a document regressed or newly fails, 0 otherwise.
+
+## Reports
+
+Open `runs/index.html` in a browser. It lists every report and shows accuracy over time.
+
+**Each run** writes `runs/<id>/report.html`, about 10 MB with its images:
+
+- **Header:** the PdfCraft commit, with links to it on GitHub, its tag if it has one (otherwise
+  its `git describe`), and the pull request for `build --pr`. Also the commit date, the
+  suite's own commit, the environment, and the mean score against the baseline.
+- **Summary table:** every document's score and score parts, with the change from the baseline.
+- **A card per document:** what the PDF tests, its score and score parts, and each page as
+  screenshots of the PDF and of the DOCX as LibreOffice lays it out (80 dpi, up to
+  `--image-pages`, default 12).
+- **Toolbar:** "Overlays" adds a third image per page, red for ink only in the PDF and blue
+  for ink only in the DOCX. "Only changed or failing" hides the rest.
+- **Details** under each card: missing and extra words, Word lint, and links to the DOCX and
+  LibreOffice's PDF.
+
+The run folder also has `report.md`, `scores.json`, the exported `docx/` and LibreOffice's
+`rendered/` PDFs.
+
+**The index** (`runs/index.html`) is rebuilt by `run`, `report`, `accept` and `index`:
+
+- **Tiles:** the latest mean score and its change, the number of tested commits, the number of
+  reports, and the baseline.
+- **Mean score over PdfCraft commits:** a line chart with tags named. Hover a point for its
+  commit; click to open its report.
+- **Small charts,** one per score part.
+- **Documents table:** each document's score at the last 10 tested commits. Tints and arrows
+  show where it moved.
+- **All reports,** newest first.
+
+A *tested commit* is a full-corpus run of a commit on main (pull-request builds are listed but
+not plotted), in the same environment as the latest run; the latest run of each commit counts.
+A vertical rule marks a change of corpus, since the means either side are of different PDFs.
+
+**Keeping history.** Every run adds a line to `runs/history.jsonl`, which the charts and
+tables are built from and which is never pruned. Run folders are pruned to the newest 10 (set
+`SUITE_KEEP_RUNS`), plus the baseline's run and the latest run of every tagged commit. The
+index still lists pruned runs, without a link. To chart a range of releases:
+
+```bash
+for ref in v0.14.0 v0.15.0 v0.16.1 origin/main; do
+  docker compose run --rm suite build --ref $ref && docker compose run --rm suite run
+done
+```
 
 ### Without the container
 
@@ -120,7 +164,8 @@ Against the baseline each document is 🔴 regression (score down 2 points or mo
 🟠 still failing, 🟢 improvement (up 2 or more) or fixed, ⚪ unchanged, 🆕 new in the corpus, or
 🧩 corpus changed (the PDF's sha256 differs from the baseline's, so the scores are not
 comparable). Component changes of 5 points or more are listed under each document. The baseline
-(`baseline/scores.json`, plus the baseline's DOCX files and DOCX page renders) is in git.
+(`baseline/scores.json`, plus the baseline's DOCX files) is in git. The baseline run's folder,
+with its screenshots, is kept when older runs are pruned.
 
 The same build in the same image gives identical scores (checked with `compare`). The visual and
 page-count scores depend on the fonts and the LibreOffice version. That is why the baseline is

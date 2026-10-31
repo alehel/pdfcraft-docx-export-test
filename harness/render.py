@@ -47,6 +47,17 @@ def rasterize(pdf, outdir, prefix, dpi):
     return sorted(pages, key=lambda p: int(p.stem.rsplit("-", 1)[1]))
 
 
+SHOT_DPI = 80  # report screenshots: sharp at the report's width, 50-110 KB a page
+
+
+def screenshots(pdf, outdir, prefix, pages, dpi=SHOT_DPI):
+    """Colour PNGs of the first `pages` pages, for people to look at (scores use rasterize)."""
+    outdir = Path(outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
+    run(["pdftoppm", "-png", "-r", str(dpi), "-f", "1", "-l", str(pages), pdf, outdir / prefix], timeout=600)
+    return sorted(outdir.glob(f"{prefix}-*.png"), key=lambda p: int(p.stem.rsplit("-", 1)[1]))
+
+
 _PGM = re.compile(rb"P5\s+(\d+)\s+(\d+)\s+(\d+)\s")
 
 

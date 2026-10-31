@@ -7,6 +7,7 @@
   suite.py compare RUN_A RUN_B                     score changes from run A to run B (same build twice = flake check)
   suite.py accept [RUN]                            make RUN (default: the latest) the baseline
   suite.py status                                  build, baseline and recent runs
+  suite.py index                                   rebuild runs/index.html (every report, accuracy over time)
   suite.py corpus [--force NAME|all]               make missing corpus files (tools/make_corpus.py)
 """
 
@@ -28,7 +29,7 @@ from pathlib import Path
 SUITE = Path(__file__).resolve().parent
 sys.path.insert(0, str(SUITE))
 
-from harness import pipeline, render, report  # noqa: E402
+from harness import history, index, pipeline, render, report  # noqa: E402
 from harness.pdfref import ToolFailed  # noqa: E402
 
 # The pdfcraft checkout, its build and the LibreOffice profiles; the container keeps them in a
@@ -40,13 +41,16 @@ BIN = TARGET / "debug" / "pdfcraft-cli"
 CACHE = WORK / "cache"
 CORPUS = SUITE / "corpus"
 RUNS = SUITE / "runs"
+HISTORY = RUNS / "history.jsonl"
 BASELINE = SUITE / "baseline"
 # A local clone (src/ becomes a worktree of it) or a URL (src/ becomes a clone).
 PDFCRAFT_REPO = os.environ.get("PDFCRAFT_REPO", str(Path.home() / "dev" / "craft" / "pdfcraft"))
 # Where the scores were made: set by the Dockerfile to the image's pins.
 ENVIRONMENT = os.environ.get("SUITE_ENVIRONMENT") or f"host: {platform.system()} {platform.machine()}"
 TOOLCHAIN_PATH = f"{Path.home()}/.cargo/bin:{Path.home()}/.rustup/toolchains/stable-aarch64-apple-darwin/bin:/opt/homebrew/bin"
-KEEP_RUNS = 10
+# Run folders kept: the newest KEEP_RUNS, the baseline's, and the latest run of every tagged commit.
+# Older ones are deleted; their scores stay in runs/history.jsonl.
+KEEP_RUNS = int(os.environ.get("SUITE_KEEP_RUNS", "10"))
 
 
 def load_json(path, default=None):
@@ -106,6 +110,7 @@ def cmd_build(args):
     if code != 0:
         sys.exit(f"build failed (exit {code}) after {fmt_duration(time.monotonic() - started)}; log: {log}")
     (TARGET / ".built-sha").write_text(sha + "\n")
+    (TARGET / ".built-ref").write_text((f"pull/{args.pr}" if args.pr else args.ref) + "\n")
     print(f"built {sha[:10]} in {fmt_duration(time.monotonic() - started)}")
 
 
@@ -129,9 +134,33 @@ def pdfcraft_identity(cli):
         if built and head and built != head:
             sys.exit(f"the binary was built from {built[:10]} but src/ is at {head[:10]}: run `suite.py build`")
         sha = built or head or ""
-        return {"cli": "target/debug/pdfcraft-cli", "sha": sha, "subject": git("log", "-1", "--format=%s", sha) or ""}
+        ref = (TARGET / ".built-ref").read_text().strip() if (TARGET / ".built-ref").exists() else None
+        return {"cli": "target/debug/pdfcraft-cli", "sha": sha, "ref": ref, **commit_info(sha)}
     p = subprocess.run([str(cli), "--version"], capture_output=True, text=True)
     return {"cli": str(cli), "sha": "", "subject": (p.stdout.splitlines() or ["?"])[0]}
+
+
+def commit_info(sha):
+    """What the pdfcraft clone knows about a commit: subject, date, tags on it, `git describe`,
+    whether origin/main contains it, and its repository's web address."""
+    if not sha or git("cat-file", "-e", f"{sha}^{{commit}}") is None:
+        return {}
+    log = (git("log", "-1", "--format=%s%x00%cI", sha) or "\x00").split("\x00")
+    tags = git("tag", "--points-at", sha, "--sort=-v:refname")
+    return {"subject": log[0], "date": log[1], "tags": tags.split() if tags else [],
+            "describe": git("describe", "--tags", sha), "on_main": git("merge-base", "--is-ancestor", sha, "origin/main") is not None,
+            "url": web_url(git("remote", "get-url", "origin"))}
+
+
+def web_url(remote):
+    m = re.match(r"(?:https://|git@)github\.com[/:](.+?)(?:\.git)?/?$", remote or "")
+    return f"https://github.com/{m[1]}" if m else None
+
+
+def suite_identity():
+    """This checkout's commit, and whether tracked files differ from it."""
+    sha = git("rev-parse", "HEAD", cwd=SUITE)
+    return {"sha": sha, "dirty": bool(git("status", "--porcelain", "--untracked-files=no", cwd=SUITE))} if sha else None
 
 
 def oracle_versions(soffice):
@@ -164,10 +193,10 @@ def cmd_run(args):
     run_id = f"{now:%Y%m%d-%H%M%S}-{identity['sha'][:8] or 'custom'}" + (f"-{args.label}" if args.label else "")
     run_dir = RUNS / run_id
     run_dir.mkdir(parents=True)
-    meta = {"id": run_id, "started": now.isoformat(timespec="seconds"), "pdfcraft": identity,
-            "environment": ENVIRONMENT, "oracles": oracle_versions(soffice), "workers": args.workers,
-            "only": args.only}
     baseline = None if args.no_baseline else load_json(BASELINE / "scores.json")
+    meta = {"id": run_id, "started": now.isoformat(timespec="seconds"), "label": args.label, "pdfcraft": identity,
+            "suite": suite_identity(), "environment": ENVIRONMENT, "oracles": oracle_versions(soffice),
+            "workers": args.workers, "only": args.only, "baseline": baseline["meta"].get("run") if baseline else None}
     base_docs = (baseline or {}).get("docs", {})
     print(f"run {run_id}: {len(docs)} PDFs, PdfCraft {identity['sha'][:10] or identity['subject']}, {args.workers} workers")
     if baseline and baseline["meta"].get("environment") != ENVIRONMENT:
@@ -202,14 +231,63 @@ def cmd_run(args):
     dump_json(run_dir / "run.json", meta)
     dump_json(run_dir / "scores.json", records)
     write_reports(run_dir, meta, records, baseline)
-    prune_runs()
+    update_index(history.summarize(meta, records))
     return summarize(run_dir, meta, records)
 
 
 def write_reports(run_dir, meta, records, baseline):
     report.classify(records, baseline)
+    descriptions = {name: d.get("description") for name, d in (load_json(CORPUS / "corpus.json") or {}).items()}
     (run_dir / "report.md").write_text(report.markdown(meta, records, baseline))
-    (run_dir / "report.html").write_text(report.html_report(meta, records, baseline))
+    (run_dir / "report.html").write_text(report.html_report(meta, records, baseline, descriptions))
+
+
+def update_index(entry=None):
+    """Add a run to the history (with any run folders it lacks), prune old run folders, and rebuild
+    runs/index.html."""
+    RUNS.mkdir(exist_ok=True)
+    if entry:
+        history.append(HISTORY, entry)
+    entries = history.backfill(HISTORY, RUNS)
+    refresh_commits(entries)
+    baseline = load_json(BASELINE / "scores.json")
+    baseline_run = baseline["meta"].get("run") if baseline else None
+    prune_runs(entries, baseline_run)
+    available = {p.name for p in RUNS.iterdir() if (p / "report.html").exists()}
+    (RUNS / "index.html").write_text(index.html_index(entries, available, baseline_run))
+    return RUNS / "index.html"
+
+
+def refresh_commits(entries):
+    """Fill in what the clone knows now: tags made after a run, and details older runs lack."""
+    if not (SRC / ".git").exists():
+        return
+    known = {}
+    for entry in entries:
+        sha = entry["pdfcraft"].get("sha")
+        if sha:
+            if sha not in known:
+                known[sha] = commit_info(sha)
+            entry["pdfcraft"].update(known[sha])
+
+
+def prune_runs(entries, baseline_run):
+    runs = sorted(p.name for p in RUNS.iterdir() if p.is_dir())
+    keep = set(runs[-KEEP_RUNS:]) | {baseline_run}
+    tagged = {}
+    for entry in sorted(entries, key=lambda e: e["started"]):
+        if not entry.get("only"):
+            for tag in entry["pdfcraft"].get("tags") or []:
+                tagged[tag] = entry["id"]
+    keep |= set(tagged.values())
+    for name in runs:
+        if name not in keep:
+            shutil.rmtree(RUNS / name, ignore_errors=True)
+
+
+def shown(path):
+    """A path as the user sees it: in the container, /suite is the checkout, so relative to that."""
+    return Path(path).relative_to(SUITE) if os.environ.get("SUITE_ENVIRONMENT") else path
 
 
 def summarize(run_dir, meta, records):
@@ -222,16 +300,9 @@ def summarize(run_dir, meta, records):
             delta = f" {100 * rec['delta']:+.1f}" if rec["delta"] is not None else ""
             why = f" — {rec['error']}" if rec.get("error") else ""
             print(f"  {report.CLASSES[rec['class']][0]} {rec['name']}: {100 * rec['score']:.1f}{delta}{why}")
-    # In the container, /suite is the checkout: show the path as the host sees it, relative to it.
-    shown = run_dir.relative_to(SUITE) if os.environ.get("SUITE_ENVIRONMENT") else run_dir
-    print(f"\nreport: {shown / 'report.html'}\n        {shown / 'report.md'}")
+    print(f"\nreport: {shown(run_dir / 'report.html')}\n        {shown(run_dir / 'report.md')}"
+          f"\nindex:  {shown(RUNS / 'index.html')}")
     return 1 if counts.get("regression") or counts.get("failed") else 0
-
-
-def prune_runs():
-    runs = sorted((p for p in RUNS.iterdir() if p.is_dir()), key=lambda p: p.name)
-    for old in runs[:-KEEP_RUNS]:
-        shutil.rmtree(old, ignore_errors=True)
 
 
 def resolve_run(name):
@@ -250,7 +321,13 @@ def cmd_report(args):
     run_dir = resolve_run(args.run)
     meta, records = load_json(run_dir / "run.json"), load_json(run_dir / "scores.json")
     write_reports(run_dir, meta, records, load_json(BASELINE / "scores.json"))
+    update_index()
     return summarize(run_dir, meta, records)
+
+
+def cmd_index(args):
+    print(f"index: {shown(update_index())}")
+    return 0
 
 
 def cmd_compare(args):
@@ -279,19 +356,16 @@ def cmd_accept(args):
     docs = {r["name"]: {k: r.get(k) for k in keep} for r in records}
     if meta.get("only"):
         docs = {**(load_json(BASELINE / "scores.json") or {}).get("docs", {}), **docs}
+    # The DOCX files go into git with the scores; the page screenshots stay in the baseline's run
+    # folder, which pruning keeps.
     for sub in ("images", "docx"):
         shutil.rmtree(BASELINE / sub, ignore_errors=True)
     for rec in records:
-        key = pipeline.safe_name(rec["name"])
-        for shot in rec.get("images", []):
-            if shot.get("docx"):
-                dest = BASELINE / shot["docx"]
-                dest.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(run_dir / shot["docx"], dest)
         if rec.get("docx_file"):
             (BASELINE / "docx").mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(run_dir / rec["docx_file"], BASELINE / "docx" / f"{key}.docx")
+            shutil.copyfile(run_dir / rec["docx_file"], BASELINE / "docx" / f"{pipeline.safe_name(rec['name'])}.docx")
     dump_json(BASELINE / "scores.json", {"meta": {**meta, "run": run_dir.name}, "docs": docs})
+    update_index()
     print(f"baseline is now {run_dir.name}: {len(docs)} PDFs, mean {100 * report.mean_score(list(docs.values())):.1f}")
     print("commit it with: git add baseline && git commit -m 'Accept baseline " + run_dir.name + "'")
     return 0
@@ -352,11 +426,12 @@ def main():
     a.add_argument("run", nargs="?")
     a.add_argument("--force", action="store_true")
     sub.add_parser("status")
+    sub.add_parser("index", help="rebuild runs/index.html")
     co = sub.add_parser("corpus", help="make missing corpus files")
     co.add_argument("--force", action="append", default=[], help="remake NAME (e.g. chrome/invoice), or 'all'")
     args = parser.parse_args()
     handler = {"build": cmd_build, "run": cmd_run, "report": cmd_report, "compare": cmd_compare,
-               "accept": cmd_accept, "status": cmd_status, "corpus": cmd_corpus}[args.command]
+               "accept": cmd_accept, "status": cmd_status, "index": cmd_index, "corpus": cmd_corpus}[args.command]
     try:
         sys.exit(handler(args) or 0)
     except ToolFailed as e:
