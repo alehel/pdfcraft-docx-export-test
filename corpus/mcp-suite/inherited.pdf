@@ -1,0 +1,59 @@
+%PDF-1.7
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 10 0 R] /Count 3 /MediaBox [0 0 400 300] /Rotate 270 /Resources << /Font << /F1 4 0 R >> >> >>
+endobj
+3 0 obj
+<< /Type /Pages /Parent 2 0 R /Kids [6 0 R 8 0 R] /Count 2 >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<<  /Length 91 >>
+stream
+BT /F1 10 Tf 10 100 Td (Page one inherits MediaBox 400x300, Rotate 270 and Resources) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 3 0 R /Contents 5 0 R  >>
+endobj
+7 0 obj
+<<  /Length 70 >>
+stream
+BT /F1 10 Tf 10 100 Td (Page two: negative origin and a CropBox) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 3 0 R /Contents 7 0 R /MediaBox [-100 -50 300 250] /CropBox [0 0 200 150] >>
+endobj
+9 0 obj
+<<  /Length 64 >>
+stream
+BT /F1 10 Tf 10 100 Td (Page three: UserUnit 2, Rotate 90) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /Contents 9 0 R /UserUnit 2 /Rotate 90 >>
+endobj
+xref
+0 11
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000203 00000 n 
+0000000280 00000 n 
+0000000377 00000 n 
+0000000519 00000 n 
+0000000583 00000 n 
+0000000704 00000 n 
+0000000819 00000 n 
+0000000934 00000 n 
+trailer
+<< /Size 11 /Root 1 0 R /ID [<cae4eae4c3b46142380966d00cc5e446> <cae4eae4c3b46142380966d00cc5e446>] >>
+startxref
+1021
+%%EOF

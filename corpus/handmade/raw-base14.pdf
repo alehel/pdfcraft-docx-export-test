@@ -1,0 +1,76 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [11 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman /Encoding /WinAnsiEncoding >>
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic /Encoding /WinAnsiEncoding >>
+endobj
+8 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold /Encoding /WinAnsiEncoding >>
+endobj
+9 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+endobj
+10 0 obj
+<< /Length 1477 >>
+stream
+BT 0 g /HB 20 Tf 72 730 Td (Base-14 fonts) Tj ET
+BT 0 g /H 11 Tf 72 704 Td (Helvetica 11 pt, the default sans serif of every PDF reader.) Tj ET
+BT 0 g /HB 11 Tf 72 688 Td (Helvetica-Bold 11 pt for emphasis.) Tj ET
+BT 0 g /HO 11 Tf 72 672 Td (Helvetica-Oblique 11 pt for a slanted voice.) Tj ET
+BT 0 g /T 11 Tf 72 640 Td (The lighthouse at Skarvik was lit for the first time on a wet October evening in 1871,) Tj ET
+BT 0 g /T 11 Tf 72 626 Td (and for almost a century afterwards the same family kept its lamp burning. Their log) Tj ET
+BT 0 g /T 11 Tf 72 612 Td (books survive in the town archive: eleven volumes of weather, ships, repairs and the) Tj ET
+BT 0 g /T 11 Tf 72 598 Td (occasional complaint about the price of paraffin.) Tj ET
+BT 0 g /TI 11 Tf 72 578 Td (Times-Italic: a quotation set in italics, as printers have done for centuries.) Tj ET
+BT 0 g /TB 14 Tf 72 550 Td (Times-Bold 14 pt heading) Tj ET
+BT 0 g /C 9 Tf 72 528 Td (Courier 9 pt: for \(i = 0; i < n; i++\) total += x[i];) Tj ET
+BT 0.8 0.1 0.1 rg /H 11 Tf 72 500 Td (Red text,) Tj ET
+BT 0.1 0.3 0.8 rg /H 11 Tf 130 500 Td (blue text) Tj ET
+BT 0.1 0.5 0.2 rg /H 11 Tf 188 500 Td (and green text on one line.) Tj ET
+BT 0 g /H 8 Tf 72 464.0 Td (Helvetica at 8 points) Tj ET
+BT 0 g /H 10 Tf 72 452.8 Td (Helvetica at 10 points) Tj ET
+BT 0 g /H 14 Tf 72 438.8 Td (Helvetica at 14 points) Tj ET
+BT 0 g /H 18 Tf 72 419.2 Td (Helvetica at 18 points) Tj ET
+BT 0 g /H 24 Tf 72 394.0 Td (Helvetica at 24 points) Tj ET
+
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /H 3 0 R /HB 4 0 R /HO 5 0 R /T 6 0 R /TI 7 0 R /TB 8 0 R /C 9 0 R >> /XObject <<  >> >> /Contents 10 0 R >>
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000122 00000 n 
+0000000219 00000 n 
+0000000321 00000 n 
+0000000426 00000 n 
+0000000525 00000 n 
+0000000625 00000 n 
+0000000723 00000 n 
+0000000818 00000 n 
+0000002348 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R >>
+startxref
+2549
+%%EOF

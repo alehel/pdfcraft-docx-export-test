@@ -1,0 +1,289 @@
+{
+ "chrome/academic-paper": {
+  "description": "A two-column paper: full-width title and abstract, numbered sections, citations, a formula, a figure, footnotes, references.",
+  "tags": [
+   "columns",
+   "format",
+   "images"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/code-listing": {
+  "description": "Monospaced code blocks with indentation, inline code, and prose around them.",
+  "tags": [
+   "monospace"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/form-fields": {
+  "description": "A printed application form: labels with fill-in lines, tick boxes, date boxes and a signature line.",
+  "tags": [
+   "forms",
+   "layout"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/headings-emphasis": {
+  "description": "Three heading levels, bold, italic, bold italic, underline, strike, colours, sizes, super/subscript, a block quote.",
+  "tags": [
+   "format"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/highlights-callouts": {
+  "description": "Highlighted text, coloured callout boxes, white text on a dark box, a bordered quote.",
+  "tags": [
+   "format",
+   "layout"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/images-figures": {
+  "description": "A chart, a JPEG photo floated right with text wrapping round it, and a logo with transparency.",
+  "tags": [
+   "images"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/international": {
+  "description": "Paragraphs in a dozen scripts, including right-to-left Arabic and Hebrew, CJK, Devanagari and Thai.",
+  "tags": [
+   "scripts",
+   "rtl"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/invoice": {
+  "description": "An invoice: logo, address blocks, item table, totals, and a rotated PAID stamp over the totals.",
+  "tags": [
+   "business",
+   "tables",
+   "rotation"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/letter-a4": {
+  "description": "A business letter: sender block, date, recipient, bold subject line, signature.",
+  "tags": [
+   "business",
+   "text"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/lists": {
+  "description": "Bulleted, numbered, nested (three levels), lettered and roman lists, and a checklist.",
+  "tags": [
+   "lists"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/mixed-page-sizes": {
+  "description": "Pages of different sizes in one file: A4 portrait, A4 landscape, A5.",
+  "tags": [
+   "page-size"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/multipage-report": {
+  "description": "An eight-page report: title page, contents, sections on new pages, running header and page numbers.",
+  "tags": [
+   "multipage",
+   "layout"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/prose-letter": {
+  "description": "Plain single-column prose in Georgia, US Letter, one heading.",
+  "tags": [
+   "text"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/rotated-labels": {
+  "description": "A table with column headers rotated 90 degrees and a vertical margin label.",
+  "tags": [
+   "rotation",
+   "tables"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/slide-deck": {
+  "description": "Three 16:9 slides: a full-bleed coloured title slide, a bullet slide, text over a full-page photo.",
+  "tags": [
+   "slides",
+   "images",
+   "layout"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/small-print": {
+  "description": "Dense 7 pt justified terms and conditions with numbered clauses over two pages.",
+  "tags": [
+   "text",
+   "format"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/table-bordered": {
+  "description": "A ruled data table with a shaded header row, zebra rows, right-aligned numbers and a total row.",
+  "tags": [
+   "tables"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/table-borderless": {
+  "description": "A financial statement: no rules, indented labels, right-aligned figures, bold subtotals.",
+  "tags": [
+   "tables"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/table-spans": {
+  "description": "A table with column and row spans, a two-level header and cells whose text wraps.",
+  "tags": [
+   "tables"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/three-column-newsletter": {
+  "description": "A newsletter: coloured masthead, three columns, an image inside a column, a pull quote.",
+  "tags": [
+   "columns",
+   "images",
+   "layout"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/two-column-article": {
+  "description": "A two-column article with a spanning title, justified hyphenated text and a drop cap.",
+  "tags": [
+   "columns",
+   "layout"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "chrome/watermark-draft": {
+  "description": "A memo with a large diagonal DRAFT watermark behind the text.",
+  "tags": [
+   "rotation",
+   "layout"
+  ],
+  "source": "Chrome headless, tools/make_corpus.py"
+ },
+ "handmade/raw-base14": {
+  "description": "Base-14 fonts only (Helvetica, Times, Courier and their bold/italic), colours and sizes 8-24 pt.",
+  "tags": [
+   "fonts",
+   "format"
+  ],
+  "source": "hand-built, tools/make_corpus.py"
+ },
+ "handmade/raw-rotate90": {
+  "description": "A landscape MediaBox with /Rotate 90, shown portrait.",
+  "tags": [
+   "rotation",
+   "page-size"
+  ],
+  "source": "hand-built, tools/make_corpus.py"
+ },
+ "handmade/raw-text-grid": {
+  "description": "A timetable made of positioned text only: columns but no rules.",
+  "tags": [
+   "tables"
+  ],
+  "source": "hand-built, tools/make_corpus.py"
+ },
+ "handmade/scanned-page": {
+  "description": "An image-only page with no text layer (a rendered page, like a scan).",
+  "tags": [
+   "images",
+   "scan"
+  ],
+  "source": "hand-built, tools/make_corpus.py"
+ },
+ "libreoffice/lo-memo": {
+  "description": "A Writer memo with bold labels, a horizontal rule, emphasis and a long multi-paragraph body.",
+  "tags": [
+   "text",
+   "format"
+  ],
+  "source": "LibreOffice Writer (HTML import), tools/make_corpus.py"
+ },
+ "libreoffice/lo-report": {
+  "description": "A Writer report: headings, paragraphs, bulleted and numbered lists, a ruled table (LibreOffice fonts and layout).",
+  "tags": [
+   "text",
+   "lists",
+   "tables"
+  ],
+  "source": "LibreOffice Writer (HTML import), tools/make_corpus.py"
+ },
+ "mcp-suite/chrome-layout": {
+  "description": "Two columns, rotated text, small caps, letter spacing, sub- and superscript (Chrome).",
+  "tags": [
+   "columns",
+   "rotation"
+  ],
+  "source": "copied from pdfcraft-mcp-suite/fixtures"
+ },
+ "mcp-suite/chrome-scripts": {
+  "description": "Six pages of scripts: Latin with diacritics, Greek, Cyrillic, Arabic, Hebrew, Indic, CJK (Chrome).",
+  "tags": [
+   "scripts",
+   "rtl",
+   "multipage"
+  ],
+  "source": "copied from pdfcraft-mcp-suite/fixtures"
+ },
+ "mcp-suite/chrome-turkish": {
+  "description": "Two pages of Turkish prose with dotted and dotless i (Chrome).",
+  "tags": [
+   "scripts"
+  ],
+  "source": "copied from pdfcraft-mcp-suite/fixtures"
+ },
+ "mcp-suite/content-array": {
+  "description": "Text split across content streams, invisible text, clipping, word and character spacing.",
+  "tags": [
+   "text"
+  ],
+  "source": "copied from pdfcraft-mcp-suite/fixtures"
+ },
+ "mcp-suite/image": {
+  "description": "One image with a caption.",
+  "tags": [
+   "images"
+  ],
+  "source": "copied from pdfcraft-mcp-suite/fixtures"
+ },
+ "mcp-suite/inherited": {
+  "description": "Pages that inherit MediaBox 400x300 and Rotate 270 from the page tree.",
+  "tags": [
+   "page-size",
+   "rotation"
+  ],
+  "source": "copied from pdfcraft-mcp-suite/fixtures"
+ },
+ "mcp-suite/lo-writer-turkish": {
+  "description": "A Turkish Writer document with headings and a table (LibreOffice).",
+  "tags": [
+   "scripts",
+   "tables"
+  ],
+  "source": "copied from pdfcraft-mcp-suite/fixtures"
+ },
+ "mcp-suite/tagged": {
+  "description": "A tagged PDF: heading, paragraph, footer artifact.",
+  "tags": [
+   "text"
+  ],
+  "source": "copied from pdfcraft-mcp-suite/fixtures"
+ },
+ "mcp-suite/type3": {
+  "description": "Text drawn with a Type 3 font.",
+  "tags": [
+   "fonts"
+  ],
+  "source": "copied from pdfcraft-mcp-suite/fixtures"
+ }
+}

@@ -1,0 +1,1316 @@
+{
+ "meta": {
+  "id": "20261030-221721-fa5f9f8c",
+  "started": "2026-10-30T22:17:21+00:00",
+  "pdfcraft": {
+   "cli": "target/debug/pdfcraft-cli",
+   "sha": "fa5f9f8c3b3add965f7ec82c743cf02207c55c93",
+   "subject": "Merge pull request #5426 from FredApps/chore/parity-integration-20261030"
+  },
+  "oracles": {
+   "poppler": "26.10.0",
+   "libreoffice": "25.8.2.2"
+  },
+  "workers": 4,
+  "only": null,
+  "seconds": 21.2,
+  "run": "20261030-221721-fa5f9f8c"
+ },
+ "docs": {
+  "chrome/academic-paper": {
+   "sha256": "89ab98d7996c66c2264e167e779b6fa94a67778594f3d8070026f55c2054d7c6",
+   "status": "ok",
+   "score": 0.7006439881947277,
+   "components": {
+    "words": 0.9938144329896907,
+    "order": 0.7925311203319502,
+    "format": 0.7850714609727892,
+    "visual": 0.2682860903956904,
+    "structure": 0.8333333333333334
+   },
+   "details": {
+    "recall": 0.9938144329896907,
+    "precision": 0.9938144329896907,
+    "order_layout": 0.7925311203319502,
+    "order_raw": 0.7887029288702929,
+    "bold": 0.967741935483871,
+    "italic": 0.9629629629629629,
+    "size": 0.9946524064171123,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 0.5,
+    "page_size": 1.0,
+    "images": 1.0
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 2,
+    "words_ref": 485,
+    "words_docx": 485,
+    "images_ref": 1,
+    "images_docx": 1,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/code-listing": {
+   "sha256": "27e8fca56049ec14db42c0b3971ba4352e2124d585b7d6cacd9853236854b532",
+   "status": "ok",
+   "score": 0.8310940967443314,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.5619803224811051,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 141,
+    "words_docx": 141,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/form-fields": {
+   "sha256": "74fda93347a6fcdba7a0cfcff14cffa4b3c7be1253cfb025005445d8dc1a646c",
+   "status": "ok",
+   "score": 0.8347135671463499,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.5740452238211663,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 80,
+    "words_docx": 80,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/headings-emphasis": {
+   "sha256": "5a5f86006fa56c6eb5514d7696001fa4944830588916b437faf6991d53652284",
+   "status": "ok",
+   "score": 0.9162713922464019,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.8,
+    "visual": 0.8209046408213394,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": 1.0,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 285,
+    "words_docx": 285,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/highlights-callouts": {
+   "sha256": "8179d30b557ff1e71967b95d58952a427a697244fb728a2811957fcad7138dee",
+   "status": "ok",
+   "score": 0.7750183766712595,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.3750612555708649,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 214,
+    "words_docx": 214,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/images-figures": {
+   "sha256": "90eb21c4f69a6ef67f318194aec5d2bcaca53778bab14c6db47e29c88b27d56d",
+   "status": "ok",
+   "score": 0.9464957544911299,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.9466525149704329,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": 1.0
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 153,
+    "words_docx": 153,
+    "images_ref": 3,
+    "images_docx": 3,
+    "positioned_pages": 1
+   }
+  },
+  "chrome/international": {
+   "sha256": "fcdc94c37ffe21db83f5b01df799f683c6cbea7ac5c3c4b5febdd198af8c9de4",
+   "status": "ok",
+   "score": 0.8218232468387295,
+   "components": {
+    "words": 0.8088888888888888,
+    "order": 1.0,
+    "format": 0.7472222222222222,
+    "visual": 0.7235774894624318,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 0.8053097345132744,
+    "precision": 0.8125,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 0.9888888888888889,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 113,
+    "words_docx": 112,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/invoice": {
+   "sha256": "976fbc03dc96752df333cdfbb432e7dafbb4ec9cd31bce1be352c40f3a3fe91c",
+   "status": "ok",
+   "score": 0.899120755914087,
+   "components": {
+    "words": 0.9746192893401014,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.8141165637068553,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 0.96,
+    "precision": 0.9896907216494846,
+    "order_layout": 0.9895833333333334,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": 1.0
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 100,
+    "words_docx": 97,
+    "images_ref": 1,
+    "images_docx": 1,
+    "positioned_pages": 1
+   }
+  },
+  "chrome/letter-a4": {
+   "sha256": "618378c324f074e06ba4be6964e228db6ddfde5f57c370bebc4c86488976a7a5",
+   "status": "ok",
+   "score": 0.7357829113734189,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.8,
+    "visual": 0.21927637124472962,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": 1.0,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 142,
+    "words_docx": 142,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/lists": {
+   "sha256": "73f5899e132b5a182cfcbfc68ffb7e400df39e30f000a872090ebef93b28c564",
+   "status": "ok",
+   "score": 0.8756132028331203,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.7103773427770677,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 92,
+    "words_docx": 92,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/mixed-page-sizes": {
+   "sha256": "0ef73be0d778c6fba73f78a2bdbbf5bbd0be12f539566ff41b46283299063643",
+   "status": "ok",
+   "score": 0.8613646432906547,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.6628821443021823,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 0.9959839357429718,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 3,
+    "pages_docx": 3,
+    "words_ref": 249,
+    "words_docx": 249,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/multipage-report": {
+   "sha256": "c37a27b2e955876fd51d59dc34051a14b9f3b7d6e566f8fb66121b06d4e00de2",
+   "status": "ok",
+   "score": 0.8474157946034616,
+   "components": {
+    "words": 1.0,
+    "order": 0.9990610328638497,
+    "format": 0.75,
+    "visual": 0.6166989710569221,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 0.9990610328638497,
+    "order_raw": 0.9772296015180265,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 7,
+    "pages_docx": 7,
+    "words_ref": 1065,
+    "words_docx": 1065,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/prose-letter": {
+   "sha256": "aa38b2ef279ed13605abe1a59af1ff6374e0ce69a14daaa756d20f98dcddcd71",
+   "status": "ok",
+   "score": 0.8672146121255047,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.6823820404183492,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 373,
+    "words_docx": 373,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/rotated-labels": {
+   "sha256": "9eeedeb3a14b7846ea8c25de32089090ade3ad447b72cffa0dd719967a5a9247",
+   "status": "ok",
+   "score": 0.8625444166763852,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.6296296296296297,
+    "visual": 0.7269999074398025,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 0.6136363636363636,
+    "order_raw": 1.0,
+    "bold": null,
+    "italic": null,
+    "size": 0.8888888888888888,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 88,
+    "words_docx": 88,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 1
+   }
+  },
+  "chrome/slide-deck": {
+   "sha256": "b3476376795d6c54bff0935eec8dfdf5b7166ff5041309bd24bb09d07d9936e8",
+   "status": "ok",
+   "score": 0.7777650807448552,
+   "components": {
+    "words": 0.9444444444444444,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.5231058247050729,
+    "structure": 0.8333333333333334
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 0.8947368421052632,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": 0.5
+   },
+   "counts": {
+    "pages_ref": 3,
+    "pages_docx": 3,
+    "words_ref": 34,
+    "words_docx": 38,
+    "images_ref": 2,
+    "images_docx": 1,
+    "positioned_pages": 1
+   }
+  },
+  "chrome/small-print": {
+   "sha256": "1f5cc41afa34ccee0edd9dc029147be89be2220d8cacb69c0dbae2ff3d2ca75d",
+   "status": "ok",
+   "score": 0.7518584321207069,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.3811947737356898,
+    "structure": 0.8333333333333333
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 0.6666666666666666,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 2,
+    "pages_docx": 3,
+    "words_ref": 2020,
+    "words_docx": 2020,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/table-bordered": {
+   "sha256": "89436645203ea2029ed05df35ba34f2fab03b31dc8ab8bf0e515a50cd7684b7a",
+   "status": "ok",
+   "score": 0.8457227316006045,
+   "components": {
+    "words": 1.0,
+    "order": 0.9842105263157894,
+    "format": 0.75,
+    "visual": 0.6160055965634186,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 0.9842105263157894,
+    "order_raw": 0.968421052631579,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 190,
+    "words_docx": 190,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/table-borderless": {
+   "sha256": "bc4e133d8f3b4d7a49cfd1474241a1d9f3030b5ed37cede371bd29d4e47c177b",
+   "status": "ok",
+   "score": 0.7830083825142169,
+   "components": {
+    "words": 0.9952153110047847,
+    "order": 0.9903846153846154,
+    "format": 0.75,
+    "visual": 0.40968442558106666,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 0.9904761904761905,
+    "order_layout": 0.9423076923076923,
+    "order_raw": 0.9903846153846154,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 104,
+    "words_docx": 105,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/table-spans": {
+   "sha256": "b6e768342276504097e24d4b41c92b7b51b2a59fc06593be6c79695e45f1e604",
+   "status": "ok",
+   "score": 0.8026092338266637,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.4670307794222126,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 0.8854961832061069,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 131,
+    "words_docx": 131,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/three-column-newsletter": {
+   "sha256": "c1b990b0f328c8326ca213f90c184846636007e1646fe46263627517a7516340",
+   "status": "ok",
+   "score": 0.7396441362688526,
+   "components": {
+    "words": 1.0,
+    "order": 0.6991404011461319,
+    "format": 0.75,
+    "visual": 0.3574336538474649,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 0.5873925501432665,
+    "order_raw": 0.6991404011461319,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": 1.0
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 349,
+    "words_docx": 349,
+    "images_ref": 1,
+    "images_docx": 1,
+    "positioned_pages": 0
+   }
+  },
+  "chrome/two-column-article": {
+   "sha256": "228b8cfa757f3cd782cd243053b02a08cfa0a84e7a2fa6bc6d2b304640780578",
+   "status": "ok",
+   "score": 0.8869438926508932,
+   "components": {
+    "words": 0.9778714436248682,
+    "order": 1.0,
+    "format": 0.8,
+    "visual": 0.7452748652114428,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 0.9851380042462845,
+    "precision": 0.9707112970711297,
+    "order_layout": 0.9978448275862069,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": 1.0,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 471,
+    "words_docx": 478,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 1
+   }
+  },
+  "chrome/watermark-draft": {
+   "sha256": "d4f38ed40b0eeb7b88bcb8c60b94fa974b7d0237fab79bb23d3d52478268e386",
+   "status": "ok",
+   "score": 0.8819666725244584,
+   "components": {
+    "words": 0.985,
+    "order": 1.0,
+    "format": 0.7247346562067374,
+    "visual": 0.7591882469781592,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 0.9752475247524752,
+    "precision": 0.9949494949494949,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 0.9090909090909091,
+    "italic": null,
+    "size": 0.9949238578680203,
+    "color": 0.9949238578680203,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 202,
+    "words_docx": 198,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 1
+   }
+  },
+  "handmade/raw-base14": {
+   "sha256": "8373d7619a5c6aac64804212d476d76ae9fb156ebc72859b3287bc3f062d6f6b",
+   "status": "ok",
+   "score": 0.9415749530466517,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.8,
+    "visual": 0.9052498434888392,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": 1.0,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 138,
+    "words_docx": 138,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 1
+   }
+  },
+  "handmade/raw-rotate90": {
+   "sha256": "0a1e9caf250553950103f48d22616a5a25412a3a3e7c9ea8618f67a445d00fcd",
+   "status": "ok",
+   "score": 0.7701415860489705,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": null,
+    "visual": 0.34873449380541666,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": null,
+    "italic": null,
+    "size": null,
+    "color": null,
+    "font": null,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 97,
+    "words_docx": 97,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 1
+   }
+  },
+  "handmade/raw-text-grid": {
+   "sha256": "f6eb091fe1538922fac849a4041861ec9209c21fa304ae3e050d829a628dc50d",
+   "status": "ok",
+   "score": 0.9205781953696963,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.8602606512323212,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 0.9797979797979798,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 99,
+    "words_docx": 99,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "handmade/scanned-page": {
+   "sha256": "93e36e0d23040e9f13fe006df3857c35c732513ebe24ec23330a5e0c51dd2b1b",
+   "status": "ok",
+   "score": 0.8112447897630803,
+   "components": {
+    "words": null,
+    "order": null,
+    "format": null,
+    "visual": 0.7168671846446204,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": null,
+    "precision": null,
+    "order_layout": null,
+    "order_raw": null,
+    "bold": null,
+    "italic": null,
+    "size": null,
+    "color": null,
+    "font": null,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": 1.0
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 0,
+    "words_docx": 0,
+    "images_ref": 1,
+    "images_docx": 1,
+    "positioned_pages": 0
+   }
+  },
+  "libreoffice/lo-memo": {
+   "sha256": "9ecc939b64456dd625ac3517ce0cb7e133f3b434a73e9ca440cc040adec4ef2b",
+   "status": "ok",
+   "score": 0.9069931061640728,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.8,
+    "visual": 0.7899770205469094,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 1.0,
+    "italic": 1.0,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 247,
+    "words_docx": 247,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "libreoffice/lo-report": {
+   "sha256": "f5bdfd352dde5153f942c477df369357609dbf2fcc9ec6f0275d5f9093a1a834",
+   "status": "ok",
+   "score": 0.8221428289255888,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.75,
+    "visual": 0.5321427630852962,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 0.9945652173913043,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 184,
+    "words_docx": 184,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "mcp-suite/chrome-layout": {
+   "sha256": "0ec2d9f814732288afe0150c52b342f585de6bd3aea3dd7c1804a2d9bf768233",
+   "status": "ok",
+   "score": 0.9202953531526076,
+   "components": {
+    "words": 0.9362637362637363,
+    "order": 0.9953917050691244,
+    "format": 0.75,
+    "visual": 0.9245902058885808,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 0.9260869565217391,
+    "precision": 0.9466666666666667,
+    "order_layout": 0.9671361502347418,
+    "order_raw": 0.9953917050691244,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 230,
+    "words_docx": 225,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 1
+   }
+  },
+  "mcp-suite/chrome-scripts": {
+   "sha256": "593f3bc5c93e95abd2218cf93a878277cd620f015a2a5c578dca519969c44488",
+   "status": "ok",
+   "score": 0.7887404029931804,
+   "components": {
+    "words": 0.8558951965065502,
+    "order": 1.0,
+    "format": 0.6950354609929078,
+    "visual": 0.5923884163075973,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 0.8828828828828829,
+    "precision": 0.8305084745762712,
+    "order_layout": 0.9795918367346939,
+    "order_raw": 1.0,
+    "bold": 0.8333333333333334,
+    "italic": null,
+    "size": 0.9468085106382979,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 6,
+    "pages_docx": 6,
+    "words_ref": 111,
+    "words_docx": 118,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "mcp-suite/chrome-turkish": {
+   "sha256": "a0bde218adabc7b07a7524c73faeeda2951392468f16234754218403c5eeda12",
+   "status": "ok",
+   "score": 0.847900813749554,
+   "components": {
+    "words": 0.9651162790697674,
+    "order": 0.927710843373494,
+    "format": 0.75,
+    "visual": 0.6769828189709144,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 0.9764705882352941,
+    "precision": 0.9540229885057471,
+    "order_layout": 0.927710843373494,
+    "order_raw": 0.927710843373494,
+    "bold": 1.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 2,
+    "pages_docx": 2,
+    "words_ref": 85,
+    "words_docx": 87,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "mcp-suite/content-array": {
+   "sha256": "fc864f22ece1c34bddb54f6196b01c5a852b15afe1ee897c78e2d79c95d6e47b",
+   "status": "ok",
+   "score": 0.798738216653766,
+   "components": {
+    "words": 0.9230769230769231,
+    "order": 1.0,
+    "format": 0.6666666666666666,
+    "visual": 0.7393837991022969,
+    "structure": 0.6666666666666666
+   },
+   "details": {
+    "recall": 0.9,
+    "precision": 0.9473684210526315,
+    "order_layout": 0.8333333333333334,
+    "order_raw": 1.0,
+    "bold": null,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": 0.0
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 20,
+    "words_docx": 19,
+    "images_ref": 1,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "mcp-suite/image": {
+   "sha256": "0a5798f1f3841c2396cf1b5a3c67be1fc5991757ac217dfc336511eb8eecfe21",
+   "status": "ok",
+   "score": 0.8982041251626613,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.6666666666666666,
+    "visual": 0.8273470838755379,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": null,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": 1.0
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 7,
+    "words_docx": 7,
+    "images_ref": 1,
+    "images_docx": 1,
+    "positioned_pages": 0
+   }
+  },
+  "mcp-suite/inherited": {
+   "sha256": "bf4cdafe18c9d589519c5914345c56e9900d9d08180843c2aff9538bedb25c8b",
+   "status": "ok",
+   "score": 0.7029877061644692,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": null,
+    "visual": 0.2417985007993292,
+    "structure": 0.8333333333333333
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": null,
+    "italic": null,
+    "size": null,
+    "color": null,
+    "font": null,
+    "pages": 1.0,
+    "page_size": 0.6666666666666666,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 3,
+    "pages_docx": 3,
+    "words_ref": 22,
+    "words_docx": 22,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 3
+   }
+  },
+  "mcp-suite/lo-writer-turkish": {
+   "sha256": "09d147f99802b087103f4c35c9405cdfe38a991073f07dce5f6185f5f37627b3",
+   "status": "ok",
+   "score": 0.737302294401253,
+   "components": {
+    "words": 1.0,
+    "order": 0.82,
+    "format": 0.7428571428571429,
+    "visual": 0.31291240990893854,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 0.72,
+    "order_raw": 0.82,
+    "bold": 1.0,
+    "italic": null,
+    "size": 0.9714285714285714,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 50,
+    "words_docx": 50,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  },
+  "mcp-suite/tagged": {
+   "sha256": "62199801c8252ca69056d2271b525ca421f466930ccfe339e296c7b19abb10fe",
+   "status": "ok",
+   "score": 0.8835474411942176,
+   "components": {
+    "words": 1.0,
+    "order": 1.0,
+    "format": 0.5,
+    "visual": 0.8618248039807253,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": 0.0,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": 1.0
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 12,
+    "words_docx": 12,
+    "images_ref": 1,
+    "images_docx": 1,
+    "positioned_pages": 0
+   }
+  },
+  "mcp-suite/type3": {
+   "sha256": "9f9d36e2c1987e58b27a69323351da65f962887539463d35d6700050f30f05c3",
+   "status": "ok",
+   "score": 0.7282629885767153,
+   "components": {
+    "words": 0.4,
+    "order": 1.0,
+    "format": 0.6666666666666666,
+    "visual": 0.8608766285890512,
+    "structure": 1.0
+   },
+   "details": {
+    "recall": 0.5,
+    "precision": 0.3333333333333333,
+    "order_layout": 1.0,
+    "order_raw": 1.0,
+    "bold": null,
+    "italic": null,
+    "size": 1.0,
+    "color": 1.0,
+    "font": 0.0,
+    "pages": 1.0,
+    "page_size": 1.0,
+    "images": null
+   },
+   "counts": {
+    "pages_ref": 1,
+    "pages_docx": 1,
+    "words_ref": 2,
+    "words_docx": 3,
+    "images_ref": 0,
+    "images_docx": 0,
+    "positioned_pages": 0
+   }
+  }
+ }
+}

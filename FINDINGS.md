@@ -1,0 +1,29 @@
+# Findings
+
+What the suite has turned up, and what was checked. Verdicts: **bug** (PdfCraft's DOCX is
+wrong), **limitation** (documented behaviour that falls short), **oracle** (the reference is
+wrong, not PdfCraft). None of these have been reported upstream or checked in Word yet.
+
+## 2026-10-30, PdfCraft `fa5f9f8c3` (origin/main), baseline mean 83.0
+
+| Verdict | Documents | Finding |
+|---|---|---|
+| bug | `chrome/international`, `mcp-suite/chrome-scripts` | Arabic and Hebrew are written to the DOCX in visual order: `ةيبرعلا` instead of `العربية`, `תירבע` instead of `עברית`. Word applies the bidi algorithm to logical text, so these show reversed. |
+| bug | `mcp-suite/tagged` | A heading in plain Helvetica 20 pt comes out bold: PdfCraft's `Heading1`/`Heading2` styles contain `<w:b/>` and runs never turn it off (`<w:b w:val="0"/>`). |
+| bug | `chrome/academic-paper`, `chrome/three-column-newsletter` | Reading order across columns: the bottom of column 1 ("2 Data") comes after the top of column 2 ("3 Results"); a fragment from the end of column 3 lands right after the masthead. |
+| bug | `mcp-suite/content-array` | Two words with a wide gap between them are joined ("widegap"); the page's one image is not exported. |
+| limitation | every document (font 0 %) | No font names (`w:rFonts`) are written, so everything falls back to the word processor's default font. Serif and monospaced documents change look, and text reflows (`chrome/small-print` 2 → 3 pages, `chrome/academic-paper` 1 → 2). |
+| bug | `chrome/table-borderless` | The inferred table's last column is too narrow: the 2024 figures wrap one digit per line (`3`/`7`/`1`), and the column headings stack vertically above the table. |
+| limitation | `chrome/letter-a4` | Alignment and spacing are lost: right-aligned sender and date blocks become left-aligned, address lines are joined into one line, vertical gaps collapse (visual 22 %). |
+| limitation | `chrome/form-fields` | Vector graphics are dropped (fill-in lines, tick boxes, date boxes), and fields side by side become a vertical list of labels. |
+| limitation | `handmade/raw-rotate90`, `mcp-suite/inherited` | Text on `/Rotate`d pages is turned horizontal and positioned in unrotated coordinates, so lines run off the page edge and are cut off. |
+| limitation | `chrome/headings-emphasis`, `chrome/academic-paper` | Subscripts and superscripts become normal text in the line (`Tadj`). |
+| limitation | `mcp-suite/lo-writer-turkish` | A Writer comment (annotation) and its author and date are put inline at the top of the body. |
+| limitation | `chrome/slide-deck` | A caption drawn twice by Chrome (text plus its shadow) is exported twice. |
+| ambiguous | `mcp-suite/type3` | Two Type 3 runs that touch with no gap ("ŞĞİ" + "İŞĞ") get a space between them; Poppler reads one word. Costs 18 points because the file has two words. |
+| oracle | `mcp-suite/inherited` | Page 3 has `/UserUnit 2`: PdfCraft's 600 × 800 pt section is right, `pdfinfo` ignores UserUnit (page_size 67 %). |
+| oracle | `chrome/international`, `mcp-suite/chrome-scripts` | Poppler splits `मछुआरे` and vertical Japanese differently from PdfCraft (whose reading is right). |
+
+Compared with the week-old build `0dc77fe4e` (the MCP suite's), `fa5f9f8c3` improved
+`chrome/headings-emphasis` by 21 points and `libreoffice/lo-memo` by 9: the old build started a
+new paragraph at every formatting change.

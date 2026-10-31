@@ -1,0 +1,10 @@
+# pdfcraft checkout and its build (a git worktree of ~/dev/craft/pdfcraft)
+/src/
+/target/
+# per-run output; accepted scores are copied into baseline/
+/runs/
+/logs/
+# LibreOffice profiles
+/cache/
+__pycache__/
+.DS_Store
