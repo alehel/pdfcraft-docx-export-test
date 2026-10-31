@@ -1,5 +1,6 @@
 {
  "chrome/academic-paper": {
+  "title": "Academic paper",
   "description": "A two-column paper: full-width title and abstract, numbered sections, citations, a formula, a figure, footnotes, references.",
   "tags": [
    "columns",
@@ -9,6 +10,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/code-listing": {
+  "title": "Code listing",
   "description": "Monospaced code blocks with indentation, inline code, and prose around them.",
   "tags": [
    "monospace"
@@ -16,6 +18,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/form-fields": {
+  "title": "Printed form",
   "description": "A printed application form: labels with fill-in lines, tick boxes, date boxes and a signature line.",
   "tags": [
    "forms",
@@ -24,6 +27,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/headings-emphasis": {
+  "title": "Headings and text styles",
   "description": "Three heading levels, bold, italic, bold italic, underline, strike, colours, sizes, super/subscript, a block quote.",
   "tags": [
    "format"
@@ -31,6 +35,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/highlights-callouts": {
+  "title": "Highlights and callout boxes",
   "description": "Highlighted text, coloured callout boxes, white text on a dark box, a bordered quote.",
   "tags": [
    "format",
@@ -39,6 +44,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/images-figures": {
+  "title": "Images and figures",
   "description": "A chart, a JPEG photo floated right with text wrapping round it, and a logo with transparency.",
   "tags": [
    "images"
@@ -46,6 +52,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/international": {
+  "title": "Many languages",
   "description": "Paragraphs in a dozen scripts, including right-to-left Arabic and Hebrew, CJK, Devanagari and Thai.",
   "tags": [
    "scripts",
@@ -54,6 +61,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/invoice": {
+  "title": "Invoice",
   "description": "An invoice: logo, address blocks, item table, totals, and a rotated PAID stamp over the totals.",
   "tags": [
    "business",
@@ -63,6 +71,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/letter-a4": {
+  "title": "Business letter",
   "description": "A business letter: sender block, date, recipient, bold subject line, signature.",
   "tags": [
    "business",
@@ -71,6 +80,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/lists": {
+  "title": "Lists",
   "description": "Bulleted, numbered, nested (three levels), lettered and roman lists, and a checklist.",
   "tags": [
    "lists"
@@ -78,6 +88,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/mixed-page-sizes": {
+  "title": "Mixed page sizes",
   "description": "Pages of different sizes in one file: A4 portrait, A4 landscape, A5.",
   "tags": [
    "page-size"
@@ -85,6 +96,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/multipage-report": {
+  "title": "Eight-page report",
   "description": "An eight-page report: title page, contents, sections on new pages, running header and page numbers.",
   "tags": [
    "multipage",
@@ -93,6 +105,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/prose-letter": {
+  "title": "Plain prose",
   "description": "Plain single-column prose in Georgia, US Letter, one heading.",
   "tags": [
    "text"
@@ -100,6 +113,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/rotated-labels": {
+  "title": "Rotated table headers",
   "description": "A table with column headers rotated 90 degrees and a vertical margin label.",
   "tags": [
    "rotation",
@@ -108,6 +122,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/slide-deck": {
+  "title": "Slide deck",
   "description": "Three 16:9 slides: a full-bleed coloured title slide, a bullet slide, text over a full-page photo.",
   "tags": [
    "slides",
@@ -117,6 +132,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/small-print": {
+  "title": "Small print",
   "description": "Dense 7 pt justified terms and conditions with numbered clauses over two pages.",
   "tags": [
    "text",
@@ -125,6 +141,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/table-bordered": {
+  "title": "Table with borders",
   "description": "A ruled data table with a shaded header row, zebra rows, right-aligned numbers and a total row.",
   "tags": [
    "tables"
@@ -132,6 +149,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/table-borderless": {
+  "title": "Table without borders",
   "description": "A financial statement: no rules, indented labels, right-aligned figures, bold subtotals.",
   "tags": [
    "tables"
@@ -139,6 +157,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/table-spans": {
+  "title": "Table with merged cells",
   "description": "A table with column and row spans, a two-level header and cells whose text wraps.",
   "tags": [
    "tables"
@@ -146,6 +165,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/three-column-newsletter": {
+  "title": "Three-column newsletter",
   "description": "A newsletter: coloured masthead, three columns, an image inside a column, a pull quote.",
   "tags": [
    "columns",
@@ -155,6 +175,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/two-column-article": {
+  "title": "Two-column article",
   "description": "A two-column article with a spanning title, justified hyphenated text and a drop cap.",
   "tags": [
    "columns",
@@ -163,6 +184,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "chrome/watermark-draft": {
+  "title": "Memo with a watermark",
   "description": "A memo with a large diagonal DRAFT watermark behind the text.",
   "tags": [
    "rotation",
@@ -171,6 +193,7 @@
   "source": "Chrome headless, tools/make_corpus.py"
  },
  "handmade/raw-base14": {
+  "title": "Standard PDF fonts",
   "description": "Base-14 fonts only (Helvetica, Times, Courier and their bold/italic), colours and sizes 8-24 pt.",
   "tags": [
    "fonts",
@@ -179,6 +202,7 @@
   "source": "hand-built, tools/make_corpus.py"
  },
  "handmade/raw-rotate90": {
+  "title": "Rotated page",
   "description": "A landscape MediaBox with /Rotate 90, shown portrait.",
   "tags": [
    "rotation",
@@ -187,6 +211,7 @@
   "source": "hand-built, tools/make_corpus.py"
  },
  "handmade/raw-text-grid": {
+  "title": "Timetable without lines",
   "description": "A timetable made of positioned text only: columns but no rules.",
   "tags": [
    "tables"
@@ -194,6 +219,7 @@
   "source": "hand-built, tools/make_corpus.py"
  },
  "handmade/scanned-page": {
+  "title": "Scanned page",
   "description": "An image-only page with no text layer (a rendered page, like a scan).",
   "tags": [
    "images",
@@ -202,6 +228,7 @@
   "source": "hand-built, tools/make_corpus.py"
  },
  "libreoffice/lo-memo": {
+  "title": "Memo from LibreOffice",
   "description": "A Writer memo with bold labels, a horizontal rule, emphasis and a long multi-paragraph body.",
   "tags": [
    "text",
@@ -210,6 +237,7 @@
   "source": "LibreOffice Writer (HTML import), tools/make_corpus.py"
  },
  "libreoffice/lo-report": {
+  "title": "Report from LibreOffice",
   "description": "A Writer report: headings, paragraphs, bulleted and numbered lists, a ruled table (LibreOffice fonts and layout).",
   "tags": [
    "text",
@@ -219,6 +247,7 @@
   "source": "LibreOffice Writer (HTML import), tools/make_corpus.py"
  },
  "mcp-suite/chrome-layout": {
+  "title": "Columns and rotated text",
   "description": "Two columns, rotated text, small caps, letter spacing, sub- and superscript (Chrome).",
   "tags": [
    "columns",
@@ -227,6 +256,7 @@
   "source": "copied from pdfcraft-mcp-suite/fixtures"
  },
  "mcp-suite/chrome-scripts": {
+  "title": "Six pages of scripts",
   "description": "Six pages of scripts: Latin with diacritics, Greek, Cyrillic, Arabic, Hebrew, Indic, CJK (Chrome).",
   "tags": [
    "scripts",
@@ -236,6 +266,7 @@
   "source": "copied from pdfcraft-mcp-suite/fixtures"
  },
  "mcp-suite/chrome-turkish": {
+  "title": "Turkish text",
   "description": "Two pages of Turkish prose with dotted and dotless i (Chrome).",
   "tags": [
    "scripts"
@@ -243,6 +274,7 @@
   "source": "copied from pdfcraft-mcp-suite/fixtures"
  },
  "mcp-suite/content-array": {
+  "title": "Tricky text placement",
   "description": "Text split across content streams, invisible text, clipping, word and character spacing.",
   "tags": [
    "text"
@@ -250,6 +282,7 @@
   "source": "copied from pdfcraft-mcp-suite/fixtures"
  },
  "mcp-suite/image": {
+  "title": "Image with a caption",
   "description": "One image with a caption.",
   "tags": [
    "images"
@@ -257,6 +290,7 @@
   "source": "copied from pdfcraft-mcp-suite/fixtures"
  },
  "mcp-suite/inherited": {
+  "title": "Inherited page settings",
   "description": "Pages that inherit MediaBox 400x300 and Rotate 270 from the page tree.",
   "tags": [
    "page-size",
@@ -265,6 +299,7 @@
   "source": "copied from pdfcraft-mcp-suite/fixtures"
  },
  "mcp-suite/lo-writer-turkish": {
+  "title": "Turkish document from LibreOffice",
   "description": "A Turkish Writer document with headings and a table (LibreOffice).",
   "tags": [
    "scripts",
@@ -273,6 +308,7 @@
   "source": "copied from pdfcraft-mcp-suite/fixtures"
  },
  "mcp-suite/tagged": {
+  "title": "Tagged PDF",
   "description": "A tagged PDF: heading, paragraph, footer artifact.",
   "tags": [
    "text"
@@ -280,6 +316,7 @@
   "source": "copied from pdfcraft-mcp-suite/fixtures"
  },
  "mcp-suite/type3": {
+  "title": "Hand-drawn font glyphs",
   "description": "Text drawn with a Type 3 font.",
   "tags": [
    "fonts"

@@ -240,11 +240,12 @@ def cmd_run(args):
 def write_reports(run_dir, meta, records, baseline):
     report.classify(records, baseline)
     (run_dir / "report.md").write_text(report.markdown(meta, records, baseline))
-    (run_dir / "report.html").write_text(report.html_report(meta, records, baseline, descriptions(), run_dir))
+    (run_dir / "report.html").write_text(report.html_report(meta, records, baseline, corpus_meta(), run_dir))
 
 
-def descriptions():
-    return {name: d.get("description") for name, d in (load_json(CORPUS / "corpus.json") or {}).items()}
+def corpus_meta():
+    """corpus/corpus.json: each test file's title, description and tags."""
+    return load_json(CORPUS / "corpus.json") or {}
 
 
 def run_dirs():
@@ -264,11 +265,11 @@ def update_index(entry=None):
     baseline_run = baseline["meta"].get("run") if baseline else None
     prune_runs(entries, baseline_run)
     available = {p.name for p in PUBLIC.iterdir() if (p / "report.html").exists()}
-    (PUBLIC / "index.html").write_text(index.html_index(entries, available, baseline_run))
+    (PUBLIC / "index.html").write_text(index.html_index(entries, available, baseline_run, PUBLIC, corpus_meta()))
     docs = PUBLIC / "docs"
     shutil.rmtree(docs, ignore_errors=True)
     docs.mkdir()
-    for name, page in docpage.build(index.tested_commits(entries)[0], PUBLIC, descriptions()).items():
+    for name, page in docpage.build(index.tested_commits(entries)[0], PUBLIC, corpus_meta()).items():
         (docs / name).write_text(page)
     return PUBLIC / "index.html"
 

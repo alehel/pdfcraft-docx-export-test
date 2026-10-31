@@ -64,57 +64,58 @@ corpus [--force NAME|all]  # (re)make missing corpus files with the pinned Chrom
 
 ## Reports
 
-Open `public/index.html` in a browser. Every page carries the site's header: "PdfCraft Export
-Quality Measure", the measured formats, and the ones still to come. The index starts with what
-the site measures and a card per format: Word (DOCX) with its latest mean score and trend, and
-one card for the formats coming next. The DOCX section below lists every report and shows
-accuracy over time.
+Open `public/index.html` in a browser. The site is written for people who do not know the
+suite: plain titles and verdicts come first, and the technical detail is folded into sections
+that open on a click ("How is the score worked out?", "For developers", "Technical details").
+Every page carries the site's header: "PdfCraft Export Quality Measure", the measured formats,
+and the formats still to come.
 
 `public/` holds everything the reports show: `index.html`, `history.jsonl`, a history page per
-test file in `docs/`, and a folder per run. It is not in git. Every link inside is relative, so any static web server or static host
-can serve the folder as it is.
+test file in `docs/`, and a folder per run. It is not in git. Every link inside is relative, so
+any static web server or static host can serve the folder as it is.
+
+**Verdicts.** Next to every score is what it means: 90 or more is *very close* to the original,
+80 to 89 *close*, 70 to 79 *noticeable differences*, below 70 *big differences*. Each test file
+has a short plain title (`title` in `corpus/corpus.json`, set in `tools/make_corpus.py`).
+
+**The index** (`public/index.html`) is rebuilt by `run`, `report`, `accept` and `index`:
+
+- **Intro and explainer:** what the site measures, and, folded, how the five score parts make
+  the score.
+- **A card per format:** Word (DOCX) with its average score, verdict, change and trend, and one
+  card for the formats coming next.
+- **Word (DOCX) section:** a plain summary ("On average, the Word files PdfCraft makes are
+  close to the originals…"), the average score across PdfCraft versions (hover for details,
+  click for that version's report), and a gallery of the test documents. Each card shows the
+  first page as a PDF and as a Word file, with its score and verdict; it opens the document's
+  history page. The gallery sorts by lowest score or A to Z.
+- **For developers** (folded): tested commits, reports and baseline, a chart per score part, each
+  document's score at the last 10 tested commits (a score opens that commit's comparison with
+  the one before), and every run, newest first.
 
 **Each run** writes `public/<id>/report.html`, about 10 MB with its images:
 
-- **Header:** the PdfCraft commit, with links to it on GitHub, its tag if it has one (otherwise
-  its `git describe`), and the pull request for `build --pr`. Also the commit date, the
-  suite's own commit, the environment, and the mean score against the baseline.
-- **Summary table:** every document's score and score parts, with the change from the baseline.
-- **A card per document:** what the PDF tests, its score and score parts, and each page as
-  screenshots of the PDF and of the DOCX as LibreOffice lays it out (80 dpi, up to
-  `--image-pages`, default 12).
-- **Toolbar:** "Overlays" adds a third image per page, red for ink only in the PDF and blue
-  for ink only in the DOCX. "Only changed or failing" hides the rest.
-- **Details** under each card: missing and extra words, Word lint, and links to the DOCX and
-  LibreOffice's PDF. Each card also links to its test file's history page.
+- **Top:** the PdfCraft commit (links to GitHub, its tag or `git describe`, the pull request for
+  `build --pr`), a sentence saying how it did, and tiles for the average, the documents and the
+  changes since the baseline. Tool versions, the environment and the score table are folded.
+- **A card per document:** title, description, score and verdict, and each page as screenshots
+  of the PDF and of the Word file as LibreOffice lays it out (80 dpi, up to `--image-pages`,
+  default 12). The score parts, missing and extra words, Word lint and the files are folded
+  under each card, which also links to the document's history page.
+- **Toolbar:** "Show differences" adds a third picture per page, red for ink only in the PDF
+  and blue for ink only in the Word file. "Only documents that changed" hides the rest.
 
 The run folder also has `report.md`, `scores.json`, the exported `docx/` and LibreOffice's
 `rendered/` PDFs.
 
-**The index** (`public/index.html`) is rebuilt by `run`, `report`, `accept` and `index`:
-
-- **Tiles:** the latest mean score and its change, the number of tested commits, the number of
-  reports, and the baseline.
-- **Mean score over PdfCraft commits:** a line chart with tags named. Hover a point for its
-  commit; click to open its report.
-- **Small charts,** one per score part.
-- **Documents table:** each document's score at the last 10 tested commits. Tints and arrows
-  show where it moved. A name opens that file's history page; a score opens the comparison of
-  that commit with the one before it.
-- **All reports,** newest first.
-
-**A history page per test file** (`public/docs/<file>.html`) shows:
-
-- the file's score at every tested commit, as a chart;
-- a comparison of any two commits, picked with From and To. Each page appears three times side
-  by side: the PDF, the DOCX at From, and the DOCX at To. Above it are the score and score-part
-  changes, and a note when the page count or the PDF itself differs;
-- a table of every tested commit, with links to its report and its comparison.
-
-Clicking a point in the chart compares that commit with the one before. The pair is kept in the
-address (`#from=<sha>&to=<sha>`), so a comparison can be shared as a link. Without a pair, the
-page opens on the latest change of 2 points or more. Screenshots exist only for runs whose folder
-is kept; for pruned runs the comparison still shows the scores.
+**A history page per test document** (`public/docs/<file>.html`) shows its score across
+PdfCraft versions as a chart, and compares any two versions, picked with From and To: each page
+appears three times side by side (the PDF, the Word file at From, the Word file at To), with the
+score changes and a note when the page count or the PDF itself differs. A table of every version
+tested is folded below. Clicking a point in the chart compares that version with the one before.
+The pair is kept in the address (`#from=<sha>&to=<sha>`), so a comparison can be shared as a
+link. Without a pair, the page opens on the latest change of 2 points or more. Screenshots exist
+only for runs whose folder is kept; for pruned runs the comparison still shows the scores.
 
 A *tested commit* is a full-corpus run of a commit on main (pull-request builds are listed but
 not plotted), in the same environment as the latest run; the latest run of each commit counts.

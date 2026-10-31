@@ -185,17 +185,24 @@ CSS = f"""
 :root[data-theme="dark"] {{ {DARK} }}
 * {{ box-sizing: border-box; }}
 body {{ margin: 0; background: var(--plane); color: var(--ink);
-  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }}
-main {{ max-width: 1240px; margin: 0 auto; padding: 18px 16px 64px; }}
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }}
+main {{ max-width: 1240px; margin: 0 auto; padding: 28px 20px 96px; }}
 a {{ color: inherit; text-decoration-color: var(--axis); text-underline-offset: 2px; }}
 a:hover {{ text-decoration-color: currentColor; }}
-h1 {{ font-size: 24px; margin: 2px 0 4px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }}
-h2 {{ font-size: 17px; margin: 36px 0 10px; }}
-h3 {{ font-size: 15px; margin: 0; }}
+h1 {{ font-size: 26px; margin: 4px 0 6px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }}
+h2 {{ font-size: 21px; margin: 52px 0 12px; }}
+h3 {{ font-size: 17px; margin: 0; }}
 p {{ margin: 0 0 6px; }}
 .muted {{ color: var(--muted); }} .ink-2 {{ color: var(--ink-2); }}
 code, .sha {{ font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; }}
-.card {{ background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }}
+.card {{ background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }}
+.lead {{ font-size: 17px; color: var(--ink-2); max-width: 760px; margin: 12px 0 0; }}
+details.tech {{ margin: 14px 0; }}
+details.tech > summary {{ cursor: pointer; color: var(--ink-2); font-weight: 600; padding: 6px 0; }}
+details.tech[open] > summary {{ margin-bottom: 8px; }}
+.verdict {{ font-weight: 600; color: var(--ink-2); }}
+.name {{ font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); margin: 2px 0 0; }}
+.doc-foot {{ margin: 4px 0 6px; }}
 .pill {{ display: inline-block; padding: 0 8px; border: 1px solid var(--border); border-radius: 999px;
   font-size: 12px; line-height: 19px; color: var(--ink-2); white-space: nowrap; text-decoration: none;
   font-weight: 500; vertical-align: 1px; }}
@@ -203,7 +210,7 @@ code, .sha {{ font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; }}
 .pill.tag::before {{ content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
   background: var(--series); margin-right: 5px; vertical-align: 0; }}
 .up {{ color: var(--up); font-weight: 600; }} .down {{ color: var(--down); font-weight: 600; }}
-.tiles {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin: 16px 0; }}
+.tiles {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 24px 0; }}
 .tile .label {{ color: var(--ink-2); font-size: 13px; }}
 .tile .value {{ font-size: 28px; font-weight: 600; line-height: 1.25; }}
 .tile .value.hero {{ font-size: 48px; line-height: 1.1; }}
@@ -220,18 +227,18 @@ td.subject {{ max-width: 200px; overflow: hidden; text-overflow: ellipsis; }}
 .toolbar > div {{ max-width: 1240px; margin: 0 auto; padding: 8px 16px; display: flex; gap: 8px 20px;
   align-items: center; flex-wrap: wrap; }}
 .toolbar label {{ display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }}
-.doc {{ margin: 14px 0; scroll-margin-top: 52px; }}
+.doc {{ margin: 22px 0; scroll-margin-top: 56px; }}
 .doc-head {{ display: flex; justify-content: space-between; gap: 8px 24px; align-items: flex-start; flex-wrap: wrap; }}
-.doc-head .desc {{ color: var(--ink-2); margin: 3px 0 0; max-width: 720px; }}
+.doc-head .desc {{ color: var(--ink-2); margin: 6px 0 0; max-width: 720px; }}
 .score {{ text-align: right; }}
 .score .num {{ font-size: 30px; font-weight: 600; line-height: 1.1; }}
 .score .num small {{ font-size: 14px; color: var(--muted); font-weight: 400; }}
 .meter {{ width: 150px; height: 6px; border-radius: 3px; background: var(--track); margin: 6px 0 4px auto; overflow: hidden; }}
 .meter span {{ display: block; height: 100%; background: var(--series); border-radius: 3px; }}
-.parts {{ display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 10px 0 12px; padding: 0; list-style: none;
+.parts {{ display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 10px 0 8px; padding: 0; list-style: none;
   color: var(--ink-2); font-size: 13px; }}
 .parts b {{ color: var(--ink); font-variant-numeric: tabular-nums; margin-left: 4px; }}
-.page {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }}
+.page {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 18px 0; }}
 .page figure {{ margin: 0; display: flex; flex-direction: column; }}
 .page img {{ display: block; width: 100%; height: auto; border: 1px solid var(--border); background: #fff; }}
 .gap {{ flex: 1; min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -347,28 +354,72 @@ def commit_line(pc):
     return " · ".join(b for b in bits if b)
 
 
-def html_report(meta, records, baseline, descriptions=None, run_dir=None):
+VERDICTS = ((0.9, "Very close", "very close to the originals"), (0.8, "Close", "close to the originals"),
+            (0.7, "Noticeable differences", "noticeably different from the originals"),
+            (0.0, "Big differences", "very different from the originals"))
+
+
+# The comparison with the baseline, as plain words.
+PLAIN = {"regression": "got worse", "failed": "now fail", "still-failing": "still fail", "improvement": "got better",
+         "fixed": "fixed", "new": "new", "corpus-changed": "PDF changed", "same": "unchanged"}
+
+
+def verdict(score, status="ok", sentence=False):
+    """A score in words, for readers who do not know the scale."""
+    if status in FAILED:
+        return "the export failed" if sentence else "Export failed"
+    return next(v[2 if sentence else 1] for v in VERDICTS if score >= v[0])
+
+
+def title_of(name, corpus):
+    """A test file's plain title from corpus.json, or one made from its file name."""
+    return (corpus.get(name) or {}).get("title") or name.rsplit("/", 1)[-1].replace("-", " ").capitalize()
+
+
+def version_label(pc):
+    return (pc.get("tags") or [None])[0] or (pc.get("sha") or "")[:7] or "a custom build"
+
+
+def plural(n, word):
+    return f"{n} {word}{'' if n == 1 else 's'}"
+
+
+def html_report(meta, records, baseline, corpus=None, run_dir=None):
     e = html.escape
-    descriptions = descriptions or {}
+    corpus = corpus or {}
     pc = meta["pdfcraft"]
     counts = summary_counts(records)
     deltas = [r["delta"] for r in records if r["delta"] is not None]
-    changed = sum(counts.get(c, 0) for c in ("regression", "failed", "still-failing", "improvement", "fixed"))
+    mean = mean_score(records)
+    failed = sum(1 for r in records if r["status"] in FAILED)
+    better = counts.get("improvement", 0) + counts.get("fixed", 0)
+    worse = counts.get("regression", 0) + counts.get("failed", 0)
+    story = (f"PdfCraft {e(version_label(pc))} converted {plural(len(records), 'test document')} to Word. On average "
+             f"the Word files are {verdict(mean, sentence=True)}: {pct(mean)} out of 100.")
+    if baseline:
+        if not better + worse:
+            story += " No document changed by 2 points or more since the baseline."
+        elif not worse:
+            story += f" Since the baseline, {plural(better, 'document')} got better and none got worse."
+        elif not better:
+            story += f" Since the baseline, {plural(worse, 'document')} got worse and none got better."
+        else:
+            story += f" Since the baseline, {plural(better, 'document')} got better and {worse} got worse."
     tiles = [
-        ("Mean score", f"<div class='value hero'>{pct(mean_score(records))}</div>",
-         delta_html(sum(deltas) / len(deltas), " vs baseline") if deltas else "no baseline to compare with"),
-        ("PDFs", f"<div class='value'>{len(records)}</div>",
-         f"{sum(1 for r in records if r['status'] in FAILED)} failed to export or score"),
-        ("Against the baseline", f"<div class='value'>{changed}</div>",
-         " · ".join(f"{CLASSES[c][0]} {n} {CLASSES[c][1]}" for c, n in
-                    sorted(counts.items(), key=lambda x: ORDER.index(x[0])))),
+        ("Average score", f"<div class='value hero'>{pct(mean)}</div>",
+         f"<b>{verdict(mean)}</b>" + (" · " + delta_html(sum(deltas) / len(deltas), " since the baseline") if deltas else "")),
+        ("Test documents", f"<div class='value'>{len(records)}</div>",
+         f"{failed} could not be converted" if failed else "all converted"),
+        ("Changed since the baseline", f"<div class='value'>{better + worse}</div>",
+         " · ".join(f"{CLASSES[c][0]} {n} {PLAIN[c]}" for c, n in sorted(counts.items(), key=lambda x: ORDER.index(x[0])))),
     ]
     tiles_html = "".join(f"<div class='tile card'><div class='label'>{label}</div>{value}<div class='sub'>{sub}</div></div>"
                          for label, value, sub in tiles)
-    meta_lines = [line[2:] for line in header_lines(meta, baseline)[1:]]
+    meta_lines = [line[2:] for line in header_lines(meta, baseline)]
     suite = meta.get("suite")
     if suite:
         meta_lines.append(f"Suite: `{suite['sha'][:10]}`" + (" with uncommitted changes" if suite.get("dirty") else ""))
+    meta_lines.append(f"Run `{meta['id']}`, {meta.get('seconds', 0):.0f} s")
     meta_lines.append("Scores 0-100; weights " + ", ".join(f"{k} {int(v * 100)} %" for k, v in WEIGHTS.items()))
     rows = []
     for rec in sorted(records, key=sort_key):
@@ -381,29 +432,31 @@ def html_report(meta, records, baseline, descriptions=None, run_dir=None):
             f"<td>{pct(rec['score'])}</td><td>{delta_html(rec['delta'])}</td>"
             + "".join(f"<td>{pct(c.get(k))}</td>" for k in WEIGHTS)
             + f"<td>{pages}</td><td class='l'>{e(rec['status'])}</td></tr>")
-    title = (pc.get("tags") or [None])[0] or (pc.get("sha") or "")[:10] or "custom build"
     body = f"""
 {site_header("../")}
 <div class="toolbar"><div>
-<a href="../index.html#docx">← All DOCX reports</a>
-<label><input type="checkbox" id="overlays"> Overlays</label>
-<label><input type="checkbox" id="changed"> Only changed or failing</label>
-<span class="muted">Overlay: red is ink only in the PDF, blue only in the DOCX</span>
+<a href="../index.html#docx">← All Word reports</a>
+<label><input type="checkbox" id="overlays"> Show differences</label>
+<label><input type="checkbox" id="changed"> Only documents that changed</label>
 </div></div>
 <main>
-<p class="muted">Word (DOCX) export report · run {e(meta['id'])} · {when(meta.get('started'))} · {meta.get('seconds', 0):.0f} s</p>
+<p class="muted">Word (DOCX) report · {when(meta.get('started'))}</p>
 <h1>PdfCraft {commit_html(pc)}</h1>
 <p class="ink-2">{commit_line(pc)}</p>
+<p class="lead">{story}</p>
 <section class="tiles">{tiles_html}</section>
-<ul class="meta">{''.join(f'<li>{inline_md(line)}</li>' for line in meta_lines)}</ul>
-<h2>Summary</h2>
+<details class="tech"><summary>Technical details</summary><ul class="meta">
+{''.join(f'<li>{inline_md(line)}</li>' for line in meta_lines)}</ul></details>
+<details class="tech"><summary>All scores in one table</summary>
 <div class="wrap"><table><thead><tr><th class="l"></th><th class="l">PDF</th><th>score</th><th>Δ</th>
 {''.join(f'<th>{k}</th>' for k in WEIGHTS)}<th>pages</th><th class="l">status</th></tr></thead>
-<tbody>{''.join(rows)}</tbody></table></div>
-<h2>Documents</h2>
-{''.join(doc_html(rec, descriptions.get(rec['name']), run_dir, pc.get('sha')) for rec in sorted(records, key=sort_key))}
+<tbody>{''.join(rows)}</tbody></table></div></details>
+<h2>The documents</h2>
+<p class="ink-2">Each test document as a PDF (left) and as the Word file PdfCraft made, opened in LibreOffice (right).
+"Show differences" adds a third picture: red where only the PDF has ink, blue where only the Word file has.</p>
+{''.join(doc_html(rec, corpus, run_dir, pc.get('sha')) for rec in sorted(records, key=sort_key))}
 </main>"""
-    return page_html(f"{title} · DOCX report · {SITE}", body)
+    return page_html(f"{version_label(pc)} · Word report · {SITE}", body)
 
 
 def inline_md(text):
@@ -412,37 +465,40 @@ def inline_md(text):
     return "".join(f"<code>{p}</code>" if i % 2 else p for i, p in enumerate(parts))
 
 
-def doc_html(rec, description, run_dir=None, sha=None):
-    """One document: score, parts, then each page as PDF | DOCX (| overlay), then the details."""
+def doc_html(rec, corpus, run_dir=None, sha=None):
+    """One document: its title, score and verdict, each page as PDF | DOCX (| overlay), and the score
+    breakdown and details folded away."""
     e = html.escape
     c = rec.get("components") or {}
     if rec["class"] == "corpus-changed":
-        change = "<span class='muted'>PDF changed since the baseline</span>"
+        change = "<span class='muted'>the PDF changed since the baseline</span>"
     elif rec["class"] == "new":
         change = "<span class='muted'>new since the baseline</span>"
     else:
-        change = delta_html(rec["delta"], " vs baseline")
+        change = delta_html(rec["delta"], " since the baseline")
     items = "".join(f"<li>{inline_md(line[2:])}</li>" for line in detail_markdown(rec)[2:] if line.startswith("- "))
-    links = [f"<a href='{e(rec[k])}'>{label}</a>" for k, label in (("docx_file", "DOCX"), ("rendered_file", "LibreOffice PDF"))
+    links = [f"<a href='{e(rec[k])}'>{label}</a>" for k, label in (("docx_file", "Word file"), ("rendered_file", "LibreOffice PDF"))
              if rec.get(k)]
     if links:
-        items += f"<li>{' · '.join(links)}</li>"
+        items += f"<li>Download: {' · '.join(links)}</li>"
     error = f"<p class='down'>{e(rec['status'])}: {e(rec['error'] or '')}</p>" if rec.get("error") else ""
     quiet = " data-quiet" if rec["class"] in QUIET else ""
+    history = f"../docs/{safe_name(rec['name'])}.html" + (f"#to={sha[:10]}" if sha else "")
     return f"""<article class="doc card" id="{e(rec['name'])}"{quiet}>
-<div class="doc-head"><div><h3>{CLASSES[rec['class']][0]} {e(rec['name'])}</h3>
-<p class="desc">{e(description or '')}</p>
-<p class="desc"><a href="../docs/{e(safe_name(rec['name']))}.html{'#to=' + sha[:10] if sha else ''}">History and comparison with earlier commits →</a></p></div>
+<div class="doc-head"><div><h3>{e(title_of(rec['name'], corpus))}</h3><p class="name">{e(rec['name'])}</p>
+<p class="desc">{e((corpus.get(rec['name']) or {}).get('description') or '')}</p></div>
 <div class="score"><div class="num">{pct(rec['score'])}<small> / 100</small></div>
-<div class="meter"><span style="width:{100 * rec['score']:.1f}%"></span></div><div>{change}</div></div></div>
-{error}<ul class="parts">{''.join(f'<li>{k}<b>{pct(c.get(k))}</b></li>' for k in WEIGHTS)}</ul>
-{pages_html(rec, run_dir)}
-<details class="more"><summary>Details</summary><ul>{items}</ul></details>
+<div class="meter"><span style="width:{100 * rec['score']:.1f}%"></span></div>
+<div class="verdict">{verdict(rec['score'], rec['status'])}</div><div>{change}</div></div></div>
+{error}{pages_html(rec, run_dir)}
+<p class="doc-foot"><a href="{e(history)}">How this document changed across PdfCraft versions →</a></p>
+<details class="more"><summary>Score breakdown and details</summary>
+<ul class="parts">{''.join(f'<li>{k}<b>{pct(c.get(k))}</b></li>' for k in WEIGHTS)}</ul><ul>{items}</ul></details>
 </article>"""
 
 
 def pages_html(rec, run_dir=None):
-    """Each page as PDF | DOCX (| overlay). Where the page counts differ, a note says so, and the
+    """Each page as PDF | Word (| differences). Where the page counts differ, a note says so, and the
     side without a page gets a page-sized placeholder that explains why, rather than looking like a
     missing file."""
     e = html.escape
@@ -464,32 +520,29 @@ def pages_html(rec, run_dir=None):
         span = f"page {first}" if first == last else f"pages {first}–{last}"
         verb = "has" if first == last else "have"
         if n_docx > n_pdf:
-            what = f"DOCX {span} {verb} no PDF page to match: content pushed past the PDF's last page. "
+            what = f"Word {span} {verb} no PDF page to match: content pushed past the PDF's last page. "
         else:
-            what = f"PDF {span} {verb} no DOCX page to match. "
-        out.append(f"<p class='note'><b>⚠ Page count</b> The PDF has {n_pdf} page{'s' * (n_pdf != 1)}; the DOCX runs to "
-                   f"{n_docx} in LibreOffice. {what}Unmatched pages count 0 towards the visual score.</p>")
+            what = f"PDF {span} {verb} no page in the Word file to match. "
+        out.append(f"<p class='note'><b>⚠ Page count</b> The PDF has {n_pdf} page{'s' * (n_pdf != 1)}; the Word file "
+                   f"runs to {n_docx}. {what}A page without a match counts 0 towards the look score.</p>")
     pages = {p["page"]: p for p in rec.get("pages", [])}
     for shot in rec.get("images", []):
         k = shot["page"]
         pdf, docx, diff = shot.get("pdf") or shot.get("ref"), shot.get("docx"), shot.get("diff")
         p = pages.get(k, {})
-        about = [f"visual {pct(p.get('visual'))}"] + ([f"words {pct(p['text'])}"] if p.get("text") is not None else [])
-        if p.get("positioned"):
-            about.append("positioned text")
+        about = [f"look {pct(p.get('visual'))}"] + ([f"words {pct(p['text'])}"] if p.get("text") is not None else [])
         if pdf:
-            left = figure(pdf, f"PDF · page {k}" + ("" if docx else " · unmatched, counts 0 towards visual"))
+            left = figure(pdf, f"PDF · page {k}" + ("" if docx else " · nothing to match in the Word file"))
         else:
-            left = gap(f"No page {k} in the PDF", f"The PDF ends on page {n_pdf}. The DOCX page beside this holds "
+            left = gap(f"No page {k} in the PDF", f"The PDF ends on page {n_pdf}. The Word page beside this holds "
                                                   "content pushed past it.", f"PDF · ends on page {n_pdf}")
         if docx:
-            right = figure(docx, f"DOCX in LibreOffice · page {k} · "
-                                 + (", ".join(about) if pdf else "unmatched, counts 0 towards visual"))
+            right = figure(docx, f"Word file · page {k} · " + (", ".join(about) if pdf else "no PDF page to match"))
         else:
-            right = gap(f"No page {k} in the DOCX", f"The DOCX ends on page {n_docx}, so this PDF page has nothing to "
-                                                    "compare with.", f"DOCX · ends on page {n_docx}")
-        overlay = (figure(diff, "Overlay", " class='diff'") if diff
-                   else gap("No overlay", "Only one side has this page.", "Overlay", " class='diff'"))
+            right = gap(f"No page {k} in the Word file", f"The Word file ends on page {n_docx}, so this PDF page has "
+                                                         "nothing to compare with.", f"Word file · ends on page {n_docx}")
+        overlay = (figure(diff, "Differences: red only in the PDF, blue only in the Word file", " class='diff'") if diff
+                   else gap("No differences picture", "Only one side has this page.", "Differences", " class='diff'"))
         out.append(f"<div class='page'>{left}{right}{overlay}</div>")
     more = max(n_pdf or 0, n_docx or 0) - len(rec.get("images", []))
     if more > 0:

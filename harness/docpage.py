@@ -12,7 +12,8 @@ from .index import CSS as CHART_CSS
 from .index import SCRIPT as CHART_SCRIPT
 from .index import line_svg
 from .pipeline import safe_name
-from .report import SITE, THRESHOLD, commit_html, delta_html, page_html, pct, png_size, site_header, when
+from .report import (SITE, THRESHOLD, commit_html, delta_html, page_html, pct, png_size, site_header, title_of,
+                     verdict, when)
 
 CSS = CHART_CSS + """
 .pickers { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 6px; }
@@ -71,11 +72,11 @@ SCRIPT = """<script>
   }
   function docxSide(p, k) {
     const s = p.shots && p.shots.find((x) => x.page === k);
-    const cap = `DOCX · page ${k} · ${p.label}`;
+    const cap = `Word · page ${k} · ${p.label}`;
     if (s && s.docx) return shot(s.docx, s.docx_size, cap);
-    if (p.status !== "ok" && p.status !== "render-failed") return gap("No DOCX", `The export failed at ${p.label} (${p.status}).`, cap);
+    if (p.status !== "ok" && p.status !== "render-failed") return gap("No Word file", `The export failed at ${p.label} (${p.status}).`, cap);
     if (!p.shots) return gap("Screenshots pruned", "Only the newest runs, the baseline's and tagged commits keep theirs.", cap);
-    if (p.pages && k > p.pages[1]) return gap(`No page ${k} in this DOCX`, `At ${p.label} the DOCX ends on page ${p.pages[1]}.`, cap);
+    if (p.pages && k > p.pages[1]) return gap(`No page ${k} in this Word file`, `At ${p.label} the Word file ends on page ${p.pages[1]}.`, cap);
     return gap(`Page ${k} not shown`, "Past the report's --image-pages.", cap);
   }
   function render() {
@@ -91,12 +92,12 @@ SCRIPT = """<script>
     }));
     const notes = [];
     if (a.pdf !== b.pdf) notes.push("The PDF itself changed between these commits (the corpus was regenerated), so part of the difference is the input.");
-    if (a.pages && b.pages && a.pages[1] !== b.pages[1]) notes.push(`The DOCX runs to ${a.pages[1]} page${a.pages[1] === 1 ? "" : "s"} at ${a.label} and ${b.pages[1]} at ${b.label}; the PDF has ${b.pages[0]}.`);
+    if (a.pages && b.pages && a.pages[1] !== b.pages[1]) notes.push(`The Word file runs to ${a.pages[1]} page${a.pages[1] === 1 ? "" : "s"} at ${a.label} and ${b.pages[1]} at ${b.label}; the PDF has ${b.pages[0]}.`);
     $("note").hidden = !notes.length;
     $("note").replaceChildren(el("b", "", "⚠ Note"), notes.join(" "));
     const head = $("head");
     head.replaceChildren(el("div", "", "PDF"));
-    for (const p of [a, b]) { const d = el("div", "", `DOCX at ${p.label} `); d.append(el("span", "", `· ${fmt(p.score)}`)); head.append(d); }
+    for (const p of [a, b]) { const d = el("div", "", `Word at ${p.label} `); d.append(el("span", "", `· ${fmt(p.score)}`)); head.append(d); }
     const pdfOf = (k) => { for (const p of [b, a]) { const s = p.shots && p.shots.find((x) => x.page === k); if (s && s.pdf) return s; } return null; };
     const counts = [a, b].flatMap((p) => p.pages ? p.pages : []).concat([a, b].flatMap((p) => (p.shots || []).map((s) => s.page)));
     const n = Math.max(1, ...counts), rows = [];
@@ -124,7 +125,7 @@ SCRIPT = """<script>
 </script>"""
 
 
-def build(points, public, descriptions):
+def build(points, public, corpus):
     """{file name: page} for every test file of the tested commits."""
     public = Path(public)
     kept = {}
@@ -133,7 +134,7 @@ def build(points, public, descriptions):
         if scores.exists():
             kept[p["id"]] = {r["name"]: r for r in json.loads(scores.read_text())}
     names = sorted({name for p in points for name in p["docs"]})
-    return {f"{safe_name(name)}.html": doc_page(name, points, kept, public, descriptions.get(name)) for name in names}
+    return {f"{safe_name(name)}.html": doc_page(name, points, kept, public, corpus) for name in names}
 
 
 def series(name, points, kept, public):
@@ -167,22 +168,23 @@ def series(name, points, kept, public):
     return out
 
 
-def doc_page(name, points, kept, public, description):
+def doc_page(name, points, kept, public, corpus):
     e = html.escape
     items = series(name, points, kept, public)
     for i, it in enumerate(items):
         prev = items[i - 1]["sha"] if i else it["sha"]
         it["href"] = f"#from={prev}&to={it['sha']}"
-        it["hint"] = "Click to compare with the commit before" if i else "Click to show this commit"
+        it["hint"] = "Click to compare with the version before" if i else "Click to show this version"
     latest, first = items[-1], items[0]
     moves = sum(1 for a, b in zip(items, items[1:]) if abs(b["score"] - a["score"]) >= 100 * THRESHOLD)
     tiles = [
         ("Latest score", f"<div class='value hero'>{latest['score']:.1f}</div>",
-         (delta_html((latest["score"] - first["score"]) / 100, f" since {e(first['label'])}") if len(items) > 1
-          else "one tested commit") + f"<br>PdfCraft {commit_html(latest['entry']['pdfcraft'], 8)}"),
-        ("Range", f"<div class='value'>{min(i['score'] for i in items):.1f}–{max(i['score'] for i in items):.1f}</div>",
-         f"over {len(items)} tested commit{'s' * (len(items) != 1)}"),
-        ("Changes of 2 points or more", f"<div class='value'>{moves}</div>", "between neighbouring tested commits"),
+         f"<b>{verdict(latest['score'] / 100, latest['status'])}</b> · "
+         + (delta_html((latest["score"] - first["score"]) / 100, f" since {e(first['label'])}") if len(items) > 1
+            else "one version tested") + f"<br>PdfCraft {commit_html(latest['entry']['pdfcraft'], 8)}"),
+        ("Lowest and highest", f"<div class='value'>{min(i['score'] for i in items):.1f}–{max(i['score'] for i in items):.1f}</div>",
+         f"over {len(items)} PdfCraft version{'s' * (len(items) != 1)}"),
+        ("Big changes", f"<div class='value'>{moves}</div>", "of 2 points or more from one version to the next"),
     ]
     tiles_html = "".join(f"<div class='tile card'><div class='label'>{label}</div>{value}<div class='sub'>{sub}</div></div>"
                          for label, value, sub in tiles)
@@ -207,17 +209,19 @@ def doc_page(name, points, kept, public, description):
     doc_payload = json.dumps(doc_data, ensure_ascii=False).replace("</", "<\\/")
     body = f"""
 {site_header("../")}
-<div class="toolbar"><div><a href="../index.html#docx">← All DOCX reports</a>
-<span class="muted">History of one test file</span></div></div>
+<div class="toolbar"><div><a href="../index.html#docx">← All Word results</a>
+<span class="muted">One test document over time</span></div></div>
 <main>
-<p class="muted">Word (DOCX) · test file history · {len(items)} tested commit{'s' * (len(items) != 1)}</p>
-<h1>{e(name)}</h1>
-<p class="ink-2">{e(description or '')}</p>
+<p class="muted">Word (DOCX) · test document</p>
+<h1>{e(title_of(name, corpus))}</h1>
+<p class="name">{e(name)}</p>
+<p class="lead">{e((corpus.get(name) or {}).get('description') or '')}</p>
 <section class="tiles">{tiles_html}</section>
-<h2>Score over PdfCraft commits</h2>
+<h2>Score across PdfCraft versions</h2>
 <figure class="chart card"><div class="scroll">{svg}</div><div class="tip" hidden></div>
-<figcaption class="ink-2">Click a point to compare that commit with the one before it.</figcaption></figure>
-<h2>Compare two commits</h2>
+<figcaption class="ink-2">Click a point to compare that version with the one before it.</figcaption></figure>
+<h2>Compare two versions</h2>
+<p class="ink-2">Pick two PdfCraft versions to see the PDF next to the Word file each one made, page by page.</p>
 <section class="card cmp" id="compare">
 <div class="pickers"><label>From <select id="from"></select></label>
 <button id="swap" type="button" aria-label="Swap from and to">⇄</button>
@@ -227,11 +231,11 @@ def doc_page(name, points, kept, public, description):
 <div class="cmp-head" id="head"></div>
 <div id="pages"></div>
 </section>
-<h2>Every tested commit</h2>
+<details class="tech"><summary>Every version tested, in a table</summary>
 <div class="wrap"><table><thead><tr><th class="l">PdfCraft</th><th class="l">committed</th><th>score</th><th>Δ</th>
 {''.join(f'<th>{k}</th>' for k in PARTS)}<th>pages</th><th class="l"></th></tr></thead>
-<tbody>{''.join(rows)}</tbody></table></div>
+<tbody>{''.join(rows)}</tbody></table></div></details>
 </main>"""
     script = (f"<script type='application/json' id='points'>{payload}</script>"
               f"<script type='application/json' id='doc'>{doc_payload}</script>{CHART_SCRIPT}{SCRIPT}")
-    return page_html(f"{name} · DOCX history · {SITE}", body, script, CSS)
+    return page_html(f"{title_of(name, corpus)} · Word history · {SITE}", body, script, CSS)

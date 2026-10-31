@@ -681,6 +681,48 @@ COPIES = {
 }
 
 
+# Short plain titles for the report site, which shows them before the technical descriptions.
+TITLES = {
+    "chrome/academic-paper": "Academic paper",
+    "chrome/code-listing": "Code listing",
+    "chrome/form-fields": "Printed form",
+    "chrome/headings-emphasis": "Headings and text styles",
+    "chrome/highlights-callouts": "Highlights and callout boxes",
+    "chrome/images-figures": "Images and figures",
+    "chrome/international": "Many languages",
+    "chrome/invoice": "Invoice",
+    "chrome/letter-a4": "Business letter",
+    "chrome/lists": "Lists",
+    "chrome/mixed-page-sizes": "Mixed page sizes",
+    "chrome/multipage-report": "Eight-page report",
+    "chrome/prose-letter": "Plain prose",
+    "chrome/rotated-labels": "Rotated table headers",
+    "chrome/slide-deck": "Slide deck",
+    "chrome/small-print": "Small print",
+    "chrome/table-bordered": "Table with borders",
+    "chrome/table-borderless": "Table without borders",
+    "chrome/table-spans": "Table with merged cells",
+    "chrome/three-column-newsletter": "Three-column newsletter",
+    "chrome/two-column-article": "Two-column article",
+    "chrome/watermark-draft": "Memo with a watermark",
+    "handmade/raw-base14": "Standard PDF fonts",
+    "handmade/raw-rotate90": "Rotated page",
+    "handmade/raw-text-grid": "Timetable without lines",
+    "handmade/scanned-page": "Scanned page",
+    "libreoffice/lo-memo": "Memo from LibreOffice",
+    "libreoffice/lo-report": "Report from LibreOffice",
+    "mcp-suite/chrome-layout": "Columns and rotated text",
+    "mcp-suite/chrome-scripts": "Six pages of scripts",
+    "mcp-suite/chrome-turkish": "Turkish text",
+    "mcp-suite/content-array": "Tricky text placement",
+    "mcp-suite/image": "Image with a caption",
+    "mcp-suite/inherited": "Inherited page settings",
+    "mcp-suite/lo-writer-turkish": "Turkish document from LibreOffice",
+    "mcp-suite/tagged": "Tagged PDF",
+    "mcp-suite/type3": "Hand-drawn font glyphs",
+}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--force", action="append", default=[], help="remake NAME (e.g. chrome/invoice), or 'all'")
@@ -740,6 +782,9 @@ def main():
                     continue
                 shutil.copyfile(MCP_FIXTURES / f"{short}.pdf", CORPUS / f"{name}.pdf")
                 made.append(name)
+    for name, title in TITLES.items():
+        if name in meta:
+            meta[name] = {"title": title, **meta[name]}
     meta_path.write_text(json.dumps(dict(sorted(meta.items())), indent=1, ensure_ascii=False) + "\n")
     print(f"made {len(made)}: {', '.join(made) if made else 'nothing (all present; --force NAME to remake)'}")
 

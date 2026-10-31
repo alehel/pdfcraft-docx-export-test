@@ -9,10 +9,13 @@ import hashlib
 import html
 import json
 import math
+from pathlib import Path
 
 from .history import PARTS
 from .pipeline import safe_name
-from .report import CLASSES, FORMATS, SITE, commit_html, delta_html, page_html, pct, site_header, when
+from .report import (CLASSES, FORMATS, SITE, commit_html, delta_html, page_html, pct, png_size, site_header,
+                     title_of, verdict, version_label, when)
+from .score import WEIGHTS
 
 MAX_COLUMNS = 10  # tested commits in the per-document table
 
@@ -69,8 +72,52 @@ ul.coming li:last-child { border-bottom: 0; padding-bottom: 0; }
 .format { scroll-margin-top: 12px; }
 .format > h2 { font-size: 22px; margin: 36px 0 4px; display: flex; gap: 10px; align-items: center; }
 .format > h2 .pill { font-size: 13px; }
-h3.section { font-size: 17px; margin: 32px 0 10px; }
+h3.section { font-size: 18px; margin: 40px 0 10px; }
+.intro .lead { margin-bottom: 4px; }
+details.explain { max-width: 760px; }
+details.explain p { color: var(--ink-2); }
+ul.weights { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 8px; }
+ul.weights li { display: grid; grid-template-columns: 120px 48px 1fr; gap: 10px; color: var(--ink-2); }
+ul.weights b { color: var(--ink); }
+.fcard .verdict { font-size: 15px; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 16px; }
+.tcard { display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: inherit; padding: 16px; }
+.tcard:hover { border-color: var(--series); }
+.thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; margin-bottom: 4px; }
+.thumbs figure { margin: 0; }
+.thumbs .frame { height: 150px; display: flex; align-items: center; justify-content: center; }
+.thumbs img { display: block; max-width: 100%; max-height: 150px; width: auto; height: auto;
+  border: 1px solid var(--border); background: #fff; }
+.thumbs .gap { min-height: 0; height: 100%; width: 100%; padding: 8px; }
+.thumbs figcaption { font-size: 11px; color: var(--muted); margin-top: 3px; text-align: center; }
+.ttitle { font-size: 16px; }
+.tdesc { font-size: 13px; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; }
+.tscore { display: flex; align-items: baseline; gap: 10px; margin-top: auto; padding-top: 4px; }
+.tscore .num { font-size: 24px; font-weight: 600; }
+.tscore .verdict { font-size: 14px; }
+.tcard .meter { width: 100%; margin: 0; }
+.tchange { font-size: 13px; }
+.sorter { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+.sorter button { font: inherit; font-size: 13px; padding: 3px 12px; border-radius: 999px; border: 1px solid var(--axis);
+  background: var(--surface); color: var(--ink-2); cursor: pointer; }
+.sorter button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+details.dev { margin-top: 48px; padding-top: 8px; border-top: 1px solid var(--grid); }
 """
+
+SORT_SCRIPT = """<script>
+(() => {
+  const gallery = document.getElementById("gallery");
+  if (!gallery) return;
+  const buttons = document.querySelectorAll("[data-sort]");
+  for (const button of buttons) button.addEventListener("click", () => {
+    const by = button.dataset.sort, cards = [...gallery.children];
+    cards.sort((a, b) => by === "score" ? a.dataset.score - b.dataset.score : a.dataset.title.localeCompare(b.dataset.title));
+    gallery.append(...cards);
+    for (const other of buttons) other.setAttribute("aria-pressed", String(other === button));
+  });
+})();
+</script>"""
 
 SCRIPT = """<script>
 (() => {
@@ -204,7 +251,7 @@ def line_svg(values, key, *, width, height, margins, most_ticks, xlabels=None, t
     return "".join(out)
 
 
-def html_index(entries, available, baseline_run):
+def html_index(entries, available, baseline_run, public, corpus):
     e = html.escape
     entries = sorted(entries, key=lambda x: x["started"], reverse=True)
     points, env = tested_commits(entries)
@@ -252,47 +299,142 @@ def html_index(entries, available, baseline_run):
                  "mean": round(100 * p["mean"], 2),
                  "parts": {k: (None if v is None else round(100 * v, 2)) for k, v in (p.get("parts") or {}).items()}}
                 for p in points]
-        caption = ("Mean score of the corpus for each tested PdfCraft commit on main, oldest first; hover for details, "
-                   "click a point for its report.")
+        caption = ("The average score of all the test documents at each PdfCraft version tested, oldest first. Hover "
+                   "over a point for details, or click it to open that version's report.")
         if breaks:
             caption += " A vertical rule marks where the corpus changed, so the means either side are of different PDFs."
         others = sum(1 for x in entries if not x.get("only") and x.get("environment") != env)
         if others:
             caption += f" {others} full runs from other environments are listed below but not plotted."
         charts = f"""<figure class="chart card"><div class="scroll">{main}</div><div class="tip" hidden></div>
-<figcaption class="ink-2">{e(caption)}</figcaption></figure>
-<h3 class="section">Score parts</h3><div class="charts">{minis}</div>"""
+<figcaption class="ink-2">{e(caption)}</figcaption></figure>"""
+        parts_html = f"""<h3 class="section">Score parts</h3><div class="charts">{minis}</div>"""
         payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
         script = f"<script type='application/json' id='points'>{payload}</script>{SCRIPT}"
     else:
         charts = "<div class='card empty'>No full-corpus runs yet: <code>suite.py run</code> makes the first.</div>"
+        parts_html = ""
         script = ""
 
     latest = href(entries[0]) if entries else None
+    script += SORT_SCRIPT
     return page_html(SITE, f"""
 {site_header()}
 <main>
 <section class="intro">
-<h1>How faithfully does PdfCraft export a PDF?</h1>
-<p class="lead">Each test PDF is exported through PdfCraft's MCP server, and the result is compared with the original:
-its words, reading order, formatting, look and structure, scored from 0 to 100. Every run happens in a container with
-pinned tools and fonts, so a score means the same from one PdfCraft commit to the next.</p>
+<h1>How well does PdfCraft turn PDFs into other formats?</h1>
+<p class="lead">We take a set of test documents, convert each one with PdfCraft, and check how close the result is to
+the original PDF. Every document gets a score out of 100.</p>
+{explainer()}
 </section>
 <section class="formats-grid">{format_cards(points)}</section>
 <section class="format" id="docx">
 <h2>Word <span class="pill">DOCX</span></h2>
-<p class="ink-2">PdfCraft's <code>doc_export_office</code> writes a <code>.docx</code>. LibreOffice lays it out, so its
-pages can be set beside the PDF's. {len(entries)} runs so far · environment:
-<span title="{e(env or '')}">{e((env or '?').split(':')[0])}</span> ·
-{f'<a href="{e(latest)}">Latest report →</a>' if latest else ''}</p>
-<section class="tiles">{tiles_html}</section>
-<h3 class="section">Mean score over PdfCraft commits</h3>
+<p class="lead">{takeaway(points)}</p>
+<h3 class="section">Average score across PdfCraft versions</h3>
 {charts}
+<h3 class="section">The test documents</h3>
+<p class="ink-2">Each card shows a test document's first page as a PDF and as the Word file PdfCraft made. Click one to
+see every page side by side, and how it changed from version to version.</p>
+<div class="sorter" role="group" aria-label="Sort the documents"><span class="ink-2">Sort:</span>
+<button type="button" data-sort="score" aria-pressed="true">Lowest score first</button>
+<button type="button" data-sort="title" aria-pressed="false">A to Z</button></div>
+<div class="gallery" id="gallery">{gallery_html(points, public, corpus)}</div>
+<details class="tech dev"><summary>For developers: score parts, every score and every run</summary>
+<p class="ink-2">{len(entries)} runs so far · environment:
+<span title="{e(env or '')}">{e((env or '?').split(':')[0])}</span>
+{f' · <a href="{e(latest)}">latest report</a>' if latest else ''}</p>
+<section class="tiles">{tiles_html}</section>
+{parts_html}
 {documents_table(points, href)}
 <h3 class="section">All reports</h3>
 {reports_table(entries, points, available, baseline_run)}
+</details>
 </section>
 </main>""", script, CSS)
+
+
+PART_NAMES = {"words": ("Words", "Is all the text there, with nothing extra?"),
+              "order": ("Reading order", "Does the text come in the same order?"),
+              "format": ("Formatting", "Bold, italic, size, colour and font."),
+              "visual": ("Look", "Does each page look like the original?"),
+              "structure": ("Structure", "The same number of pages, page sizes and pictures.")}
+
+
+def explainer():
+    parts = "".join(f"<li><b>{PART_NAMES[k][0]}</b><span>{int(w * 100)} %</span><span>{PART_NAMES[k][1]}</span></li>"
+                    for k, w in WEIGHTS.items())
+    return f"""<details class="tech explain"><summary>How is the score worked out?</summary>
+<p>PdfCraft converts each document, and the result is opened in LibreOffice so its pages can be laid next to the
+original's. Five things are checked, and together they make the score:</p>
+<ul class="weights">{parts}</ul>
+<p>What a score means: 90 or more is <b>very close</b> to the original, 80 to 89 <b>close</b>, 70 to 79 has
+<b>noticeable differences</b>, and below 70 <b>big differences</b>.</p>
+<p>The tests always run with the same versions of every tool and font, so a score means the same from one PdfCraft
+version to the next.</p></details>"""
+
+
+def takeaway(points):
+    """The Word results in two or three plain sentences."""
+    if not points:
+        return "There are no results yet."
+    now = points[-1]
+    text = (f"On average, the Word files PdfCraft makes are {verdict(now['mean'], sentence=True)}: "
+            f"{pct(now['mean'])} out of 100 at {html.escape(version_label(now['pdfcraft']))}.")
+    if len(points) > 1:
+        d = now["mean"] - points[0]["mean"]
+        first = html.escape(version_label(points[0]["pdfcraft"]))
+        text += (f" That is {'up' if d > 0 else 'down'} {abs(100 * d):.1f} points since {first}, the first version tested."
+                 if abs(d) >= 0.0005 else f" That is the same as at {first}, the first version tested.")
+    bands = {}
+    for score, status, *_ in now["docs"].values():
+        label = verdict(score, status)
+        bands[label] = bands.get(label, 0) + 1
+    words = {"Very close": "are very close", "Close": "close", "Noticeable differences": "show noticeable differences",
+             "Big differences": "show big differences", "Export failed": "could not be converted"}
+    said = [f"{bands[k]} {words[k]}" for k in words if bands.get(k)]
+    if said:
+        text += f" Of the {len(now['docs'])} test documents, " + (", ".join(said[:-1]) + " and " + said[-1]
+                                                                   if len(said) > 1 else said[0]) + "."
+    return text
+
+
+def gallery_html(points, public, corpus):
+    """A card per test document of the latest tested commit: thumbnails of its first page as a PDF and
+    as a Word file, its score and verdict, and how far it moved since the first version tested."""
+    if not points:
+        return ""
+    e = html.escape
+    now = points[-1]
+    scores = Path(public) / now["id"] / "scores.json"
+    recs = {r["name"]: r for r in json.loads(scores.read_text())} if scores.exists() else {}
+    cards = []
+    for name, (score, status, sha, *_) in sorted(now["docs"].items(), key=lambda x: x[1][0]):
+        # The change since the first version tested with this same PDF.
+        since = next(p for p in points if name in p["docs"] and p["docs"][name][2] == sha)
+        change = score - since["docs"][name][0]
+        moved = delta_html(change, f" since {e(version_label(since['pdfcraft']))}") if abs(change) >= 0.02 else ""
+        thumbs = []
+        shots = (recs.get(name) or {}).get("images") or [{}]
+        for side, caption in (("pdf", "PDF"), ("docx", "Word")):
+            src = shots[0].get(side) or (shots[0].get("ref") if side == "pdf" else None)
+            if src:
+                size = png_size(Path(public) / now["id"] / src)
+                dims = f" width='{size[0]}' height='{size[1]}'" if size else ""
+                thumbs.append(f"<figure><div class='frame'><img loading='lazy' src='{e(now['id'])}/{e(src)}'{dims} alt=''>"
+                              f"</div><figcaption>{caption}</figcaption></figure>")
+            else:
+                thumbs.append(f"<figure><div class='frame'><div class='gap'><span>no page</span></div></div>"
+                              f"<figcaption>{caption}</figcaption></figure>")
+        title = title_of(name, corpus)
+        cards.append(
+            f"<a class='tcard card' href='docs/{e(safe_name(name))}.html' data-score='{100 * score:.2f}' data-title='{e(title)}'>"
+            f"<div class='thumbs'>{''.join(thumbs)}</div><b class='ttitle'>{e(title)}</b>"
+            f"<span class='tdesc'>{e((corpus.get(name) or {}).get('description') or '')}</span>"
+            f"<div class='tscore'><span class='num'>{pct(score)}</span><span class='verdict'>{verdict(score, status)}</span></div>"
+            f"<div class='meter'><span style='width:{100 * score:.1f}%'></span></div>"
+            f"{f'<span class=tchange>{moved}</span>' if moved else ''}</a>")
+    return "".join(cards)
 
 
 def sparkline(values, width=220, height=44):
@@ -317,16 +459,16 @@ def format_cards(points):
             continue
         if points:
             now = points[-1]
-            label = (now["pdfcraft"].get("tags") or [None])[0] or now["pdfcraft"]["sha"][:7]
-            change = (delta_html(now["mean"] - points[-2]["mean"], " since the commit before") if len(points) > 1
-                      else "the first tested commit")
-            body = (f"<div class='value hero'>{pct(now['mean'])}</div><div class='sub'>mean score at "
-                    f"{html.escape(label)} · {change}</div>{sparkline([p['mean'] for p in points[-12:]])}"
-                    f"<div class='sub'>{len(now['docs'])} test PDFs · {len(points)} tested commits</div>")
+            change = (delta_html(now["mean"] - points[0]["mean"], f" since {html.escape(version_label(points[0]['pdfcraft']))}")
+                      if len(points) > 1 else "the first version tested")
+            body = (f"<div class='value hero'>{pct(now['mean'])}</div><div class='verdict'>{verdict(now['mean'])}</div>"
+                    f"<div class='sub'>average score at {html.escape(version_label(now['pdfcraft']))} · {change}</div>"
+                    f"{sparkline([p['mean'] for p in points[-12:]])}"
+                    f"<div class='sub'>{len(now['docs'])} test documents · {len(points)} PdfCraft versions tested</div>")
         else:
             body = "<p class='ink-2'>No full-corpus run yet.</p>"
         cards.append(f"<a class='fcard card live' href='#{key}'><div class='fname'>{name} <span class='pill'>{ext}</span>"
-                     f"</div>{body}<span class='go'>See the {ext} results ↓</span></a>")
+                     f"</div>{body}<span class='go'>See the {name} results ↓</span></a>")
     coming = "".join(f"<li>{name} <span class='pill'>{ext}</span></li>" for _, name, ext, measured in FORMATS if not measured)
     if coming:
         cards.append(f"<div class='fcard card soon-card'><div class='fname'>Coming soon</div><p class='ink-2'>PdfCraft "
