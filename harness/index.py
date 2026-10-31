@@ -12,7 +12,7 @@ import math
 
 from .history import PARTS
 from .pipeline import safe_name
-from .report import CLASSES, commit_html, delta_html, page_html, pct, when
+from .report import CLASSES, FORMATS, SITE, commit_html, delta_html, page_html, pct, site_header, when
 
 MAX_COLUMNS = 10  # tested commits in the per-document table
 
@@ -46,6 +46,30 @@ td.u1 { background: var(--up-wash); } td.u2 { background: var(--up-wash-2); }
 td.d1 { background: var(--down-wash); } td.d2 { background: var(--down-wash-2); }
 th small { display: block; font-weight: 400; color: var(--muted); }
 .empty { padding: 28px; text-align: center; color: var(--ink-2); }
+.intro { margin: 18px 0 18px; max-width: 820px; }
+.intro h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; }
+.lead { font-size: 16px; color: var(--ink-2); margin: 0; }
+.formats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin: 0 0 8px; }
+.fcard { display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: inherit; }
+.fcard .fname { font-weight: 600; font-size: 15px; display: flex; gap: 8px; align-items: center; }
+.fcard.live:hover { border-color: var(--series); }
+.fcard .go { margin-top: auto; padding-top: 6px; color: var(--ink-2); font-size: 13px; }
+.fcard.live:hover .go { color: var(--ink); text-decoration: underline; }
+.fcard .value.hero { font-size: 48px; font-weight: 600; line-height: 1.1; margin-top: 6px; }
+.fcard .sub { font-size: 13px; color: var(--ink-2); }
+.soon-card { background: transparent; border-style: dashed; }
+.soon-card p { margin: 0; font-size: 13px; }
+ul.coming { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+ul.coming li { display: flex; justify-content: space-between; align-items: center; color: var(--ink-2);
+  padding-bottom: 8px; border-bottom: 1px solid var(--grid); }
+ul.coming li:last-child { border-bottom: 0; padding-bottom: 0; }
+.spark { width: 100%; max-width: 260px; height: 44px; margin: 4px 0; }
+.spark polyline { fill: none; stroke: var(--muted); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.spark circle { fill: var(--series); stroke: var(--surface); stroke-width: 2; }
+.format { scroll-margin-top: 12px; }
+.format > h2 { font-size: 22px; margin: 36px 0 4px; display: flex; gap: 10px; align-items: center; }
+.format > h2 .pill { font-size: 13px; }
+h3.section { font-size: 17px; margin: 32px 0 10px; }
 """
 
 SCRIPT = """<script>
@@ -192,17 +216,14 @@ def html_index(entries, available, baseline_run):
         pc = entry["pdfcraft"]
         return (pc.get("tags") or [None])[0] or (pc.get("sha") or "")[:7] or "custom"
 
-    # -- tiles
+    # -- the format's own tiles (its headline number is on its card at the top)
     tiles = []
     if points:
         now = points[-1]
-        sub = (delta_html(now["mean"] - points[-2]["mean"], f" since {e(name(points[-2]))}") if len(points) > 1
-               else "the first tested commit")
-        tiles.append(("Latest mean score", f"<div class='value hero'>{pct(now['mean'])}</div>",
-                      f"{sub}<br>PdfCraft {commit_html(now['pdfcraft'], 8)}"))
         tiles.append(("Tested commits", f"<div class='value'>{len(points)}</div>",
                       f"from {when(points[0]['pdfcraft'].get('date') or points[0]['started'], False)} "
                       f"to {when(now['pdfcraft'].get('date') or now['started'], False)}"))
+        tiles.append(("Test PDFs", f"<div class='value'>{len(now['docs'])}</div>", "in the latest tested commit's run"))
     tiles.append(("Reports", f"<div class='value'>{len(available)}</div>",
                   f"of {len(entries)} runs; older ones are pruned, their scores kept"))
     base = next((x for x in entries if x["id"] == baseline_run), None)
@@ -240,26 +261,77 @@ def html_index(entries, available, baseline_run):
             caption += f" {others} full runs from other environments are listed below but not plotted."
         charts = f"""<figure class="chart card"><div class="scroll">{main}</div><div class="tip" hidden></div>
 <figcaption class="ink-2">{e(caption)}</figcaption></figure>
-<h2>Score parts</h2><div class="charts">{minis}</div>"""
+<h3 class="section">Score parts</h3><div class="charts">{minis}</div>"""
         payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
         script = f"<script type='application/json' id='points'>{payload}</script>{SCRIPT}"
     else:
         charts = "<div class='card empty'>No full-corpus runs yet: <code>suite.py run</code> makes the first.</div>"
         script = ""
 
-    return page_html("DOCX export reports", f"""
+    latest = href(entries[0]) if entries else None
+    return page_html(SITE, f"""
+{site_header()}
 <main>
-<p class="muted">PdfCraft DOCX export test suite · {len(entries)} runs ·
-<span title="{e(env or '')}">{e((env or '?').split(':')[0])}</span></p>
-<h1>DOCX export accuracy</h1>
-{f'<p><a href="{e(href(entries[0]))}">Latest report →</a></p>' if entries and href(entries[0]) else ''}
+<section class="intro">
+<h1>How faithfully does PdfCraft export a PDF?</h1>
+<p class="lead">Each test PDF is exported through PdfCraft's MCP server, and the result is compared with the original:
+its words, reading order, formatting, look and structure, scored from 0 to 100. Every run happens in a container with
+pinned tools and fonts, so a score means the same from one PdfCraft commit to the next.</p>
+</section>
+<section class="formats-grid">{format_cards(points)}</section>
+<section class="format" id="docx">
+<h2>Word <span class="pill">DOCX</span></h2>
+<p class="ink-2">PdfCraft's <code>doc_export_office</code> writes a <code>.docx</code>. LibreOffice lays it out, so its
+pages can be set beside the PDF's. {len(entries)} runs so far · environment:
+<span title="{e(env or '')}">{e((env or '?').split(':')[0])}</span> ·
+{f'<a href="{e(latest)}">Latest report →</a>' if latest else ''}</p>
 <section class="tiles">{tiles_html}</section>
-<h2>Mean score over PdfCraft commits</h2>
+<h3 class="section">Mean score over PdfCraft commits</h3>
 {charts}
 {documents_table(points, href)}
-<h2>All reports</h2>
+<h3 class="section">All reports</h3>
 {reports_table(entries, points, available, baseline_run)}
+</section>
 </main>""", script, CSS)
+
+
+def sparkline(values, width=220, height=44):
+    """The trend behind a headline number: a thin line, the latest point marked."""
+    if len(values) < 2:
+        return ""
+    lo, hi = min(values), max(values)
+    span = (hi - lo) or 1
+    xs = [round(4 + i * (width - 8) / (len(values) - 1), 1) for i in range(len(values))]
+    ys = [round(height - 4 - (v - lo) / span * (height - 8), 1) for v in values]
+    points = " ".join(f"{x},{y}" for x, y in zip(xs, ys))
+    return (f"<svg class='spark' viewBox='0 0 {width} {height}' aria-hidden='true'><polyline points='{points}'/>"
+            f"<circle cx='{xs[-1]}' cy='{ys[-1]}' r='4'/></svg>")
+
+
+def format_cards(points):
+    """A card per measured export format, with its latest mean score and trend, and one card listing
+    the formats PdfCraft exports that are not measured yet."""
+    cards = []
+    for key, name, ext, measured in FORMATS:
+        if not measured:
+            continue
+        if points:
+            now = points[-1]
+            label = (now["pdfcraft"].get("tags") or [None])[0] or now["pdfcraft"]["sha"][:7]
+            change = (delta_html(now["mean"] - points[-2]["mean"], " since the commit before") if len(points) > 1
+                      else "the first tested commit")
+            body = (f"<div class='value hero'>{pct(now['mean'])}</div><div class='sub'>mean score at "
+                    f"{html.escape(label)} · {change}</div>{sparkline([p['mean'] for p in points[-12:]])}"
+                    f"<div class='sub'>{len(now['docs'])} test PDFs · {len(points)} tested commits</div>")
+        else:
+            body = "<p class='ink-2'>No full-corpus run yet.</p>"
+        cards.append(f"<a class='fcard card live' href='#{key}'><div class='fname'>{name} <span class='pill'>{ext}</span>"
+                     f"</div>{body}<span class='go'>See the {ext} results ↓</span></a>")
+    coming = "".join(f"<li>{name} <span class='pill'>{ext}</span></li>" for _, name, ext, measured in FORMATS if not measured)
+    if coming:
+        cards.append(f"<div class='fcard card soon-card'><div class='fname'>Coming soon</div><p class='ink-2'>PdfCraft "
+                     f"exports these too. They will be measured the same way.</p><ul class='coming'>{coming}</ul></div>")
+    return "".join(cards)
 
 
 def documents_table(points, href):
@@ -301,7 +373,7 @@ def documents_table(points, href):
         latest = cols[-1]["docs"][doc]
         label = f"<a href='docs/{e(safe_name(doc))}.html'>{e(doc)}</a>"
         rows.append(f"<tr><td class='l'>{label}</td>{''.join(cells)}<td>{delta_html(latest[0] - first[0])}</td></tr>")
-    return f"""<h2>Documents</h2>
+    return f"""<h3 class="section">Documents</h3>
 <p class="ink-2">Each PDF's score at the last {len(cols)} tested commits. A tint marks a change from the column before: blue
 up, red down, darker and with an arrow from 2 points; ◆ means the PDF itself changed. The last column is the change
 since the first column with the same PDF. Click a name for that file's history, or a score to see that commit's DOCX

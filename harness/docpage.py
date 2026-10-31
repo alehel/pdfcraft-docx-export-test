@@ -12,7 +12,7 @@ from .index import CSS as CHART_CSS
 from .index import SCRIPT as CHART_SCRIPT
 from .index import line_svg
 from .pipeline import safe_name
-from .report import THRESHOLD, commit_html, delta_html, page_html, pct, png_size, when
+from .report import SITE, THRESHOLD, commit_html, delta_html, page_html, pct, png_size, site_header, when
 
 CSS = CHART_CSS + """
 .pickers { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 6px; }
@@ -206,10 +206,11 @@ def doc_page(name, points, kept, public, description):
     payload = json.dumps(chart_data, ensure_ascii=False).replace("</", "<\\/")
     doc_payload = json.dumps(doc_data, ensure_ascii=False).replace("</", "<\\/")
     body = f"""
-<div class="toolbar"><div><a href="../index.html">← All reports</a>
+{site_header("../")}
+<div class="toolbar"><div><a href="../index.html#docx">← All DOCX reports</a>
 <span class="muted">History of one test file</span></div></div>
 <main>
-<p class="muted">Test file · {len(items)} tested commit{'s' * (len(items) != 1)}</p>
+<p class="muted">Word (DOCX) · test file history · {len(items)} tested commit{'s' * (len(items) != 1)}</p>
 <h1>{e(name)}</h1>
 <p class="ink-2">{e(description or '')}</p>
 <section class="tiles">{tiles_html}</section>
@@ -233,4 +234,4 @@ def doc_page(name, points, kept, public, description):
 </main>"""
     script = (f"<script type='application/json' id='points'>{payload}</script>"
               f"<script type='application/json' id='doc'>{doc_payload}</script>{CHART_SCRIPT}{SCRIPT}")
-    return page_html(f"{name} · DOCX export history", body, script, CSS)
+    return page_html(f"{name} · DOCX history · {SITE}", body, script, CSS)

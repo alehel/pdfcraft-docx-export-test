@@ -1,6 +1,10 @@
-# PdfCraft DOCX export test suite
+# PdfCraft Export Quality Measure
 
-Measures how faithfully PdfCraft exports PDFs to Word. Every PDF in `corpus/` is converted to
+Measures how faithfully PdfCraft exports PDFs to other formats, and publishes the results as a
+static site (`public/`). Word (DOCX) is measured today. PdfCraft's `doc_export_office` also
+writes PowerPoint (PPTX), HTML, Rich Text (RTF) and Markdown; the site lists them as coming soon.
+
+For DOCX, every PDF in `corpus/` is converted to
 DOCX through PdfCraft's MCP server (`pdfcraft-cli mcp`: `doc_open`, then `doc_export_office`
 with a `.docx` path), and the DOCX is compared with the PDF it came from. Each PDF gets a score
 from 0 to 100. Scores are compared with an accepted baseline, so a PdfCraft change that makes the
@@ -60,7 +64,11 @@ corpus [--force NAME|all]  # (re)make missing corpus files with the pinned Chrom
 
 ## Reports
 
-Open `public/index.html` in a browser. It lists every report and shows accuracy over time.
+Open `public/index.html` in a browser. Every page carries the site's header: "PdfCraft Export
+Quality Measure", the measured formats, and the ones still to come. The index starts with what
+the site measures and a card per format: Word (DOCX) with its latest mean score and trend, and
+one card for the formats coming next. The DOCX section below lists every report and shows
+accuracy over time.
 
 `public/` holds everything the reports show: `index.html`, `history.jsonl`, a history page per
 test file in `docs/`, and a folder per run. It is not in git. Every link inside is relative, so any static web server or static host

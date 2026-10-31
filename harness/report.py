@@ -109,7 +109,7 @@ def header_lines(meta, baseline):
 
 
 def markdown(meta, records, baseline):
-    out = [f"# DOCX export: run {meta['id']}", ""]
+    out = [f"# {SITE}: Word (DOCX), run {meta['id']}", ""]
     out += header_lines(meta, baseline)
     counts = summary_counts(records)
     out += ["", f"**{len(records)} PDFs, mean score {pct(mean_score(records))}**  " +
@@ -242,6 +242,17 @@ td.subject {{ max-width: 200px; overflow: hidden; text-overflow: ellipsis; }}
 .note {{ margin: 0 0 12px; padding: 7px 12px; border-left: 3px solid var(--warn); border-radius: 0 6px 6px 0;
   background: var(--plane); color: var(--ink-2); }}
 .note b {{ color: var(--ink); margin-right: 6px; }}
+header.site {{ background: var(--surface); border-bottom: 1px solid var(--border); }}
+header.site > div {{ max-width: 1240px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 8px 24px;
+  align-items: center; flex-wrap: wrap; }}
+.brand {{ display: inline-flex; gap: 10px; align-items: center; text-decoration: none; font-size: 16px; color: var(--ink); }}
+.brand b {{ font-weight: 700; }}
+.mark {{ width: 26px; height: 26px; flex: none; }}
+nav.formats {{ display: flex; gap: 6px 12px; align-items: center; flex-wrap: wrap; margin-left: auto; font-size: 13px; }}
+.fmt {{ padding: 2px 11px; border-radius: 999px; border: 1px solid var(--border); text-decoration: none; color: var(--ink-2); }}
+.fmt.on {{ background: var(--ink); border-color: var(--ink); color: var(--surface); font-weight: 600; }}
+.fmt small {{ opacity: 0.75; margin-left: 2px; }}
+.soon {{ color: var(--muted); }}
 figcaption {{ color: var(--ink-2); font-size: 12px; margin-top: 4px; }}
 .page figure.diff {{ display: none; }}
 body:has(#overlays:checked) .page {{ grid-template-columns: repeat(3, minmax(0, 1fr)); }}
@@ -255,6 +266,30 @@ details.more ul {{ margin: 6px 0 0; padding-left: 18px; }}
 """
 
 QUIET = ("same", "new", "corpus-changed")  # hidden by "Only changed or failing"
+
+SITE = "PdfCraft Export Quality Measure"
+# What PdfCraft's doc_export_office writes, and whether the suite measures it yet. A measured
+# format has a section on the index (index.html#<key>).
+FORMATS = [("docx", "Word", "DOCX", True), ("pptx", "PowerPoint", "PPTX", False), ("html", "HTML", "HTML", False),
+           ("rtf", "Rich Text", "RTF", False), ("md", "Markdown", "MD", False)]
+MARK = ("<svg class='mark' viewBox='0 0 26 26' aria-hidden='true'><rect x='2' y='2' width='13' height='17' rx='2' "
+        "fill='var(--series)'/><rect x='10' y='7' width='13' height='17' rx='2' fill='var(--surface)' stroke='var(--series)' "
+        "stroke-width='2'/><path d='M13.5 13h6M13.5 16.5h6M13.5 20h4' stroke='var(--series)' stroke-width='1.6' "
+        "stroke-linecap='round'/></svg>")
+
+
+def site_header(root="", active="docx"):
+    """The bar on every page: the site's name, the measured formats, and the ones still to come."""
+    live = ""
+    for key, name, ext, measured in FORMATS:
+        if measured:
+            current = " on' aria-current='page" if key == active else ""
+            live += f"<a class='fmt{current}' href='{root}index.html#{key}'>{name} <small>{ext}</small></a>"
+    soon = " · ".join(name for _, name, _, measured in FORMATS if not measured)
+    return (f"<header class='site'><div><a class='brand' href='{root}index.html'>{MARK}"
+            f"<span><b>PdfCraft</b> Export Quality Measure</span></a>"
+            f"<nav class='formats' aria-label='Export formats'>{live}"
+            f"<span class='soon'>Coming soon: {soon}</span></nav></div></header>")
 
 
 def page_html(title, body, script="", css=""):
@@ -348,14 +383,15 @@ def html_report(meta, records, baseline, descriptions=None, run_dir=None):
             + f"<td>{pages}</td><td class='l'>{e(rec['status'])}</td></tr>")
     title = (pc.get("tags") or [None])[0] or (pc.get("sha") or "")[:10] or "custom build"
     body = f"""
+{site_header("../")}
 <div class="toolbar"><div>
-<a href="../index.html">← All reports</a>
+<a href="../index.html#docx">← All DOCX reports</a>
 <label><input type="checkbox" id="overlays"> Overlays</label>
 <label><input type="checkbox" id="changed"> Only changed or failing</label>
 <span class="muted">Overlay: red is ink only in the PDF, blue only in the DOCX</span>
 </div></div>
 <main>
-<p class="muted">DOCX export report · run {e(meta['id'])} · {when(meta.get('started'))} · {meta.get('seconds', 0):.0f} s</p>
+<p class="muted">Word (DOCX) export report · run {e(meta['id'])} · {when(meta.get('started'))} · {meta.get('seconds', 0):.0f} s</p>
 <h1>PdfCraft {commit_html(pc)}</h1>
 <p class="ink-2">{commit_line(pc)}</p>
 <section class="tiles">{tiles_html}</section>
@@ -367,7 +403,7 @@ def html_report(meta, records, baseline, descriptions=None, run_dir=None):
 <h2>Documents</h2>
 {''.join(doc_html(rec, descriptions.get(rec['name']), run_dir, pc.get('sha')) for rec in sorted(records, key=sort_key))}
 </main>"""
-    return page_html(f"DOCX export · {title} · {meta['id']}", body)
+    return page_html(f"{title} · DOCX report · {SITE}", body)
 
 
 def inline_md(text):
