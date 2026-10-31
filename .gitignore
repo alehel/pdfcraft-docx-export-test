@@ -1,8 +1,8 @@
 # pdfcraft checkout and its build (a git worktree of ~/dev/craft/pdfcraft)
 /src/
 /target/
-# per-run output; accepted scores are copied into baseline/
-/runs/
+# reports: a folder per run, index.html, history.jsonl; accepted scores are copied into baseline/
+/public/
 /logs/
 # LibreOffice profiles
 /cache/

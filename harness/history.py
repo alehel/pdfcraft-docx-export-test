@@ -1,4 +1,4 @@
-"""The run history (runs/history.jsonl): one line per run with its scores, kept when old run folders
+"""The run history (public/history.jsonl): one line per run with its scores, kept when old run folders
 are pruned, so the index can chart accuracy over every run ever made."""
 
 import json

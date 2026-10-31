@@ -22,7 +22,7 @@ docker compose run --rm suite run          # export + score the whole corpus, co
 With Podman, write `podman compose` instead of `docker compose`.
 
 The image ([Dockerfile](Dockerfile)) is only the environment. compose mounts this checkout at
-`/suite`, so runs and baselines land here, and keeps the pdfcraft clone, its Cargo build and the
+`/suite`, so reports (`public/`) and baselines land here, and keeps the pdfcraft clone, its Cargo build and the
 LibreOffice profiles in the `work` volume. The image pins:
 
 | Tool | Version | Used for |
@@ -51,7 +51,7 @@ run --only 'chrome/'       # a subset (regex on corpus names)
 compare RUN_A RUN_B        # score changes between two runs (same build twice = flake check)
 accept [RUN]               # make RUN (default: the latest) the baseline; then commit baseline/
 report [RUN]               # rebuild a run's reports from its scores.json
-index                      # rebuild runs/index.html
+index                      # rebuild public/index.html
 status                     # build, origin/main, baseline, environment, recent runs
 corpus [--force NAME|all]  # (re)make missing corpus files with the pinned Chromium and LibreOffice
 ```
@@ -60,9 +60,13 @@ corpus [--force NAME|all]  # (re)make missing corpus files with the pinned Chrom
 
 ## Reports
 
-Open `runs/index.html` in a browser. It lists every report and shows accuracy over time.
+Open `public/index.html` in a browser. It lists every report and shows accuracy over time.
 
-**Each run** writes `runs/<id>/report.html`, about 10 MB with its images:
+`public/` holds everything the reports show: `index.html`, `history.jsonl`, and a folder per
+run. It is not in git. Every link inside is relative, so any static web server or static host
+can serve the folder as it is.
+
+**Each run** writes `public/<id>/report.html`, about 10 MB with its images:
 
 - **Header:** the PdfCraft commit, with links to it on GitHub, its tag if it has one (otherwise
   its `git describe`), and the pull request for `build --pr`. Also the commit date, the
@@ -79,7 +83,7 @@ Open `runs/index.html` in a browser. It lists every report and shows accuracy ov
 The run folder also has `report.md`, `scores.json`, the exported `docx/` and LibreOffice's
 `rendered/` PDFs.
 
-**The index** (`runs/index.html`) is rebuilt by `run`, `report`, `accept` and `index`:
+**The index** (`public/index.html`) is rebuilt by `run`, `report`, `accept` and `index`:
 
 - **Tiles:** the latest mean score and its change, the number of tested commits, the number of
   reports, and the baseline.
@@ -94,7 +98,7 @@ A *tested commit* is a full-corpus run of a commit on main (pull-request builds 
 not plotted), in the same environment as the latest run; the latest run of each commit counts.
 A vertical rule marks a change of corpus, since the means either side are of different PDFs.
 
-**Keeping history.** Every run adds a line to `runs/history.jsonl`, which the charts and
+**Keeping history.** Every run adds a line to `public/history.jsonl`, which the charts and
 tables are built from and which is never pruned. Run folders are pruned to the newest 10 (set
 `SUITE_KEEP_RUNS`), plus the baseline's run and the latest run of every tagged commit. The
 index still lists pruned runs, without a link. To chart a range of releases:

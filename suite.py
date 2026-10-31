@@ -7,7 +7,7 @@
   suite.py compare RUN_A RUN_B                     score changes from run A to run B (same build twice = flake check)
   suite.py accept [RUN]                            make RUN (default: the latest) the baseline
   suite.py status                                  build, baseline and recent runs
-  suite.py index                                   rebuild runs/index.html (every report, accuracy over time)
+  suite.py index                                   rebuild public/index.html (every report, accuracy over time)
   suite.py corpus [--force NAME|all]               make missing corpus files (tools/make_corpus.py)
 """
 
@@ -40,8 +40,10 @@ TARGET = WORK / "target"
 BIN = TARGET / "debug" / "pdfcraft-cli"
 CACHE = WORK / "cache"
 CORPUS = SUITE / "corpus"
-RUNS = SUITE / "runs"
-HISTORY = RUNS / "history.jsonl"
+# Everything to look at, as a static site: index.html, history.jsonl, and a folder per run with its
+# report and the files the report shows.
+PUBLIC = SUITE / "public"
+HISTORY = PUBLIC / "history.jsonl"
 BASELINE = SUITE / "baseline"
 # A local clone (src/ becomes a worktree of it) or a URL (src/ becomes a clone).
 PDFCRAFT_REPO = os.environ.get("PDFCRAFT_REPO", str(Path.home() / "dev" / "craft" / "pdfcraft"))
@@ -49,7 +51,7 @@ PDFCRAFT_REPO = os.environ.get("PDFCRAFT_REPO", str(Path.home() / "dev" / "craft
 ENVIRONMENT = os.environ.get("SUITE_ENVIRONMENT") or f"host: {platform.system()} {platform.machine()}"
 TOOLCHAIN_PATH = f"{Path.home()}/.cargo/bin:{Path.home()}/.rustup/toolchains/stable-aarch64-apple-darwin/bin:/opt/homebrew/bin"
 # Run folders kept: the newest KEEP_RUNS, the baseline's, and the latest run of every tagged commit.
-# Older ones are deleted; their scores stay in runs/history.jsonl.
+# Older ones are deleted; their scores stay in public/history.jsonl.
 KEEP_RUNS = int(os.environ.get("SUITE_KEEP_RUNS", "10"))
 
 
@@ -191,7 +193,7 @@ def cmd_run(args):
     identity = pdfcraft_identity(cli)
     now = dt.datetime.now(dt.timezone.utc)
     run_id = f"{now:%Y%m%d-%H%M%S}-{identity['sha'][:8] or 'custom'}" + (f"-{args.label}" if args.label else "")
-    run_dir = RUNS / run_id
+    run_dir = PUBLIC / run_id
     run_dir.mkdir(parents=True)
     baseline = None if args.no_baseline else load_json(BASELINE / "scores.json")
     meta = {"id": run_id, "started": now.isoformat(timespec="seconds"), "label": args.label, "pdfcraft": identity,
@@ -244,18 +246,18 @@ def write_reports(run_dir, meta, records, baseline):
 
 def update_index(entry=None):
     """Add a run to the history (with any run folders it lacks), prune old run folders, and rebuild
-    runs/index.html."""
-    RUNS.mkdir(exist_ok=True)
+    public/index.html."""
+    PUBLIC.mkdir(exist_ok=True)
     if entry:
         history.append(HISTORY, entry)
-    entries = history.backfill(HISTORY, RUNS)
+    entries = history.backfill(HISTORY, PUBLIC)
     refresh_commits(entries)
     baseline = load_json(BASELINE / "scores.json")
     baseline_run = baseline["meta"].get("run") if baseline else None
     prune_runs(entries, baseline_run)
-    available = {p.name for p in RUNS.iterdir() if (p / "report.html").exists()}
-    (RUNS / "index.html").write_text(index.html_index(entries, available, baseline_run))
-    return RUNS / "index.html"
+    available = {p.name for p in PUBLIC.iterdir() if (p / "report.html").exists()}
+    (PUBLIC / "index.html").write_text(index.html_index(entries, available, baseline_run))
+    return PUBLIC / "index.html"
 
 
 def refresh_commits(entries):
@@ -272,7 +274,7 @@ def refresh_commits(entries):
 
 
 def prune_runs(entries, baseline_run):
-    runs = sorted(p.name for p in RUNS.iterdir() if p.is_dir())
+    runs = sorted(p.name for p in PUBLIC.iterdir() if p.is_dir())
     keep = set(runs[-KEEP_RUNS:]) | {baseline_run}
     tagged = {}
     for entry in sorted(entries, key=lambda e: e["started"]):
@@ -282,7 +284,7 @@ def prune_runs(entries, baseline_run):
     keep |= set(tagged.values())
     for name in runs:
         if name not in keep:
-            shutil.rmtree(RUNS / name, ignore_errors=True)
+            shutil.rmtree(PUBLIC / name, ignore_errors=True)
 
 
 def shown(path):
@@ -301,12 +303,12 @@ def summarize(run_dir, meta, records):
             why = f" — {rec['error']}" if rec.get("error") else ""
             print(f"  {report.CLASSES[rec['class']][0]} {rec['name']}: {100 * rec['score']:.1f}{delta}{why}")
     print(f"\nreport: {shown(run_dir / 'report.html')}\n        {shown(run_dir / 'report.md')}"
-          f"\nindex:  {shown(RUNS / 'index.html')}")
+          f"\nindex:  {shown(PUBLIC / 'index.html')}")
     return 1 if counts.get("regression") or counts.get("failed") else 0
 
 
 def resolve_run(name):
-    runs = sorted((p for p in RUNS.iterdir() if p.is_dir()), key=lambda p: p.name) if RUNS.exists() else []
+    runs = sorted((p for p in PUBLIC.iterdir() if p.is_dir()), key=lambda p: p.name) if PUBLIC.exists() else []
     if not runs:
         sys.exit("no runs yet")
     if name in (None, "latest"):
@@ -388,8 +390,8 @@ def cmd_status(args):
         print("baseline: none")
     print(f"corpus:   {len(corpus_docs())} PDFs")
     print(f"environment: {ENVIRONMENT}")
-    if RUNS.exists():
-        for run_dir in sorted(RUNS.iterdir())[-5:]:
+    if PUBLIC.exists():
+        for run_dir in sorted(PUBLIC.iterdir())[-5:]:
             records = load_json(run_dir / "scores.json")
             if records:
                 print(f"  run {run_dir.name}: {len(records)} PDFs, mean {100 * report.mean_score(records):.1f}")
@@ -426,7 +428,7 @@ def main():
     a.add_argument("run", nargs="?")
     a.add_argument("--force", action="store_true")
     sub.add_parser("status")
-    sub.add_parser("index", help="rebuild runs/index.html")
+    sub.add_parser("index", help="rebuild public/index.html")
     co = sub.add_parser("corpus", help="make missing corpus files")
     co.add_argument("--force", action="append", default=[], help="remake NAME (e.g. chrome/invoice), or 'all'")
     args = parser.parse_args()

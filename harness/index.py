@@ -1,4 +1,4 @@
-"""runs/index.html: every report, and accuracy over the PdfCraft commits that were tested.
+"""public/index.html: every report, and accuracy over the PdfCraft commits that were tested.
 
 A tested commit is a full-corpus run (no --only) of a commit on main, made in the same environment
 as the latest full run (scores from elsewhere are not comparable); when a commit was run more than
