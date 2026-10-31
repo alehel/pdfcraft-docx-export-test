@@ -82,12 +82,16 @@ def mean_score(records):
 def header_lines(meta, baseline):
     pc = meta["pdfcraft"]
     lines = [f"- PdfCraft: `{pc.get('sha', '')[:10]}` {pc.get('subject', '')} ({pc.get('cli')})",
-             f"- Oracles: Poppler {meta['oracles'].get('poppler')}, LibreOffice {meta['oracles'].get('libreoffice')}"]
+             f"- Oracles: Poppler {meta['oracles'].get('poppler')}, LibreOffice {meta['oracles'].get('libreoffice')}",
+             f"- Environment: {meta.get('environment', '?')}"]
     if baseline:
         bm = baseline["meta"]
         lines.append(f"- Baseline: run `{bm.get('run')}`, PdfCraft `{bm['pdfcraft'].get('sha', '')[:10]}` "
                      f"{bm['pdfcraft'].get('subject', '')}")
-        if bm.get("oracles") != meta["oracles"]:
+        if bm.get("environment") != meta.get("environment"):
+            lines.append(f"- ⚠️ The baseline was made elsewhere ({bm.get('environment', '?')}): fonts and tools differ, "
+                         "so score changes may come from them, not from PdfCraft")
+        elif bm.get("oracles") != meta["oracles"]:
             lines.append(f"- ⚠️ The oracles changed since the baseline ({bm.get('oracles')}): "
                          "score changes may come from them, not from PdfCraft")
     else:

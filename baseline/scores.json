@@ -1,41 +1,42 @@
 {
  "meta": {
-  "id": "20261030-221721-fa5f9f8c",
-  "started": "2026-10-30T22:17:21+00:00",
+  "id": "20261031-052637-fa5f9f8c-linux-corpus",
+  "started": "2026-10-31T05:26:37+00:00",
   "pdfcraft": {
    "cli": "target/debug/pdfcraft-cli",
    "sha": "fa5f9f8c3b3add965f7ec82c743cf02207c55c93",
    "subject": "Merge pull request #5426 from FredApps/chore/parity-integration-20261030"
   },
+  "environment": "container: Debian snapshot 20261030T000000Z, Chromium 156.0.8078.73-1~deb13u1, LibreOffice 25.8.2.2, Poppler 25.03.0-5+deb13u4, Rust 1.99.1",
   "oracles": {
-   "poppler": "26.10.0",
+   "poppler": "25.03.0",
    "libreoffice": "25.8.2.2"
   },
   "workers": 4,
   "only": null,
-  "seconds": 21.2,
-  "run": "20261030-221721-fa5f9f8c"
+  "seconds": 10.6,
+  "run": "20261031-052637-fa5f9f8c-linux-corpus"
  },
  "docs": {
   "chrome/academic-paper": {
-   "sha256": "89ab98d7996c66c2264e167e779b6fa94a67778594f3d8070026f55c2054d7c6",
+   "sha256": "bb4044817c3d40e875a344ed8f9c51869ecf4436d06556a21c7c5bd3c3ca4e6d",
    "status": "ok",
-   "score": 0.7006439881947277,
+   "score": 0.7009824613883092,
    "components": {
     "words": 0.9938144329896907,
     "order": 0.7925311203319502,
-    "format": 0.7850714609727892,
-    "visual": 0.2682860903956904,
+    "format": 0.7850685936303855,
+    "visual": 0.2694157680454974,
     "structure": 0.8333333333333334
    },
    "details": {
     "recall": 0.9938144329896907,
     "precision": 0.9938144329896907,
     "order_layout": 0.7925311203319502,
-    "order_raw": 0.7887029288702929,
+    "order_raw": 0.7925311203319502,
     "bold": 0.967741935483871,
     "italic": 0.9629629629629629,
-    "size": 0.9946524064171123,
+    "size": 0.9946380697050938,
     "color": 1.0,
     "font": 0.0,
     "pages": 0.5,
@@ -53,14 +54,14 @@
    }
   },
   "chrome/code-listing": {
-   "sha256": "27e8fca56049ec14db42c0b3971ba4352e2124d585b7d6cacd9853236854b532",
+   "sha256": "846f149df3f3cd2b20f1adcc602bf87e9edc5948c9560b3372e7362e067ec221",
    "status": "ok",
-   "score": 0.8310940967443314,
+   "score": 0.8332404880419122,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.5619803224811051,
+    "visual": 0.5691349601397074,
     "structure": 1.0
    },
    "details": {
@@ -88,14 +89,14 @@
    }
   },
   "chrome/form-fields": {
-   "sha256": "74fda93347a6fcdba7a0cfcff14cffa4b3c7be1253cfb025005445d8dc1a646c",
+   "sha256": "7605b081dd2be6ba25b571a375c10ae7247715746e1823cb68505a49912e1c02",
    "status": "ok",
-   "score": 0.8347135671463499,
+   "score": 0.8338073523409608,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.5740452238211663,
+    "visual": 0.5710245078032028,
     "structure": 1.0
    },
    "details": {
@@ -123,14 +124,14 @@
    }
   },
   "chrome/headings-emphasis": {
-   "sha256": "5a5f86006fa56c6eb5514d7696001fa4944830588916b437faf6991d53652284",
+   "sha256": "eb20358ab2b6e6a3d1414d0cd3eb745ca1231e5eb1ab6eccad00c976fd39db2d",
    "status": "ok",
-   "score": 0.9162713922464019,
+   "score": 0.9164524891472179,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.8,
-    "visual": 0.8209046408213394,
+    "visual": 0.8215082971573933,
     "structure": 1.0
    },
    "details": {
@@ -158,14 +159,14 @@
    }
   },
   "chrome/highlights-callouts": {
-   "sha256": "8179d30b557ff1e71967b95d58952a427a697244fb728a2811957fcad7138dee",
+   "sha256": "25866d26023d8b8e9966bb5d61358e87f9301ba2e5f965b437e351a53a0f3589",
    "status": "ok",
-   "score": 0.7750183766712595,
+   "score": 0.7774944710227794,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.3750612555708649,
+    "visual": 0.38331490340926466,
     "structure": 1.0
    },
    "details": {
@@ -193,14 +194,14 @@
    }
   },
   "chrome/images-figures": {
-   "sha256": "90eb21c4f69a6ef67f318194aec5d2bcaca53778bab14c6db47e29c88b27d56d",
+   "sha256": "d5b1f5801b5b24dd6cd3af950392cfcd51466f72b550783f6de2680239866849",
    "status": "ok",
-   "score": 0.9464957544911299,
+   "score": 0.9475765512736085,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.9466525149704329,
+    "visual": 0.9502551709120285,
     "structure": 1.0
    },
    "details": {
@@ -228,14 +229,14 @@
    }
   },
   "chrome/international": {
-   "sha256": "fcdc94c37ffe21db83f5b01df799f683c6cbea7ac5c3c4b5febdd198af8c9de4",
+   "sha256": "8c83b831bec0d15bd8392fc4be4413b990b9a24157365a363b96b3915d3ddcc1",
    "status": "ok",
-   "score": 0.8218232468387295,
+   "score": 0.8182509100704595,
    "components": {
     "words": 0.8088888888888888,
     "order": 1.0,
     "format": 0.7472222222222222,
-    "visual": 0.7235774894624318,
+    "visual": 0.7116697002348651,
     "structure": 1.0
    },
    "details": {
@@ -245,8 +246,8 @@
     "order_raw": 1.0,
     "bold": 1.0,
     "italic": null,
-    "size": 0.9888888888888889,
-    "color": 1.0,
+    "size": 1.0,
+    "color": 0.9888888888888889,
     "font": 0.0,
     "pages": 1.0,
     "page_size": 1.0,
@@ -263,14 +264,14 @@
    }
   },
   "chrome/invoice": {
-   "sha256": "976fbc03dc96752df333cdfbb432e7dafbb4ec9cd31bce1be352c40f3a3fe91c",
+   "sha256": "8f6ec36a6b25ad9220449bc0717f33205c308ec787ff78d693cfb24b7e22b764",
    "status": "ok",
-   "score": 0.899120755914087,
+   "score": 0.9001656922070409,
    "components": {
     "words": 0.9746192893401014,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.8141165637068553,
+    "visual": 0.8175996846833682,
     "structure": 1.0
    },
    "details": {
@@ -298,14 +299,14 @@
    }
   },
   "chrome/letter-a4": {
-   "sha256": "618378c324f074e06ba4be6964e228db6ddfde5f57c370bebc4c86488976a7a5",
+   "sha256": "b0e93510cdf9bbac54927fd49b4ba35aa3110b10073d4a8416cdbb9e20b531c7",
    "status": "ok",
-   "score": 0.7357829113734189,
+   "score": 0.7382817328278104,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.8,
-    "visual": 0.21927637124472962,
+    "visual": 0.2276057760927013,
     "structure": 1.0
    },
    "details": {
@@ -333,14 +334,14 @@
    }
   },
   "chrome/lists": {
-   "sha256": "73f5899e132b5a182cfcbfc68ffb7e400df39e30f000a872090ebef93b28c564",
+   "sha256": "0e4471fc835e644ed7a039ca8191fe688a1276ac574f93a6e2fa011715b62f10",
    "status": "ok",
-   "score": 0.8756132028331203,
+   "score": 0.8751284365306586,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.7103773427770677,
+    "visual": 0.7087614551021956,
     "structure": 1.0
    },
    "details": {
@@ -368,14 +369,14 @@
    }
   },
   "chrome/mixed-page-sizes": {
-   "sha256": "0ef73be0d778c6fba73f78a2bdbbf5bbd0be12f539566ff41b46283299063643",
+   "sha256": "e6c33ba1df2ff23f736ae78a334302053b7814fe3f7b9be84173019519fd786f",
    "status": "ok",
-   "score": 0.8613646432906547,
+   "score": 0.8612630477755794,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.6628821443021823,
+    "visual": 0.6625434925852646,
     "structure": 1.0
    },
    "details": {
@@ -403,21 +404,21 @@
    }
   },
   "chrome/multipage-report": {
-   "sha256": "c37a27b2e955876fd51d59dc34051a14b9f3b7d6e566f8fb66121b06d4e00de2",
+   "sha256": "1d3df9c25d43d48daaf0c3c5537318a2a01a0fc4d88806c7c319b6702683a394",
    "status": "ok",
-   "score": 0.8474157946034616,
+   "score": 0.8467876348186952,
    "components": {
     "words": 1.0,
     "order": 0.9990610328638497,
     "format": 0.75,
-    "visual": 0.6166989710569221,
+    "visual": 0.6146051051077009,
     "structure": 1.0
    },
    "details": {
     "recall": 1.0,
     "precision": 1.0,
     "order_layout": 0.9990610328638497,
-    "order_raw": 0.9772296015180265,
+    "order_raw": 0.9774647887323944,
     "bold": 1.0,
     "italic": null,
     "size": 1.0,
@@ -438,14 +439,14 @@
    }
   },
   "chrome/prose-letter": {
-   "sha256": "aa38b2ef279ed13605abe1a59af1ff6374e0ce69a14daaa756d20f98dcddcd71",
+   "sha256": "e5a29b0e2a19261482ba75f4b90d4f86cc013c320923163d2a7b5bd194877d36",
    "status": "ok",
-   "score": 0.8672146121255047,
+   "score": 0.8799359317669347,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.6823820404183492,
+    "visual": 0.724786439223116,
     "structure": 1.0
    },
    "details": {
@@ -473,24 +474,24 @@
    }
   },
   "chrome/rotated-labels": {
-   "sha256": "9eeedeb3a14b7846ea8c25de32089090ade3ad447b72cffa0dd719967a5a9247",
+   "sha256": "b862f3f5d25627fd908876326ca648aebd67fde87eb758c0c575caa349002bc1",
    "status": "ok",
-   "score": 0.8625444166763852,
+   "score": 0.8639180771006537,
    "components": {
     "words": 1.0,
     "order": 1.0,
-    "format": 0.6296296296296297,
-    "visual": 0.7269999074398025,
+    "format": 0.6666666666666666,
+    "visual": 0.7130602570021791,
     "structure": 1.0
    },
    "details": {
     "recall": 1.0,
     "precision": 1.0,
-    "order_layout": 0.6136363636363636,
+    "order_layout": 0.6704545454545454,
     "order_raw": 1.0,
     "bold": null,
     "italic": null,
-    "size": 0.8888888888888888,
+    "size": 1.0,
     "color": 1.0,
     "font": 0.0,
     "pages": 1.0,
@@ -508,14 +509,14 @@
    }
   },
   "chrome/slide-deck": {
-   "sha256": "b3476376795d6c54bff0935eec8dfdf5b7166ff5041309bd24bb09d07d9936e8",
+   "sha256": "655d0d301a8a84fe586028fcb5b2eed234047f3fe539bdda6ad98250c047106d",
    "status": "ok",
-   "score": 0.7777650807448552,
+   "score": 0.779346060451745,
    "components": {
     "words": 0.9444444444444444,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.5231058247050729,
+    "visual": 0.5283757570613726,
     "structure": 0.8333333333333334
    },
    "details": {
@@ -543,14 +544,14 @@
    }
   },
   "chrome/small-print": {
-   "sha256": "1f5cc41afa34ccee0edd9dc029147be89be2220d8cacb69c0dbae2ff3d2ca75d",
+   "sha256": "3d4c617dda3eb854e15e2c2979c012e8547647cff4dd92b3c523a382cd976f41",
    "status": "ok",
-   "score": 0.7518584321207069,
+   "score": 0.750341007545146,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.3811947737356898,
+    "visual": 0.37613669181715353,
     "structure": 0.8333333333333333
    },
    "details": {
@@ -578,14 +579,14 @@
    }
   },
   "chrome/table-bordered": {
-   "sha256": "89436645203ea2029ed05df35ba34f2fab03b31dc8ab8bf0e515a50cd7684b7a",
+   "sha256": "48854f0b0c6798d6bef06f3d9876c896db29a33b03484e5ee6a619ba20b60c4f",
    "status": "ok",
-   "score": 0.8457227316006045,
+   "score": 0.8462722324468364,
    "components": {
     "words": 1.0,
     "order": 0.9842105263157894,
     "format": 0.75,
-    "visual": 0.6160055965634186,
+    "visual": 0.6178372660508581,
     "structure": 1.0
    },
    "details": {
@@ -613,14 +614,14 @@
    }
   },
   "chrome/table-borderless": {
-   "sha256": "bc4e133d8f3b4d7a49cfd1474241a1d9f3030b5ed37cede371bd29d4e47c177b",
+   "sha256": "78b0e81c2f3a84ccb0436f981bbc58431fc3a9a601f76eb49f695003c2708352",
    "status": "ok",
-   "score": 0.7830083825142169,
+   "score": 0.7807003034365569,
    "components": {
     "words": 0.9952153110047847,
     "order": 0.9903846153846154,
     "format": 0.75,
-    "visual": 0.40968442558106666,
+    "visual": 0.4019908286555337,
     "structure": 1.0
    },
    "details": {
@@ -648,20 +649,20 @@
    }
   },
   "chrome/table-spans": {
-   "sha256": "b6e768342276504097e24d4b41c92b7b51b2a59fc06593be6c79695e45f1e604",
+   "sha256": "586f3ac48c2faa154f71ef8e44a49b91c03c66d7e0b04af36247fd7399e5acb1",
    "status": "ok",
-   "score": 0.8026092338266637,
+   "score": 0.7999993154305906,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.4670307794222126,
+    "visual": 0.4583310514353019,
     "structure": 1.0
    },
    "details": {
     "recall": 1.0,
     "precision": 1.0,
-    "order_layout": 0.8854961832061069,
+    "order_layout": 0.8778625954198473,
     "order_raw": 1.0,
     "bold": 1.0,
     "italic": null,
@@ -683,14 +684,14 @@
    }
   },
   "chrome/three-column-newsletter": {
-   "sha256": "c1b990b0f328c8326ca213f90c184846636007e1646fe46263627517a7516340",
+   "sha256": "f21c9e23c28db57f4412056781243b1ea9cbca70696698b1699e0ea638a805ae",
    "status": "ok",
-   "score": 0.7396441362688526,
+   "score": 0.7390596693260392,
    "components": {
     "words": 1.0,
     "order": 0.6991404011461319,
     "format": 0.75,
-    "visual": 0.3574336538474649,
+    "visual": 0.3554854307047534,
     "structure": 1.0
    },
    "details": {
@@ -718,20 +719,20 @@
    }
   },
   "chrome/two-column-article": {
-   "sha256": "228b8cfa757f3cd782cd243053b02a08cfa0a84e7a2fa6bc6d2b304640780578",
+   "sha256": "831d72483dab80ba3db1e1f9490c5d19208c0e428c7e082919103ff944bc0d62",
    "status": "ok",
-   "score": 0.8869438926508932,
+   "score": 0.9023683513084195,
    "components": {
-    "words": 0.9778714436248682,
+    "words": 1.0,
     "order": 1.0,
     "format": 0.8,
-    "visual": 0.7452748652114428,
+    "visual": 0.7745611710280652,
     "structure": 1.0
    },
    "details": {
-    "recall": 0.9851380042462845,
-    "precision": 0.9707112970711297,
-    "order_layout": 0.9978448275862069,
+    "recall": 1.0,
+    "precision": 1.0,
+    "order_layout": 0.9978768577494692,
     "order_raw": 1.0,
     "bold": 1.0,
     "italic": 1.0,
@@ -746,21 +747,21 @@
     "pages_ref": 1,
     "pages_docx": 1,
     "words_ref": 471,
-    "words_docx": 478,
+    "words_docx": 471,
     "images_ref": 0,
     "images_docx": 0,
     "positioned_pages": 1
    }
   },
   "chrome/watermark-draft": {
-   "sha256": "d4f38ed40b0eeb7b88bcb8c60b94fa974b7d0237fab79bb23d3d52478268e386",
+   "sha256": "0327f00ceb8b7980ddfcd8babb27e5c0d5e74c6d1a36e6fe967cb6d6026d22a4",
    "status": "ok",
-   "score": 0.8819666725244584,
+   "score": 0.8901488932603923,
    "components": {
     "words": 0.985,
     "order": 1.0,
     "format": 0.7247346562067374,
-    "visual": 0.7591882469781592,
+    "visual": 0.7864623160979389,
     "structure": 1.0
    },
    "details": {
@@ -790,12 +791,12 @@
   "handmade/raw-base14": {
    "sha256": "8373d7619a5c6aac64804212d476d76ae9fb156ebc72859b3287bc3f062d6f6b",
    "status": "ok",
-   "score": 0.9415749530466517,
+   "score": 0.9456974381984371,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.8,
-    "visual": 0.9052498434888392,
+    "visual": 0.918991460661457,
     "structure": 1.0
    },
    "details": {
@@ -825,12 +826,12 @@
   "handmade/raw-rotate90": {
    "sha256": "0a1e9caf250553950103f48d22616a5a25412a3a3e7c9ea8618f67a445d00fcd",
    "status": "ok",
-   "score": 0.7701415860489705,
+   "score": 0.7706279887819137,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": null,
-    "visual": 0.34873449380541666,
+    "visual": 0.3501126348820887,
     "structure": 1.0
    },
    "details": {
@@ -860,12 +861,12 @@
   "handmade/raw-text-grid": {
    "sha256": "f6eb091fe1538922fac849a4041861ec9209c21fa304ae3e050d829a628dc50d",
    "status": "ok",
-   "score": 0.9205781953696963,
+   "score": 0.9180368090526891,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.8602606512323212,
+    "visual": 0.8517893635089642,
     "structure": 1.0
    },
    "details": {
@@ -893,14 +894,14 @@
    }
   },
   "handmade/scanned-page": {
-   "sha256": "93e36e0d23040e9f13fe006df3857c35c732513ebe24ec23330a5e0c51dd2b1b",
+   "sha256": "cbd9adf08932ff1e05296e486d1e3429a36d27e8504dcb15e84854e19d2873e6",
    "status": "ok",
-   "score": 0.8112447897630803,
+   "score": 0.8068932711177196,
    "components": {
     "words": null,
     "order": null,
     "format": null,
-    "visual": 0.7168671846446204,
+    "visual": 0.7103399066765792,
     "structure": 1.0
    },
    "details": {
@@ -928,14 +929,14 @@
    }
   },
   "libreoffice/lo-memo": {
-   "sha256": "9ecc939b64456dd625ac3517ce0cb7e133f3b434a73e9ca440cc040adec4ef2b",
+   "sha256": "30dae8ba8b1f73b3b0083726d9dc09a5774ed43cc9fdcb5df38311990af22add",
    "status": "ok",
-   "score": 0.9069931061640728,
+   "score": 0.9059879872409158,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.8,
-    "visual": 0.7899770205469094,
+    "visual": 0.7866266241363858,
     "structure": 1.0
    },
    "details": {
@@ -963,14 +964,14 @@
    }
   },
   "libreoffice/lo-report": {
-   "sha256": "f5bdfd352dde5153f942c477df369357609dbf2fcc9ec6f0275d5f9093a1a834",
+   "sha256": "9b21c6c1951981aa4a96722fc1dcd17c18a3e519ed9051a773fc49c542509ec0",
    "status": "ok",
-   "score": 0.8221428289255888,
+   "score": 0.8209998751269406,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.75,
-    "visual": 0.5321427630852962,
+    "visual": 0.528332917089802,
     "structure": 1.0
    },
    "details": {
@@ -1000,12 +1001,12 @@
   "mcp-suite/chrome-layout": {
    "sha256": "0ec2d9f814732288afe0150c52b342f585de6bd3aea3dd7c1804a2d9bf768233",
    "status": "ok",
-   "score": 0.9202953531526076,
+   "score": 0.9204133142233292,
    "components": {
     "words": 0.9362637362637363,
     "order": 0.9953917050691244,
     "format": 0.75,
-    "visual": 0.9245902058885808,
+    "visual": 0.9249834094576528,
     "structure": 1.0
    },
    "details": {
@@ -1035,12 +1036,12 @@
   "mcp-suite/chrome-scripts": {
    "sha256": "593f3bc5c93e95abd2218cf93a878277cd620f015a2a5c578dca519969c44488",
    "status": "ok",
-   "score": 0.7887404029931804,
+   "score": 0.7845251188695537,
    "components": {
     "words": 0.8558951965065502,
     "order": 1.0,
     "format": 0.6950354609929078,
-    "visual": 0.5923884163075973,
+    "visual": 0.5783374692288417,
     "structure": 1.0
    },
    "details": {
@@ -1070,12 +1071,12 @@
   "mcp-suite/chrome-turkish": {
    "sha256": "a0bde218adabc7b07a7524c73faeeda2951392468f16234754218403c5eeda12",
    "status": "ok",
-   "score": 0.847900813749554,
+   "score": 0.8451419419232065,
    "components": {
     "words": 0.9651162790697674,
     "order": 0.927710843373494,
     "format": 0.75,
-    "visual": 0.6769828189709144,
+    "visual": 0.6677865795497564,
     "structure": 1.0
    },
    "details": {
@@ -1105,12 +1106,12 @@
   "mcp-suite/content-array": {
    "sha256": "fc864f22ece1c34bddb54f6196b01c5a852b15afe1ee897c78e2d79c95d6e47b",
    "status": "ok",
-   "score": 0.798738216653766,
+   "score": 0.7957912943856056,
    "components": {
     "words": 0.9230769230769231,
     "order": 1.0,
     "format": 0.6666666666666666,
-    "visual": 0.7393837991022969,
+    "visual": 0.7295607248750957,
     "structure": 0.6666666666666666
    },
    "details": {
@@ -1140,12 +1141,12 @@
   "mcp-suite/image": {
    "sha256": "0a5798f1f3841c2396cf1b5a3c67be1fc5991757ac217dfc336511eb8eecfe21",
    "status": "ok",
-   "score": 0.8982041251626613,
+   "score": 0.8982353083086879,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.6666666666666666,
-    "visual": 0.8273470838755379,
+    "visual": 0.8274510276956266,
     "structure": 1.0
    },
    "details": {
@@ -1175,12 +1176,12 @@
   "mcp-suite/inherited": {
    "sha256": "bf4cdafe18c9d589519c5914345c56e9900d9d08180843c2aff9538bedb25c8b",
    "status": "ok",
-   "score": 0.7029877061644692,
+   "score": 0.7024918900834132,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": null,
-    "visual": 0.2417985007993292,
+    "visual": 0.2403936885696705,
     "structure": 0.8333333333333333
    },
    "details": {
@@ -1210,12 +1211,12 @@
   "mcp-suite/lo-writer-turkish": {
    "sha256": "09d147f99802b087103f4c35c9405cdfe38a991073f07dce5f6185f5f37627b3",
    "status": "ok",
-   "score": 0.737302294401253,
+   "score": 0.7367819502032066,
    "components": {
     "words": 1.0,
     "order": 0.82,
     "format": 0.7428571428571429,
-    "visual": 0.31291240990893854,
+    "visual": 0.3111779292487839,
     "structure": 1.0
    },
    "details": {
@@ -1245,12 +1246,12 @@
   "mcp-suite/tagged": {
    "sha256": "62199801c8252ca69056d2271b525ca421f466930ccfe339e296c7b19abb10fe",
    "status": "ok",
-   "score": 0.8835474411942176,
+   "score": 0.8822840434993339,
    "components": {
     "words": 1.0,
     "order": 1.0,
     "format": 0.5,
-    "visual": 0.8618248039807253,
+    "visual": 0.8576134783311129,
     "structure": 1.0
    },
    "details": {
@@ -1280,12 +1281,12 @@
   "mcp-suite/type3": {
    "sha256": "9f9d36e2c1987e58b27a69323351da65f962887539463d35d6700050f30f05c3",
    "status": "ok",
-   "score": 0.7282629885767153,
+   "score": 0.7321816716456974,
    "components": {
     "words": 0.4,
     "order": 1.0,
     "format": 0.6666666666666666,
-    "visual": 0.8608766285890512,
+    "visual": 0.8739389054856579,
     "structure": 1.0
    },
    "details": {

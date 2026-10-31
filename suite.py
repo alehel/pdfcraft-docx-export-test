@@ -7,6 +7,7 @@
   suite.py compare RUN_A RUN_B                     score changes from run A to run B (same build twice = flake check)
   suite.py accept [RUN]                            make RUN (default: the latest) the baseline
   suite.py status                                  build, baseline and recent runs
+  suite.py corpus [--force NAME|all]               make missing corpus files (tools/make_corpus.py)
 """
 
 import argparse
@@ -14,11 +15,13 @@ import concurrent.futures
 import datetime as dt
 import json
 import os
+import platform
 import queue
 import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -28,14 +31,20 @@ sys.path.insert(0, str(SUITE))
 from harness import pipeline, render, report  # noqa: E402
 from harness.pdfref import ToolFailed  # noqa: E402
 
-SRC = SUITE / "src"
-TARGET = SUITE / "target"
+# The pdfcraft checkout, its build and the LibreOffice profiles; the container keeps them in a
+# volume of their own ($SUITE_WORK), apart from the macOS ones in the checkout.
+WORK = Path(os.environ.get("SUITE_WORK", SUITE))
+SRC = WORK / "src"
+TARGET = WORK / "target"
 BIN = TARGET / "debug" / "pdfcraft-cli"
+CACHE = WORK / "cache"
 CORPUS = SUITE / "corpus"
 RUNS = SUITE / "runs"
 BASELINE = SUITE / "baseline"
-CACHE = SUITE / "cache"
-PDFCRAFT_REPO = Path(os.environ.get("PDFCRAFT_REPO", Path.home() / "dev" / "craft" / "pdfcraft"))
+# A local clone (src/ becomes a worktree of it) or a URL (src/ becomes a clone).
+PDFCRAFT_REPO = os.environ.get("PDFCRAFT_REPO", str(Path.home() / "dev" / "craft" / "pdfcraft"))
+# Where the scores were made: set by the Dockerfile to the image's pins.
+ENVIRONMENT = os.environ.get("SUITE_ENVIRONMENT") or f"host: {platform.system()} {platform.machine()}"
 TOOLCHAIN_PATH = f"{Path.home()}/.cargo/bin:{Path.home()}/.rustup/toolchains/stable-aarch64-apple-darwin/bin:/opt/homebrew/bin"
 KEEP_RUNS = 10
 
@@ -64,11 +73,15 @@ def fmt_duration(seconds):
 
 def cmd_build(args):
     if not (SRC / ".git").exists():
-        if not (PDFCRAFT_REPO / ".git").exists():
-            sys.exit(f"no pdfcraft clone at {PDFCRAFT_REPO} (set PDFCRAFT_REPO)")
-        subprocess.run(["git", "-C", str(PDFCRAFT_REPO), "fetch", "-q", "origin", "main"], check=True)
-        subprocess.run(["git", "-C", str(PDFCRAFT_REPO), "worktree", "add", "-q", "--detach", str(SRC), "origin/main"],
-                       check=True)
+        if "://" in PDFCRAFT_REPO:
+            subprocess.run(["git", "clone", "-q", "--filter=blob:none", "--no-checkout", PDFCRAFT_REPO, str(SRC)],
+                           check=True)
+        elif not (Path(PDFCRAFT_REPO) / ".git").exists():
+            sys.exit(f"no pdfcraft clone at {PDFCRAFT_REPO} (set PDFCRAFT_REPO to a clone or a URL)")
+        else:
+            subprocess.run(["git", "-C", PDFCRAFT_REPO, "fetch", "-q", "origin", "main"], check=True)
+            subprocess.run(["git", "-C", PDFCRAFT_REPO, "worktree", "add", "-q", "--detach", str(SRC), "origin/main"],
+                           check=True)
     subprocess.run(["git", "-C", str(SRC), "fetch", "-q", "origin", "main"], check=True)
     if args.pr:
         subprocess.run(["git", "-C", str(SRC), "fetch", "-q", "origin", f"pull/{args.pr}/head"], check=True)
@@ -152,15 +165,22 @@ def cmd_run(args):
     run_dir = RUNS / run_id
     run_dir.mkdir(parents=True)
     meta = {"id": run_id, "started": now.isoformat(timespec="seconds"), "pdfcraft": identity,
-            "oracles": oracle_versions(soffice), "workers": args.workers, "only": args.only}
+            "environment": ENVIRONMENT, "oracles": oracle_versions(soffice), "workers": args.workers,
+            "only": args.only}
     baseline = None if args.no_baseline else load_json(BASELINE / "scores.json")
     base_docs = (baseline or {}).get("docs", {})
     print(f"run {run_id}: {len(docs)} PDFs, PdfCraft {identity['sha'][:10] or identity['subject']}, {args.workers} workers")
+    if baseline and baseline["meta"].get("environment") != ENVIRONMENT:
+        print(f"warning: the baseline was made in another environment ({baseline['meta'].get('environment', '?')}),"
+              " so differences are not only PdfCraft's")
 
     profiles = queue.Queue()
     for i in range(args.workers):
         profiles.put(CACHE / f"lo-profile-{i}")
-    ctx = {"cli": cli.resolve(), "run_dir": run_dir, "soffice": soffice, "profiles": profiles,
+    # Sandboxes and page bitmaps go on a local disk: in the container, run_dir is a folder shared
+    # with the host, and under load its listing of just-written bitmaps has come back short.
+    scratch = run_dir / "work" if args.keep_work else Path(tempfile.mkdtemp(prefix="docx-suite-"))
+    ctx = {"cli": cli.resolve(), "run_dir": run_dir, "scratch": scratch, "soffice": soffice, "profiles": profiles,
            "image_pages": args.image_pages, "timeout": args.timeout, "keep_work": args.keep_work}
     started = time.monotonic()
     records = []
@@ -176,7 +196,8 @@ def cmd_run(args):
             print(f"  [{len(records):>{len(str(len(docs)))}}/{len(docs)}] {rec['name']:<{width}} "
                   f"{100 * rec['score']:5.1f}{delta}  {rec['seconds']:.1f}s{flag}", flush=True)
     meta["seconds"] = round(time.monotonic() - started, 1)
-    shutil.rmtree(run_dir / "work", ignore_errors=True)
+    if not args.keep_work:
+        shutil.rmtree(scratch, ignore_errors=True)
     records.sort(key=lambda r: r["name"])
     dump_json(run_dir / "run.json", meta)
     dump_json(run_dir / "scores.json", records)
@@ -201,7 +222,9 @@ def summarize(run_dir, meta, records):
             delta = f" {100 * rec['delta']:+.1f}" if rec["delta"] is not None else ""
             why = f" — {rec['error']}" if rec.get("error") else ""
             print(f"  {report.CLASSES[rec['class']][0]} {rec['name']}: {100 * rec['score']:.1f}{delta}{why}")
-    print(f"\nreport: {run_dir / 'report.html'}\n        {run_dir / 'report.md'}")
+    # In the container, /suite is the checkout: show the path as the host sees it, relative to it.
+    shown = run_dir.relative_to(SUITE) if os.environ.get("SUITE_ENVIRONMENT") else run_dir
+    print(f"\nreport: {shown / 'report.html'}\n        {shown / 'report.md'}")
     return 1 if counts.get("regression") or counts.get("failed") else 0
 
 
@@ -290,12 +313,18 @@ def cmd_status(args):
     else:
         print("baseline: none")
     print(f"corpus:   {len(corpus_docs())} PDFs")
+    print(f"environment: {ENVIRONMENT}")
     if RUNS.exists():
         for run_dir in sorted(RUNS.iterdir())[-5:]:
             records = load_json(run_dir / "scores.json")
             if records:
                 print(f"  run {run_dir.name}: {len(records)} PDFs, mean {100 * report.mean_score(records):.1f}")
     return 0
+
+
+def cmd_corpus(args):
+    force = [x for name in args.force for x in ("--force", name)]
+    return subprocess.run([sys.executable, "-I", str(SUITE / "tools" / "make_corpus.py"), *force]).returncode
 
 
 def main():
@@ -323,9 +352,11 @@ def main():
     a.add_argument("run", nargs="?")
     a.add_argument("--force", action="store_true")
     sub.add_parser("status")
+    co = sub.add_parser("corpus", help="make missing corpus files")
+    co.add_argument("--force", action="append", default=[], help="remake NAME (e.g. chrome/invoice), or 'all'")
     args = parser.parse_args()
     handler = {"build": cmd_build, "run": cmd_run, "report": cmd_report, "compare": cmd_compare,
-               "accept": cmd_accept, "status": cmd_status}[args.command]
+               "accept": cmd_accept, "status": cmd_status, "corpus": cmd_corpus}[args.command]
     try:
         sys.exit(handler(args) or 0)
     except ToolFailed as e:

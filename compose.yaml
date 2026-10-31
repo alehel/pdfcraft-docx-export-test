@@ -1,0 +1,13 @@
+# docker compose run --rm suite <command>     (or: podman compose run --rm suite <command>)
+services:
+  suite:
+    build: .
+    image: localhost/pdfcraft-docx-export-test
+    volumes:
+      - .:/suite
+      - work:/work
+    init: true
+    shm_size: 1gb
+
+volumes:
+  work:

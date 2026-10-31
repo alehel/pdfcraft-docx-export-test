@@ -6,30 +6,53 @@ with a `.docx` path), and the DOCX is compared with the PDF it came from. Each P
 from 0 to 100. Scores are compared with an accepted baseline, so a PdfCraft change that makes the
 export worse (or better) shows up as a regression (or improvement) per document.
 
-Plain Python 3 with no packages; it calls Poppler and LibreOffice as external processes.
+Plain Python 3 with no packages; it calls Poppler, LibreOffice and Chromium as external processes.
+They run in a container image that pins each of them, so scores are the same on every machine.
 
 ## Setup
 
-- Poppler (`pdftotext`, `pdftohtml`, `pdftoppm`, `pdfinfo`, `pdfimages`): `brew install poppler`
-- LibreOffice (renders the DOCX for the visual comparison): `/Applications/LibreOffice.app`, or
-  set `SOFFICE` to its `soffice` binary
-- A Rust toolchain and a pdfcraft clone at `~/dev/craft/pdfcraft` (or set `PDFCRAFT_REPO`) for
-  `suite.py build`; or point `--cli` / `PDFCRAFT_CLI` at any `pdfcraft-cli` binary
-- Google Chrome only for regenerating the corpus
+Docker or Podman, with compose (`docker compose` or `podman compose`). The first command builds
+the image (about 2.6 GB, a few minutes).
+
+```bash
+docker compose run --rm suite build        # clone pdfcraft and build pdfcraft-cli for Linux (first time ~4 min)
+docker compose run --rm suite run          # export + score the whole corpus, compare with the baseline
+```
+
+With Podman, write `podman compose` instead of `docker compose`.
+
+The image ([Dockerfile](Dockerfile)) is only the environment. compose mounts this checkout at
+`/suite`, so runs and baselines land here, and keeps the pdfcraft clone, its Cargo build and the
+LibreOffice profiles in the `work` volume. The image pins:
+
+| Tool | Version | Used for |
+|---|---|---|
+| Chromium | 156.0.8078.73 (Debian) | making the corpus |
+| LibreOffice | 25.8.2.2 (The Document Foundation's build, checksum-verified) | rendering the DOCX for the visual score |
+| Poppler | 25.03.0 (Debian) | reading the PDF: words, formatting, page sizes, images, page bitmaps |
+| Fonts | DejaVu, Liberation, URW base 35, Carlito, Caladea, Noto, Noto CJK (Debian) | everything above |
+| Python | 3.13 (Debian) | the suite |
+| Rust | 1.99.1 | building pdfcraft-cli |
+
+Every Debian package comes from snapshot.debian.org at one moment (`DEBIAN_SNAPSHOT`), and both
+base images are pinned by digest. To move a pin, edit the Dockerfile and run
+`docker compose build`. If Chromium or the fonts changed, run `corpus --force all`. Then accept
+a new baseline. If pdfcraft raises its minimum Rust version, the build says so: move the Rust pin.
 
 ## Commands
 
+Each command goes after `docker compose run --rm suite`:
+
 ```bash
-python3 -I suite.py build                  # git worktree of pdfcraft in src/ at origin/main, built into target/
-python3 -I suite.py build --pr 1234        # or a pull request, or --ref <ref>
-python3 -I suite.py run                    # export + score the whole corpus (~20 s for 37 PDFs), compare with the baseline
-python3 -I suite.py run --only 'chrome/'   # a subset (regex on corpus names)
-python3 -I suite.py run --cli /path/to/pdfcraft-cli --label other-build
-python3 -I suite.py compare RUN_A RUN_B    # score changes between two runs (same build twice = flake check)
-python3 -I suite.py accept [RUN]           # make RUN (default: the latest) the baseline; then commit baseline/
-python3 -I suite.py report [RUN]           # rebuild a run's reports from its scores.json
-python3 -I suite.py status                 # build, origin/main, baseline, recent runs
-python3 -I tools/make_corpus.py            # (re)make missing corpus files; --force NAME or --force all
+build                      # pdfcraft at origin/main (github.com/storytold/pdfcraft), built into the work volume
+build --pr 1234            # or a pull request, or --ref <ref>
+run                        # export + score the whole corpus (~10 s for 37 PDFs), compare with the baseline
+run --only 'chrome/'       # a subset (regex on corpus names)
+compare RUN_A RUN_B        # score changes between two runs (same build twice = flake check)
+accept [RUN]               # make RUN (default: the latest) the baseline; then commit baseline/
+report [RUN]               # rebuild a run's reports from its scores.json
+status                     # build, origin/main, baseline, environment, recent runs
+corpus [--force NAME|all]  # (re)make missing corpus files with the pinned Chromium and LibreOffice
 ```
 
 `run` exits with 1 when a document regressed or newly fails, 0 otherwise. Each run writes
@@ -38,8 +61,18 @@ words, Word lint, and page images: original | DOCX as LibreOffice renders it | o
 for ink only in the PDF and blue for ink only in the DOCX), `report.md`, `scores.json`, the
 exported `docx/` and LibreOffice's `rendered/` PDFs. The newest 10 runs are kept.
 
-`build` uses its own worktree (`src/`) and Cargo target folder (`target/`, several GB), so it
-never touches your pdfcraft checkout.
+### Without the container
+
+The same commands also run directly, as `python3 -I suite.py <command>`. This needs Poppler
+(`brew install poppler`), LibreOffice (`/Applications/LibreOffice.app`, or set `SOFFICE`), a
+Rust toolchain and a pdfcraft clone at `~/dev/craft/pdfcraft` (or set `PDFCRAFT_REPO` to a clone
+or a URL). You can also point `--cli` / `PDFCRAFT_CLI` at any `pdfcraft-cli` binary. `build` then
+makes a worktree in `src/` and builds into `target/` (several GB), so it never touches your
+checkout.
+
+The fonts and tool versions differ from the image's, so scores can differ from the baseline's.
+On macOS they came within a point or so. `run` and the report warn when the environment differs
+from the baseline's.
 
 ## The score
 
@@ -89,16 +122,22 @@ Against the baseline each document is 🔴 regression (score down 2 points or mo
 comparable). Component changes of 5 points or more are listed under each document. The baseline
 (`baseline/scores.json`, plus the baseline's DOCX files and DOCX page renders) is in git.
 
-Same build, same machine: identical scores (checked with `compare`). The visual and page-count
-scores depend on the fonts installed and the LibreOffice version, so keep the baseline and the
-runs on one machine. The report warns when the Poppler or LibreOffice version differs from the
+The same build in the same image gives identical scores (checked with `compare`). The visual and
+page-count scores depend on the fonts and the LibreOffice version. That is why the baseline is
+made in the image. The report warns when a run's environment or oracle versions differ from the
 baseline's.
 
 ## Corpus
 
-`corpus/corpus.json` describes each file. `tools/make_corpus.py` made them:
+`corpus/corpus.json` describes each file. `tools/make_corpus.py` (`suite.py corpus`) made them
+in the image, so the fonts are the Linux ones listed above. CSS asking for Arial, Times New Roman
+or Courier New gets their metric-compatible Liberation fonts, and Georgia and Helvetica Neue fall
+back to Liberation Serif and Liberation Sans. Menlo falls back to DejaVu Sans Mono. Arabic and
+Hebrew come from DejaVu Sans, and the other scripts from Noto. Running the generator twice gives
+byte-identical files: the creation date that Chromium and LibreOffice stamp is replaced by a
+fixed one.
 
-- `chrome/`: 22 documents printed by headless Chrome from HTML in the script: prose, headings and
+- `chrome/`: 22 documents printed by headless Chromium from HTML in the script: prose, headings and
   emphasis, lists, ruled/spanned/borderless tables, two- and three-column layouts, images (PNG,
   JPEG, a logo with transparency), an 8-page report with running headers, an invoice with a
   rotated stamp, 16:9 slides with text over a photo, a diagonal watermark, rotated table headers,

@@ -1,0 +1,2 @@
+# The image is only the environment; compose.yaml mounts the checkout at /suite.
+*

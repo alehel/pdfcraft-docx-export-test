@@ -10,9 +10,12 @@ copied from the MCP regression suite's fixtures. corpus/corpus.json describes ev
 added by hand (e.g. corpus/real/*.pdf) need no entry."""
 
 import argparse
+import hashlib
 import html
 import json
 import math
+import os
+import re
 import shutil
 import subprocess
 import sys
@@ -26,7 +29,9 @@ sys.path.insert(0, str(SUITE))
 from harness.render import find_soffice, rasterize, read_pgm, write_png  # noqa: E402
 
 CORPUS = SUITE / "corpus"
-CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+# The container sets CHROME to its pinned Chromium.
+CHROME = (os.environ.get("CHROME") or shutil.which("chromium")
+          or "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 MCP_FIXTURES = Path.home() / "dev" / "craft" / "pdfcraft-mcp-suite" / "fixtures"
 
 # -- text ------------------------------------------------------------------------------------------
@@ -610,8 +615,13 @@ def make_images(folder):
                 rgb = (int(30 + 20 * math.sin(x / 7 + y)), int(70 + 30 * t), int(110 + 40 * t))
             px[(y * w + x) * 3:(y * w + x) * 3 + 3] = bytes(rgb)
     write_png(folder / "photo.png", (w, h, bytes(px)), channels=3)
-    subprocess.run(["sips", "-s", "format", "jpeg", "-s", "formatOptions", "80", str(folder / "photo.png"), "--out", str(folder / "photo.jpg")],
-                   check=True, capture_output=True)
+    if shutil.which("cjpeg"):  # libjpeg-turbo, in the container
+        (folder / "photo.ppm").write_bytes(b"P6\n%d %d\n255\n" % (w, h) + bytes(px))
+        subprocess.run(["cjpeg", "-quality", "80", "-outfile", str(folder / "photo.jpg"), str(folder / "photo.ppm")],
+                       check=True, capture_output=True)
+    else:  # macOS
+        subprocess.run(["sips", "-s", "format", "jpeg", "-s", "formatOptions", "80", str(folder / "photo.png"), "--out", str(folder / "photo.jpg")],
+                       check=True, capture_output=True)
     # A round logo with a transparent background.
     w = h = 240
     px = bytearray(w * h * 4)
@@ -628,9 +638,12 @@ def make_images(folder):
 
 def chrome_pdf(html_file, out_pdf):
     with tempfile.TemporaryDirectory() as profile:
+        # Chrome will not start as root with its sandbox on (the container runs as root).
+        sandbox = ["--no-sandbox"] if hasattr(os, "geteuid") and os.geteuid() == 0 else []
         subprocess.run([CHROME, "--headless", "--disable-gpu", "--no-first-run", "--no-default-browser-check", "--disable-extensions",
-                        f"--user-data-dir={profile}", "--no-pdf-header-footer", "--virtual-time-budget=5000",
+                        *sandbox, f"--user-data-dir={profile}", "--no-pdf-header-footer", "--virtual-time-budget=5000",
                         f"--print-to-pdf={out_pdf}", Path(html_file).as_uri()], check=True, capture_output=True, timeout=180)
+    reproducible(out_pdf)
 
 
 def lo_pdf(soffice, html_file, outdir):
@@ -638,6 +651,21 @@ def lo_pdf(soffice, html_file, outdir):
         subprocess.run([soffice, f"-env:UserInstallation={Path(profile).as_uri()}", "--headless", "--norestore",
                         "--infilter=HTML (StarWriter)", "--convert-to", "pdf:writer_pdf_Export", "--outdir", str(outdir), str(html_file)],
                        check=True, capture_output=True, timeout=180)
+    reproducible(Path(outdir) / f"{Path(html_file).stem}.pdf")
+
+
+_ID = re.compile(rb"/ID ?\[[^\]]*\]|/DocChecksum ?/[0-9A-F]{32}")
+
+
+def reproducible(pdf):
+    """Chrome and LibreOffice stamp the time of printing, and LibreOffice an /ID and /DocChecksum
+    made from it: the only bytes that differ from one run to the next. A fixed date, and a digest
+    of the rest of the file in place of the ID, keep the file reproducible; both are the same
+    length, so the xref offsets stay right."""
+    data = re.sub(rb"(/(?:CreationDate|ModDate) ?\(D:)\d{14}", rb"\g<1>20260101000000", Path(pdf).read_bytes())
+    digest = hashlib.md5(_ID.sub(b"", data)).hexdigest().upper().encode()
+    data = _ID.sub(lambda m: re.sub(rb"[0-9A-Fa-f]{32}", digest, m.group()), data)
+    Path(pdf).write_bytes(data)
 
 
 COPIES = {
@@ -706,8 +734,9 @@ def main():
             name = f"mcp-suite/{short}"
             meta[name] = {"description": description, "tags": tags, "source": "copied from pdfcraft-mcp-suite/fixtures"}
             if wanted(name):
-                if not (MCP_FIXTURES / f"{short}.pdf").exists():
-                    print(f"skipped {name}: {MCP_FIXTURES} not found")
+                if not (MCP_FIXTURES / f"{short}.pdf").exists():  # e.g. in the container: keep the copy
+                    if not (CORPUS / f"{name}.pdf").exists():
+                        print(f"skipped {name}: {MCP_FIXTURES} not found")
                     continue
                 shutil.copyfile(MCP_FIXTURES / f"{short}.pdf", CORPUS / f"{name}.pdf")
                 made.append(name)

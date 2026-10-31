@@ -18,14 +18,15 @@ def safe_name(name):
 
 
 def evaluate(doc, ctx):
-    """Score one corpus PDF. `doc` is {"name", "path"}; `ctx` has cli, run_dir, soffice, profiles
-    (a queue of LibreOffice profile folders), image_pages, timeout and keep_work."""
+    """Score one corpus PDF. `doc` is {"name", "path"}; `ctx` has cli, run_dir, scratch (a folder on
+    a local disk for the sandbox and page bitmaps), soffice, profiles (a queue of LibreOffice
+    profile folders), image_pages, timeout and keep_work (scratch is then inside run_dir)."""
     started = time.monotonic()
     pdf = Path(doc["path"])
     data = pdf.read_bytes()
     rec = {"name": doc["name"], "file": doc["rel"], "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data),
            "status": "ok", "error": None, "score": 0.0, "notes": []}
-    work = ctx["run_dir"] / "work" / safe_name(doc["name"])
+    work = Path(ctx["scratch"]) / safe_name(doc["name"])
     try:
         _evaluate(rec, pdf, work, ctx)
     except Exception as e:  # a harness failure: record it and carry on with the other documents
@@ -80,6 +81,11 @@ def _evaluate(rec, pdf, work, ctx):
 
     ref_pages = render.rasterize(pdf, work / "ref", "p", DPI)
     out_pages = render.rasterize(rendered, work / "docx", "p", DPI) if rendered else []
+    # A missing bitmap would score its page 0 as if it were blank: fail loudly instead.
+    for what, pages, expected in (("PDF", ref_pages, n_ref),
+                                  ("rendered DOCX", out_pages, len(rendered_sizes) if rendered else 0)):
+        if len(pages) != expected:
+            raise pdfref.ToolFailed(f"pdftoppm left {len(pages)} page bitmaps of the {what}'s {expected} pages")
     image_dir = run_dir / "images" / key
     image_dir.mkdir(parents=True, exist_ok=True)
     similarities, images = [], []
