@@ -7,6 +7,7 @@ import struct
 from pathlib import Path
 from urllib.parse import quote
 
+from .pipeline import safe_name
 from .score import WEIGHTS
 
 THRESHOLD = 0.02           # a score change of 2 points or more is a regression / improvement
@@ -364,7 +365,7 @@ def html_report(meta, records, baseline, descriptions=None, run_dir=None):
 {''.join(f'<th>{k}</th>' for k in WEIGHTS)}<th>pages</th><th class="l">status</th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div>
 <h2>Documents</h2>
-{''.join(doc_html(rec, descriptions.get(rec['name']), run_dir) for rec in sorted(records, key=sort_key))}
+{''.join(doc_html(rec, descriptions.get(rec['name']), run_dir, pc.get('sha')) for rec in sorted(records, key=sort_key))}
 </main>"""
     return page_html(f"DOCX export · {title} · {meta['id']}", body)
 
@@ -375,7 +376,7 @@ def inline_md(text):
     return "".join(f"<code>{p}</code>" if i % 2 else p for i, p in enumerate(parts))
 
 
-def doc_html(rec, description, run_dir=None):
+def doc_html(rec, description, run_dir=None, sha=None):
     """One document: score, parts, then each page as PDF | DOCX (| overlay), then the details."""
     e = html.escape
     c = rec.get("components") or {}
@@ -394,7 +395,8 @@ def doc_html(rec, description, run_dir=None):
     quiet = " data-quiet" if rec["class"] in QUIET else ""
     return f"""<article class="doc card" id="{e(rec['name'])}"{quiet}>
 <div class="doc-head"><div><h3>{CLASSES[rec['class']][0]} {e(rec['name'])}</h3>
-<p class="desc">{e(description or '')}</p></div>
+<p class="desc">{e(description or '')}</p>
+<p class="desc"><a href="../docs/{e(safe_name(rec['name']))}.html{'#to=' + sha[:10] if sha else ''}">History and comparison with earlier commits →</a></p></div>
 <div class="score"><div class="num">{pct(rec['score'])}<small> / 100</small></div>
 <div class="meter"><span style="width:{100 * rec['score']:.1f}%"></span></div><div>{change}</div></div></div>
 {error}<ul class="parts">{''.join(f'<li>{k}<b>{pct(c.get(k))}</b></li>' for k in WEIGHTS)}</ul>

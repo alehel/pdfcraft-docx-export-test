@@ -9,7 +9,8 @@ PARTS = ("words", "order", "format", "visual", "structure")
 
 def summarize(meta, records):
     """A run's history line: who was tested where, the mean and part means, and every document's
-    score, status and PDF hash (to tell a changed corpus from a changed PdfCraft)."""
+    score, status, PDF hash (to tell a changed corpus from a changed PdfCraft) and parts (in PARTS
+    order; lines from before they were kept have three fields)."""
     parts = {}
     for k in PARTS:
         values = [r["components"][k] for r in records if (r.get("components") or {}).get(k) is not None]
@@ -26,7 +27,9 @@ def summarize(meta, records):
         "baseline": meta.get("baseline"),
         "mean": round(sum(r["score"] for r in records) / len(records), 4) if records else 0.0,
         "parts": parts, "classes": classes,
-        "docs": {r["name"]: [round(r["score"], 4), r["status"], r["sha256"][:12]] for r in records},
+        "docs": {r["name"]: [round(r["score"], 4), r["status"], r["sha256"][:12],
+                             [None if (r.get("components") or {}).get(k) is None else round(r["components"][k], 4)
+                              for k in PARTS]] for r in records},
     }
 
 

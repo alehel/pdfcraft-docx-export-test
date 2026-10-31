@@ -11,6 +11,7 @@ import json
 import math
 
 from .history import PARTS
+from .pipeline import safe_name
 from .report import CLASSES, commit_html, delta_html, page_html, pct, when
 
 MAX_COLUMNS = 10  # tested commits in the per-document table
@@ -39,6 +40,8 @@ svg .dot { fill: var(--series); stroke: var(--surface); stroke-width: 2; }
 svg a.pt:focus { outline: none; } svg a.pt:focus .dot { stroke: var(--ink); }
 svg .cross { stroke: var(--axis); stroke-width: 1; visibility: hidden; }
 td.cell { min-width: 64px; }
+td.cell a { text-decoration: none; display: block; }
+td.cell a:hover { text-decoration: underline; }
 td.u1 { background: var(--up-wash); } td.u2 { background: var(--up-wash-2); }
 td.d1 { background: var(--down-wash); } td.d2 { background: var(--down-wash-2); }
 th small { display: block; font-weight: 400; color: var(--muted); }
@@ -55,12 +58,12 @@ SCRIPT = """<script>
     const row = (cls, text) => { const d = document.createElement("div"); d.className = cls; d.textContent = text; return d; };
     function show(i) {
       current = i;
-      const p = data[i], v = key === "mean" ? p.mean : p.parts[key];
+      const p = data[i], v = key in p ? p[key] : p.parts[key];
       cross.setAttribute("x1", xs[i]); cross.setAttribute("x2", xs[i]); cross.style.visibility = "visible";
       const strong = document.createElement("strong");
       strong.textContent = (v == null ? "–" : v.toFixed(1)) + (key === "mean" ? " mean score" : " " + key);
       tip.replaceChildren(strong, row("", (p.tags.length ? p.tags.join(", ") + " · " : "") + p.sha + " · " + p.date),
-                          row("s", p.subject), row("m", p.href ? "Click to open the report" : "Report pruned"));
+                          row("s", p.subject), row("m", p.hint || (p.href ? "Click to open the report" : "Report pruned")));
       tip.hidden = false;
       const box = svg.getBoundingClientRect(), frame = fig.getBoundingClientRect();
       const x = box.left - frame.left + xs[i] / width * box.width;
@@ -293,15 +296,16 @@ def documents_table(points, href):
                     tint = "u2" if d > 0 else "d2"
             if first is None or first[2] != now[2]:
                 first = now
-            cells.append(f"<td class='cell {tint}' title='{e(title)}'>{pct(now[0])}{mark}</td>")
+            page = f"docs/{safe_name(doc)}.html#to={col['pdfcraft']['sha'][:10]}"
+            cells.append(f"<td class='cell {tint}' title='{e(title)}'><a href='{e(page)}'>{pct(now[0])}{mark}</a></td>")
         latest = cols[-1]["docs"][doc]
-        link = href(cols[-1], f"#{doc}")
-        label = f"<a href='{e(link)}'>{e(doc)}</a>" if link else e(doc)
+        label = f"<a href='docs/{e(safe_name(doc))}.html'>{e(doc)}</a>"
         rows.append(f"<tr><td class='l'>{label}</td>{''.join(cells)}<td>{delta_html(latest[0] - first[0])}</td></tr>")
     return f"""<h2>Documents</h2>
 <p class="ink-2">Each PDF's score at the last {len(cols)} tested commits. A tint marks a change from the column before: blue
 up, red down, darker and with an arrow from 2 points; ◆ means the PDF itself changed. The last column is the change
-since the first column with the same PDF.</p>
+since the first column with the same PDF. Click a name for that file's history, or a score to see that commit's DOCX
+next to the one before it.</p>
 <div class="wrap"><table><thead><tr><th class="l">PDF</th>{head}<th>change</th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div>"""
 

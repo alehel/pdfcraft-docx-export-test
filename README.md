@@ -62,8 +62,8 @@ corpus [--force NAME|all]  # (re)make missing corpus files with the pinned Chrom
 
 Open `public/index.html` in a browser. It lists every report and shows accuracy over time.
 
-`public/` holds everything the reports show: `index.html`, `history.jsonl`, and a folder per
-run. It is not in git. Every link inside is relative, so any static web server or static host
+`public/` holds everything the reports show: `index.html`, `history.jsonl`, a history page per
+test file in `docs/`, and a folder per run. It is not in git. Every link inside is relative, so any static web server or static host
 can serve the folder as it is.
 
 **Each run** writes `public/<id>/report.html`, about 10 MB with its images:
@@ -78,7 +78,7 @@ can serve the folder as it is.
 - **Toolbar:** "Overlays" adds a third image per page, red for ink only in the PDF and blue
   for ink only in the DOCX. "Only changed or failing" hides the rest.
 - **Details** under each card: missing and extra words, Word lint, and links to the DOCX and
-  LibreOffice's PDF.
+  LibreOffice's PDF. Each card also links to its test file's history page.
 
 The run folder also has `report.md`, `scores.json`, the exported `docx/` and LibreOffice's
 `rendered/` PDFs.
@@ -91,8 +91,22 @@ The run folder also has `report.md`, `scores.json`, the exported `docx/` and Lib
   commit; click to open its report.
 - **Small charts,** one per score part.
 - **Documents table:** each document's score at the last 10 tested commits. Tints and arrows
-  show where it moved.
+  show where it moved. A name opens that file's history page; a score opens the comparison of
+  that commit with the one before it.
 - **All reports,** newest first.
+
+**A history page per test file** (`public/docs/<file>.html`) shows:
+
+- the file's score at every tested commit, as a chart;
+- a comparison of any two commits, picked with From and To. Each page appears three times side
+  by side: the PDF, the DOCX at From, and the DOCX at To. Above it are the score and score-part
+  changes, and a note when the page count or the PDF itself differs;
+- a table of every tested commit, with links to its report and its comparison.
+
+Clicking a point in the chart compares that commit with the one before. The pair is kept in the
+address (`#from=<sha>&to=<sha>`), so a comparison can be shared as a link. Without a pair, the
+page opens on the latest change of 2 points or more. Screenshots exist only for runs whose folder
+is kept; for pruned runs the comparison still shows the scores.
 
 A *tested commit* is a full-corpus run of a commit on main (pull-request builds are listed but
 not plotted), in the same environment as the latest run; the latest run of each commit counts.

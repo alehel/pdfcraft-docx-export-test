@@ -29,7 +29,7 @@ from pathlib import Path
 SUITE = Path(__file__).resolve().parent
 sys.path.insert(0, str(SUITE))
 
-from harness import history, index, pipeline, render, report  # noqa: E402
+from harness import docpage, history, index, pipeline, render, report  # noqa: E402
 from harness.pdfref import ToolFailed  # noqa: E402
 
 # The pdfcraft checkout, its build and the LibreOffice profiles; the container keeps them in a
@@ -239,14 +239,22 @@ def cmd_run(args):
 
 def write_reports(run_dir, meta, records, baseline):
     report.classify(records, baseline)
-    descriptions = {name: d.get("description") for name, d in (load_json(CORPUS / "corpus.json") or {}).items()}
     (run_dir / "report.md").write_text(report.markdown(meta, records, baseline))
-    (run_dir / "report.html").write_text(report.html_report(meta, records, baseline, descriptions, run_dir))
+    (run_dir / "report.html").write_text(report.html_report(meta, records, baseline, descriptions(), run_dir))
+
+
+def descriptions():
+    return {name: d.get("description") for name, d in (load_json(CORPUS / "corpus.json") or {}).items()}
+
+
+def run_dirs():
+    """The run folders in public/, oldest first (public/ also holds docs/)."""
+    return sorted((p for p in PUBLIC.iterdir() if (p / "run.json").exists()), key=lambda p: p.name) if PUBLIC.exists() else []
 
 
 def update_index(entry=None):
     """Add a run to the history (with any run folders it lacks), prune old run folders, and rebuild
-    public/index.html."""
+    public/index.html and the test files' history pages in public/docs/."""
     PUBLIC.mkdir(exist_ok=True)
     if entry:
         history.append(HISTORY, entry)
@@ -257,6 +265,11 @@ def update_index(entry=None):
     prune_runs(entries, baseline_run)
     available = {p.name for p in PUBLIC.iterdir() if (p / "report.html").exists()}
     (PUBLIC / "index.html").write_text(index.html_index(entries, available, baseline_run))
+    docs = PUBLIC / "docs"
+    shutil.rmtree(docs, ignore_errors=True)
+    docs.mkdir()
+    for name, page in docpage.build(index.tested_commits(entries)[0], PUBLIC, descriptions()).items():
+        (docs / name).write_text(page)
     return PUBLIC / "index.html"
 
 
@@ -274,7 +287,7 @@ def refresh_commits(entries):
 
 
 def prune_runs(entries, baseline_run):
-    runs = sorted(p.name for p in PUBLIC.iterdir() if p.is_dir())
+    runs = [p.name for p in run_dirs()]
     keep = set(runs[-KEEP_RUNS:]) | {baseline_run}
     tagged = {}
     for entry in sorted(entries, key=lambda e: e["started"]):
@@ -308,7 +321,7 @@ def summarize(run_dir, meta, records):
 
 
 def resolve_run(name):
-    runs = sorted((p for p in PUBLIC.iterdir() if p.is_dir()), key=lambda p: p.name) if PUBLIC.exists() else []
+    runs = run_dirs()
     if not runs:
         sys.exit("no runs yet")
     if name in (None, "latest"):
@@ -390,11 +403,10 @@ def cmd_status(args):
         print("baseline: none")
     print(f"corpus:   {len(corpus_docs())} PDFs")
     print(f"environment: {ENVIRONMENT}")
-    if PUBLIC.exists():
-        for run_dir in sorted(PUBLIC.iterdir())[-5:]:
-            records = load_json(run_dir / "scores.json")
-            if records:
-                print(f"  run {run_dir.name}: {len(records)} PDFs, mean {100 * report.mean_score(records):.1f}")
+    for run_dir in run_dirs()[-5:]:
+        records = load_json(run_dir / "scores.json")
+        if records:
+            print(f"  run {run_dir.name}: {len(records)} PDFs, mean {100 * report.mean_score(records):.1f}")
     return 0
 
 
