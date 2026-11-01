@@ -109,7 +109,13 @@ The run folder also has `report.md`, `scores.json`, the exported `docx/` and Lib
 `rendered/` PDFs.
 
 **A history page per test document** (`public/docs/<file>.html`) shows its score across
-PdfCraft versions as a chart, and compares any two versions, picked with From and To: each page
+PdfCraft versions as a chart, then every version side by side: the original PDF's pages stay
+pinned on the left, and the Word file of each tested version follows in its own column, oldest
+first, pages lined up in rows. It opens on the latest version; scroll sideways (or use the slider
+and the ◀ ▶ buttons) to go back through earlier ones. Each column gives the version's score, verdict, looks and text,
+and the change from the one before, and says "changed" when its Word pages differ from the version
+before (the page images are compared) or "same as before". Below that, the page compares any two
+versions, picked with From and To: each page
 appears three times side by side (the PDF, the Word file at From, the Word file at To), with the
 score changes and a note when the page count or the PDF itself differs. A table of every version
 tested is folded below. Clicking a point in the chart compares that version with the one before.
